@@ -1,0 +1,80 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Database.java",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 488,
+          "line": 17
+        },
+        "start": {
+          "column": 1,
+          "index": 488,
+          "line": 17
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Event.java",
+      "selection": {
+        "end": {
+          "column": 33,
+          "index": 246,
+          "line": 11
+        },
+        "start": {
+          "column": 33,
+          "index": 246,
+          "line": 11
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/DatabaseHelper.java",
+      "selection": {
+        "end": {
+          "column": 37,
+          "index": 1171,
+          "line": 32
+        },
+        "start": {
+          "column": 37,
+          "index": 1171,
+          "line": 32
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Coop.java",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 746,
+          "line": 33
+        },
+        "start": {
+          "column": 0,
+          "index": 746,
+          "line": 33
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/MainActivity.java",
+      "selection": {
+        "end": {
+          "column": 31,
+          "index": 904,
+          "line": 31
+        },
+        "start": {
+          "column": 31,
+          "index": 904,
+          "line": 31
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Database.java"
+}
