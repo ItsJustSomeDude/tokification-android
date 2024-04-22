@@ -29,22 +29,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		
-		coop = Coop.fetchSelectedCoop(this);
+//		coop = Coop.fetchSelectedCoop(this);
 		
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 
-		binding.fab.setOnClickListener(v -> {
-			try {
-                Notifications.listNotifications();
-			} catch(Exception err) {
-				System.out.println("Failed to get notifications.");
-				System.err.println(err);
-			}
-			
-            Toast.makeText(MainActivity.this, "Replace with your action", Toast.LENGTH_SHORT).show();
-        });
+//		binding.fab.setOnClickListener(v -> {
+//			try {
+//                Notifications.listNotifications();
+//			} catch(Exception err) {
+//				System.out.println("Failed to get notifications.");
+//				System.err.println(err);
+//			}
+//
+//            Toast.makeText(MainActivity.this, "Replace with your action", Toast.LENGTH_SHORT).show();
+//        });
     }
     
     @Override
