@@ -28,36 +28,6 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <!-- Your content below appbar right here -->
-        <LinearLayout
-             android:layout_height="wrap_content"
-             android:layout_width="match_parent"
-             android:gravity="center_vertical"
-             android:orientation="horizontal">
-
-            <LinearLayout
-                 android:layout_height="wrap_content"
-                 android:layout_width="0dp"
-                 android:orientation="vertical"
-                 android:layout_weight="1">
-
-                <TextView
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="Co-op" />
-
-                <TextView
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="The code for the co-op to be tracked" />
-
-            </LinearLayout>
-
-            <EditText
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:gravity="right|center_vertical" />
-
-        </LinearLayout>
 
 
     </androidx.core.widget.NestedScrollView>

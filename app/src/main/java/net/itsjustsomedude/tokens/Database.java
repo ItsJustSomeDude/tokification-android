@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Database {
+	private static final String TAG = "Database";
+	
 	private DatabaseHelper dbHelper;
 	private Context context;
 	private SQLiteDatabase database;
@@ -32,12 +34,13 @@ public class Database {
 		dbHelper.close();
 	}
 	
-	public void savrCoop(Coop coop) {
-		String s = df.format(coop.startTime);
-		String e = df.format(coop.endTime);
+	public void saveCoop(Coop coop) {
+		String s = "";
+		String e = "";
+        if (coop.startTime != null) s = df.format(coop.startTime);
+		if (coop.endTime != null) e = df.format(coop.endTime);
 		
 		ContentValues cv = new ContentValues();
-		cv.put(DatabaseHelper._ID, coop.id);
 		cv.put(DatabaseHelper.COOP_NAME, coop.name);
 		cv.put(DatabaseHelper.START_TIME, s);
 		cv.put(DatabaseHelper.END_TIME, e);
@@ -64,7 +67,7 @@ public class Database {
 			String t = df.format(ev.time);
 			
 			ContentValues ecv = new ContentValues();
-			ecv.put(DatabaseHelper.EVENT_COOP, coop.id);
+			ecv.put(DatabaseHelper.EVENT_COOP, coop.name);
 			ecv.put(DatabaseHelper.EVENT_TIME, t);
 			ecv.put(DatabaseHelper.EVENT_COUNT, ev.count);
 			ecv.put(DatabaseHelper.EVENT_DIR, ev.direction);
@@ -118,10 +121,12 @@ public class Database {
 		
 		ArrayList<Event> evs = new ArrayList<Event>();
 		
+		Log.i(TAG, "Finding events where " + DatabaseHelper.EVENT_COOP + " is " + coop.getString(1));
+		
 		Cursor events = database.query(
 			DatabaseHelper.EVENTS_TABLE,
 			eventCols,
-			DatabaseHelper.EVENT_COOP + " = " + _id,
+			DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "'",
 			null, null, null, null);
 		if (events != null && events.moveToFirst()) {
 			do {
@@ -130,7 +135,7 @@ public class Database {
 					t = df.parse(events.getString(1));
 				} catch(ParseException err) {
 					Log.e("DB", "Invalid date on event!");
-					Log.e("DB", events.getString(1));
+					Log.e("DB", events.getString(1), err);
 					continue;
 				}
 				

@@ -25,23 +25,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	static final String DB_NAME = "Coops.db";
 	
-	static final int VERSION = 2;
+	static final int VERSION = 6;
 	
 	private static final String CREATE_COOPS_TABLE = "CREATE TABLE " +
 	    COOPS_TABLE + "(" +
 	    _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 	    COOP_NAME + " TEXT NOT NULL, " +
-	    START_TIME + " TEXT " +
+	    START_TIME + " TEXT, " +
 	    END_TIME + " TEXT);";
 	
 	private static final String CREATE_EVENTS_TABLE = "CREATE TABLE " +
 	    EVENTS_TABLE + "(" +
 	    _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-	    EVENT_COOP + " INTEGER NOT NULL, " +
-	    EVENT_TIME + " TEXT " +
-	    EVENT_COUNT + " INTEGER " +
-	    EVENT_PERSON + " TEXT " +
-	    EVENT_DIR + " TEXT " +
+	    EVENT_COOP + " TEXT NOT NULL, " +
+	    EVENT_TIME + " TEXT, " +
+	    EVENT_COUNT + " INTEGER, " +
+	    EVENT_PERSON + " TEXT, " +
+	    EVENT_DIR + " TEXT, " +
 	    EVENT_NOTE_ID + " INTEGER);";
 	
 	public DatabaseHelper(Context context) {

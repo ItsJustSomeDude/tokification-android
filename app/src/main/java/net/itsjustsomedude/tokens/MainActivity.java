@@ -3,6 +3,10 @@ package net.itsjustsomedude.tokens;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.OutputStream;
@@ -29,22 +33,56 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		
-//		coop = Coop.fetchSelectedCoop(this);
+		Notifications.createChannels(this);
+		Notifications.sendActions(this);
+		
+		// coop = Coop.fetchSelectedCoop(this);
 		
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 
-//		binding.fab.setOnClickListener(v -> {
-//			try {
-//                Notifications.listNotifications();
-//			} catch(Exception err) {
-//				System.out.println("Failed to get notifications.");
-//				System.err.println(err);
-//			}
-//
-//            Toast.makeText(MainActivity.this, "Replace with your action", Toast.LENGTH_SHORT).show();
-//        });
+		binding.CopyReport.setOnClickListener(v -> {
+			try {
+				Coop testing = Coop.fetchSelectedCoop(this);
+                NotificationReader.processNotifications(testing);
+				testing.save(this);
+					
+				Toast.makeText(MainActivity.this, "This must have worked!", Toast.LENGTH_SHORT).show();
+			} catch(Exception err) {
+				System.out.println("Failed to get notifications.");
+				System.err.println(err);
+			}
+        });
+		
+		binding.CopyDReport.setOnClickListener(v -> {
+			Coop.createCoop().save(this);
+		});
+		
+		Cursor coops = Coop.fetchCoops(this);
+		
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+			this,
+			android.R.layout.simple_spinner_item,
+			coops,
+			new String[] { DatabaseHelper.COOP_NAME },
+			new int[] { android.R.id.text1 },
+			0);
+		
+		binding.SelectExistingCoop.setAdapter(adapter);
+		binding.SelectExistingCoop.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					// TODO: Implement this method
+				}
+				
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View arg1, int arg2, long id) {
+					// TODO: Implement this method
+					
+					Toast.makeText(parent.getContext(), "You picked " + id, Toast.LENGTH_LONG).show();
+				}
+		});
     }
     
     @Override

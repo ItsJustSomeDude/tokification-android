@@ -1,77 +1,60 @@
 package net.itsjustsomedude.tokens;
-import android.app.Notification;
-import android.service.notification.NotificationListenerService;
-import android.service.notification.StatusBarNotification;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class Notifications {
-    static void listNotifications() throws Exception {
-        NotificationService notificationService = NotificationService.get();
-        StatusBarNotification[] notifications = notificationService.getActiveNotifications();
-
-        for (StatusBarNotification n : notifications) {
-            int id = n.getId();
-            String key = "";
-            String title = "";
-            String text = "";
-            CharSequence[] lines = null;
-            String packageName = "";
-            String tag = "";
-            String group = "";
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String when = dateFormat.format(new Date(n.getNotification().when));
-
-            if (n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
-                title = n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE).toString();
-            }
-            if (n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT) != null) {
-                text = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString();
-            } else if (n.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT) != null) {
-                text = n.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT).toString();
-            }
-            if (n.getNotification().extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES) != null) {
-                lines = n.getNotification().extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
-            }
-            if (n.getTag() != null) {
-                tag = n.getTag();
-            }
-            if (n.getNotification().getGroup() != null) {
-                group = n.getNotification().getGroup();
-            }
-            if (n.getKey() != null) {
-                key = n.getKey();
-            }
-            if (n.getPackageName() != null) {
-                packageName = n.getPackageName();
-            }
-			System.out.println("id " + id + " packageName " + packageName);
-//          if (lines != null) {
-//                out.name("lines").beginArray();
-//                for (CharSequence line : lines) {
-//                    out.value(line.toString());
-//                }
-//                out.endArray();
-//          }
-        }
-    }
+	private static final String ACTION_CHANNEL = "Actions";
+	private static final int ACTIONS_ID = 770;
 	
-	// Listener service.
-    public static class NotificationService extends NotificationListenerService {
-        static NotificationService _this;
+	public static void createChannels(Context ctx) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
+		
+		CharSequence name = ctx.getString(R.string.action_channel_name);
+		String desc = ctx.getString(R.string.action_channel_desc);
+		int importance = NotificationManager.IMPORTANCE_DEFAULT;
+		NotificationChannel channel = new NotificationChannel(ACTION_CHANNEL, name, importance);
+        channel.setDescription(desc);
+		
+		NotificationManager notificationManager = ctx.getSystemService(NotificationManager.class);
+		notificationManager.createNotificationChannel(channel);
+	}
+	
+	public static void sendActions(Context ctx) {
+		Intent openMenu = new Intent(ctx, MainActivity.class);
+		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
+		
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
+		    .setSmallIcon(android.R.drawable.ic_dialog_alert)
+		    .setContentTitle("Tokification")
+            .setContentText("Click to open the menu.")
+		    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+		    .setAutoCancel(false)
+		    .setContentIntent(openMenuPending);
 
-        public static NotificationService get() {
-            return _this;
-        }
+        NotificationManagerCompat mgr = NotificationManagerCompat.from(ctx);
+		
+        if (ActivityCompat.checkSelfPermission(
+			ctx,
+			Manifest.permission.POST_NOTIFICATIONS
+		    ) != PackageManager.PERMISSION_GRANTED) {
+			//TODO: ask for permission.
 
-        @Override
-        public void onListenerConnected() {
-            _this = this;
-        }
-
-        @Override
-        public void onListenerDisconnected() {
-            _this = null;
-        }
-    }
+            //String[] toRequest = new String[] { Manifest.permission.POST_NOTIFICATIONS };
+				
+			//ActivityCompat.requestPermissions(ctx., toRequest, 1);
+		}
+		
+		mgr.notify(ACTIONS_ID, builder.build());
+	}
 }
