@@ -28,86 +28,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView2"
+				android:id="@+id/selected_coop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Existing Coop" />
-
-            <Spinner
-                android:id="@+id/SelectExistingCoop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:id="@+id/editTextText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Code of coop to track"
-                android:inputType="text"
-                android:text="Coop Code" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/modifyStartTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Start Time" />
-
-                <Button
-                    android:id="@+id/modifyEndTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="End Time" />
-            </LinearLayout>
-
-            <Switch
-                android:id="@+id/coopMode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Sink Mode" />
+                android:text="Selected Coop: " />
 			
-			<Button
-                    android:id="@+id/SaveCoop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Save Coop" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="?android:attr/listDivider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/editTextNumberSigned"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Tokens"
-                    android:inputType="numberSigned"
-                    android:text="6" />
-
-                <Button
-                    android:id="@+id/SendTokens"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Send" />
-
-            </LinearLayout>
+			<Button />
 
             <LinearLayout
                 android:layout_width="match_parent"

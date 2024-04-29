@@ -5,6 +5,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +29,8 @@ public class NotificationReader {
             String tag = "";
             String group = "";
             //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date when = new Date(n.getNotification().when);
+			Calendar when = Calendar.getInstance();
+			when.setTimeInMillis(n.getNotification().when * 1000l);
 
             if (n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
                 title = n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE).toString();

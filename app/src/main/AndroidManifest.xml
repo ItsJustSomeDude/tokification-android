@@ -20,6 +20,20 @@
                     android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+		
+		<activity
+		    android:name="SendTokensActivity"
+		    android:exported="true"
+			android:theme="@style/DialogTheme.Dark" />
+		
+		<activity
+		    android:name="EditCoopActivity"
+		    android:exported="false" />
+		
+		<activity
+		     android:name="ListCoopsActivity"
+		     android:exported="true" />
+		
         <service
             android:name=".NotificationReader$NotificationService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"

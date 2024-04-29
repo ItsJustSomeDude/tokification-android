@@ -9,6 +9,7 @@ import android.util.Log;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Database {
@@ -37,14 +38,15 @@ public class Database {
 	public void saveCoop(Coop coop) {
 		String s = "";
 		String e = "";
-        if (coop.startTime != null) s = df.format(coop.startTime);
-		if (coop.endTime != null) e = df.format(coop.endTime);
+        if (coop.startTime != null) s = df.format(coop.startTime.getTime());
+		if (coop.endTime != null) e = df.format(coop.endTime.getTime());
 		
 		ContentValues cv = new ContentValues();
 		cv.put(DatabaseHelper.COOP_NAME, coop.name);
 		cv.put(DatabaseHelper.START_TIME, s);
 		cv.put(DatabaseHelper.END_TIME, e);
 		
+		long newId = -1;
 		if (coop.id == 0) {
 			// Coop has no id, so insert new.
 		    database.insert(
@@ -52,10 +54,10 @@ public class Database {
 			    null,
 			    cv
 		    );
-		} else if (coop.modified) {
+		} else /* if (coop.modified) */ {
 			// Existing record, changed coop, update.
 			database.update(
-				DatabaseHelper.EVENTS_TABLE,
+				DatabaseHelper.COOPS_TABLE,
 				cv,
 				DatabaseHelper._ID + " = " + coop.id,
 				null
@@ -63,11 +65,16 @@ public class Database {
 		}
 		// Exisiting unmodified coop
 		
+		// If this is -1, means existing coop.
+		// This is used to store the coop ID in the Events.
+		if (newId == -1)
+		    newId = coop.id;
+		
 		for (Event ev : coop.events) {
-			String t = df.format(ev.time);
+			String t = df.format(ev.time.getTime());
 			
 			ContentValues ecv = new ContentValues();
-			ecv.put(DatabaseHelper.EVENT_COOP, coop.name);
+			ecv.put(DatabaseHelper.EVENT_COOP, newId);
 			ecv.put(DatabaseHelper.EVENT_TIME, t);
 			ecv.put(DatabaseHelper.EVENT_COUNT, ev.count);
 			ecv.put(DatabaseHelper.EVENT_DIR, ev.direction);
@@ -121,18 +128,21 @@ public class Database {
 		
 		ArrayList<Event> evs = new ArrayList<Event>();
 		
-		Log.i(TAG, "Finding events where " + DatabaseHelper.EVENT_COOP + " is " + coop.getString(1));
+		Log.i(TAG, "Finding events where " + DatabaseHelper.EVENT_COOP + " is " + coop.getLong(0));
 		
 		Cursor events = database.query(
 			DatabaseHelper.EVENTS_TABLE,
 			eventCols,
-			DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "'",
+			// DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "'",
+			DatabaseHelper.EVENT_COOP + " = " + coop.getLong(0),
 			null, null, null, null);
 		if (events != null && events.moveToFirst()) {
 			do {
-				Date t = null;
+				Calendar t = null;
 				try {
-					t = df.parse(events.getString(1));
+					Date parsed = df.parse(events.getString(1));
+					t = Calendar.getInstance();
+					t.setTime(parsed);
 				} catch(ParseException err) {
 					Log.e("DB", "Invalid date on event!");
 					Log.e("DB", events.getString(1), err);
@@ -140,24 +150,28 @@ public class Database {
 				}
 				
 				evs.add(new Event(
-						events.getLong(0),
-					    t,
-						events.getInt(2),
-						events.getString(3),
-						events.getString(4),
-						events.getInt(5)
+					events.getLong(0),
+					t,
+					events.getInt(2),
+					events.getString(3),
+					events.getString(4),
+					events.getInt(5)
 				));
 			} while(events.moveToNext());
 		}
 		
-		Date start = null;
+		Calendar start = null;
 		try {
-			start = df.parse(coop.getString(2));
+			Date parsed = df.parse(coop.getString(2));
+			start = Calendar.getInstance();
+			start.setTime(parsed);
 		} catch(ParseException err) {}
 		
-		Date end = null;
+		Calendar end = null;
 		try {
-			start = df.parse(coop.getString(3));
+			Date parsed = df.parse(coop.getString(3));
+			end = Calendar.getInstance();
+			end.setTime(parsed);
 		} catch(ParseException err) {}
 		
 		return new Coop(
@@ -174,11 +188,15 @@ public class Database {
 		Cursor cursor = database.query(
 			DatabaseHelper.COOPS_TABLE,
 			columns,
-			null, null, null, null, null);
+			null, null, null, null, DatabaseHelper._ID + " DESC");
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
 		return cursor;
+		
+//		return database.rawQuery(
+//			"SELECT * FROM " + DatabaseHelper.COOPS_TABLE + ";"
+//			, null);
 	}
 	
 	public void deleteCoop(long _id) {

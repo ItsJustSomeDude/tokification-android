@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -59,30 +60,30 @@ public class MainActivity extends AppCompatActivity {
 			Coop.createCoop().save(this);
 		});
 		
-		Cursor coops = Coop.fetchCoops(this);
-		
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-			this,
-			android.R.layout.simple_spinner_item,
-			coops,
-			new String[] { DatabaseHelper.COOP_NAME },
-			new int[] { android.R.id.text1 },
-			0);
-		
-		binding.SelectExistingCoop.setAdapter(adapter);
-		binding.SelectExistingCoop.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO: Implement this method
-				}
-				
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View arg1, int arg2, long id) {
-					// TODO: Implement this method
-					
-					Toast.makeText(parent.getContext(), "You picked " + id, Toast.LENGTH_LONG).show();
-				}
-		});
+//		Cursor coops = Coop.fetchCoops(this);
+//		
+//		SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+//			this,
+//			android.R.layout.simple_spinner_item,
+//			coops,
+//			new String[] { DatabaseHelper.COOP_NAME },
+//			new int[] { android.R.id.text1 },
+//			0);
+//		
+//		binding.SelectExistingCoop.setAdapter(adapter);
+//		binding.SelectExistingCoop.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//				@Override
+//				public void onNothingSelected(AdapterView<?> arg0) {
+//					// TODO: Implement this method
+//				}
+//				
+//				@Override
+//				public void onItemSelected(AdapterView<?> parent, View arg1, int arg2, long id) {
+//					// TODO: Implement this method
+//					
+//					Toast.makeText(parent.getContext(), "You picked " + id, Toast.LENGTH_LONG).show();
+//				}
+//		});
     }
     
     @Override

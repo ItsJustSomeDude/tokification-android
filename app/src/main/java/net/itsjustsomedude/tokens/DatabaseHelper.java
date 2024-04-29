@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	static final String DB_NAME = "Coops.db";
 	
-	static final int VERSION = 6;
+	static final int VERSION = 7;
 	
 	private static final String CREATE_COOPS_TABLE = "CREATE TABLE " +
 	    COOPS_TABLE + "(" +
@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String CREATE_EVENTS_TABLE = "CREATE TABLE " +
 	    EVENTS_TABLE + "(" +
 	    _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-	    EVENT_COOP + " TEXT NOT NULL, " +
+	    EVENT_COOP + " INTEGER NOT NULL, " +
 	    EVENT_TIME + " TEXT, " +
 	    EVENT_COUNT + " INTEGER, " +
 	    EVENT_PERSON + " TEXT, " +

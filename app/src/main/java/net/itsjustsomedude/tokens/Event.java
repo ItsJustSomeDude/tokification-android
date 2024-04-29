@@ -1,9 +1,9 @@
 package net.itsjustsomedude.tokens;
-import java.util.Date;
+import java.util.Calendar;
 
 public class Event {
 	public long id;
-	public Date time;
+	public Calendar time;
 	public int count;
 	public String person;
 	public String direction;
@@ -11,7 +11,7 @@ public class Event {
 	
 	public boolean modified = false;
 	
-	public Event(long _id, Date time, int count, String person, String direction, int note) {
+	public Event(long _id, Calendar time, int count, String person, String direction, int note) {
 		this.id = _id;
 		this.time = time;
 		this.count = count;
@@ -20,10 +20,10 @@ public class Event {
 		this.notification = note;
 	}
 	
-	public double tval(Date coopStart, Date coopEnd) {
-		long tokenTime = this.time.getTime();
-		long startTime = coopStart.getTime();
-		long endTime = coopEnd.getTime();
+	public double tval(Calendar coopStart, Calendar coopEnd) {
+		long tokenTime = this.time.getTimeInMillis() / 1000l;
+		long startTime = coopStart.getTimeInMillis() / 1000l;
+		long endTime = coopEnd.getTimeInMillis() / 1000l;
 		
 		long duration = endTime - startTime;
 		long elapsed = tokenTime - startTime;
