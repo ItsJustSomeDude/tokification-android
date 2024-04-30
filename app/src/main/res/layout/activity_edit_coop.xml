@@ -2,7 +2,8 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
      xmlns:android="http://schemas.android.com/apk/res/android"
      xmlns:app="http://schemas.android.com/apk/res-auto"
-     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
      android:layout_width="match_parent"
      android:id="@+id/coordinator">
 
@@ -34,14 +35,14 @@
              android:orientation="vertical">
 
             <EditText
-                 android:layout_height="wrap_content"
-                 android:layout_width="match_parent"
-                 android:selectAllOnFocus="true"
-                 android:hint="Co-op code"
-                 android:singleLine="true"
-                 android:ems="10"
-                 android:inputType="text"
-                 android:id="@+id/editCoopCode" />
+                android:id="@+id/editCoopCode"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:ems="10"
+                android:hint="Co-op code"
+                android:inputType="text"
+                android:selectAllOnFocus="true"
+                android:singleLine="true" />
 
             <LinearLayout
                  android:layout_height="wrap_content"
@@ -82,12 +83,13 @@
             </LinearLayout>
 
             <Switch
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:textOn="Sink Mode"
-                 android:textOff="Normal Mode"
-				 android:text="Sink Mode"
-                 android:id="@+id/editCoopMode" />
+                android:id="@+id/editCoopMode"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Sink Mode"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textOff="Normal Mode"
+                android:textOn="Sink Mode" />
 
             <Button
                  android:layout_height="wrap_content"

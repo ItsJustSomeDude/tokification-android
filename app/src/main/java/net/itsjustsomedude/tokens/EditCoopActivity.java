@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -23,8 +24,8 @@ public class EditCoopActivity extends AppCompatActivity {
 	
 	public Coop coop;
 	
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +40,14 @@ public class EditCoopActivity extends AppCompatActivity {
 		
 		Intent thisIntent = getIntent();
 		String i = thisIntent.getStringExtra(EDIT_ID);
-		Long id = Long.parseLong(i);
-		coop = db.fetchCoop(id);
-		
+		if(i != null) {
+			long id = Long.parseLong(i);
+			coop = db.fetchCoop(id);
+		}
+
 		if (coop == null) {
-			this.finish();
-			return;
+			Log.i(TAG, "Creating new coop.");
+			this.coop = Coop.createCoop();
 		}
 		
 		binding.editCoopCode.setText(coop.name);

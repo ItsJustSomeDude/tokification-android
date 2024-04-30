@@ -1,5 +1,9 @@
 package net.itsjustsomedude.tokens;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +14,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Logger;
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
@@ -36,29 +38,44 @@ public class MainActivity extends AppCompatActivity {
 		
 		Notifications.createChannels(this);
 		Notifications.sendActions(this);
-		
-		// coop = Coop.fetchSelectedCoop(this);
-		
+
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 
-		binding.CopyReport.setOnClickListener(v -> {
-			try {
-				Coop testing = Coop.fetchSelectedCoop(this);
-                NotificationReader.processNotifications(testing);
-				testing.save(this);
-					
-				Toast.makeText(MainActivity.this, "This must have worked!", Toast.LENGTH_SHORT).show();
-			} catch(Exception err) {
-				System.out.println("Failed to get notifications.");
-				System.err.println(err);
-			}
-        });
-		
-		binding.CopyDReport.setOnClickListener(v -> {
-			Coop.createCoop().save(this);
+		coop = Coop.fetchSelectedCoop(this);
+
+		if(coop != null) {
+			binding.selectedCoop.setText("Selected Coop: " + coop.name);
+//			binding.
+		}
+
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		String savedName = sharedPref.getString("PlayerName", "");
+		binding.mainPlayerName.setText(savedName);
+		binding.mainSaveName.setOnClickListener(view -> {
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putString("PlayerName", view.toString());
+			editor.apply();
+
+			Toast.makeText(this, "Player Name Saved.", Toast.LENGTH_SHORT).show();
 		});
+//
+//		binding.CopyReport.setOnClickListener(v -> {
+//			try {
+//				Coop testing = Coop.fetchSelectedCoop(this);
+//                NotificationReader.processNotifications(testing);
+//				testing.save(this);
+//
+//				Toast.makeText(MainActivity.this, "This must have worked!", Toast.LENGTH_SHORT).show();
+//			} catch(Exception err) {
+//				Log.i("", "Failed to get notifications.", err);
+//			}
+//        });
+//
+//		binding.CopyDReport.setOnClickListener(v -> {
+//			Coop.createCoop().save(this);
+//		});
 		
 //		Cursor coops = Coop.fetchCoops(this);
 //		
