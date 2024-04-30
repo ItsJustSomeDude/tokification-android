@@ -1,11 +1,14 @@
 package net.itsjustsomedude.tokens;
 
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -33,7 +36,13 @@ public class EditCoopActivity extends AppCompatActivity {
 		
 		binding = ActivityEditCoopBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-		// setSupportActionBar(binding.toolbar);
+		setSupportActionBar(binding.toolbar);
+		setTitle("Edit Co-op");
+		
+		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+		binding.toolbar.setNavigationOnClickListener(v -> {
+			startActivity(new Intent(this, ListCoopsActivity.class));
+		});
 		
 		Database db = new Database(this);
 		db.open();
@@ -178,6 +187,18 @@ public class EditCoopActivity extends AppCompatActivity {
 			coop.save(this);
 			Toast.makeText(this, "Saved Coop!", Toast.LENGTH_SHORT).show();
 		});
+		
+		binding.editCoopDelete.setOnClickListener(view -> {
+				
+		});
+		
+		binding.editCoopSetActive.setOnClickListener(v -> {
+			if(coop.id != 0) {
+			    Coop.setSelectedCoop(this, coop.id);
+			} else {
+				Toast.makeText(this, "Save the Co-op first.", Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 	
 	public void setButtonTexts() {
@@ -208,6 +229,24 @@ public class EditCoopActivity extends AppCompatActivity {
 			    timeFormat.format(coop.endTime.getTime())
 		    );
 		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.coop_edit, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.delete_coop) {
+			coop.delete(this);
+			
+			Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
+			returnHome();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	public void returnHome() {

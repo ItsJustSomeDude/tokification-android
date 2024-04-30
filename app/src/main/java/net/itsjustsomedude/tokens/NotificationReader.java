@@ -30,7 +30,7 @@ public class NotificationReader {
             String group = "";
             //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Calendar when = Calendar.getInstance();
-			when.setTimeInMillis(n.getNotification().when * 1000l);
+			when.setTimeInMillis(n.getNotification().when);
 
             if (n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE) != null) {
                 title = n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE).toString();

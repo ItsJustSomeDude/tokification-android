@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens;
 
+import android.content.Intent;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 import android.content.Context;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 	
 	public Coop coop;
 	
+	public static final String PREFERENCES = "Prefs";
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,60 +50,68 @@ public class MainActivity extends AppCompatActivity {
 
 		if(coop != null) {
 			binding.selectedCoop.setText("Selected Coop: " + coop.name);
-//			binding.
+		} else {
+			binding.selectedCoop.setText("No Coop Selected!");
+			
+			binding.mainRefresh.setEnabled(false);
+			binding.mainSend.setEnabled(false);
+			
+			//binding.mainEdit.setText("Create Coop");
 		}
+		
+		binding.mainRefresh.setOnClickListener(view -> {
+			try {
+				NotificationReader.processNotifications(coop);
+				coop.modified = true;
+				coop.save(this);
+				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
+			} catch(Exception err) {
+				Log.e("", "Failed to get notifications.", err);
+				Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
+			}
+		});
+		
+		binding.mainSend.setOnClickListener(view -> {
+			startActivity(new Intent(this, SendTokensActivity.class));
+		});
+		
+		binding.CopyReport.setOnClickListener(v -> {
+			Log.i("Report", Reports.sinkReport(coop));
+		});
+		
+		// detailed report...
+		
+		binding.mainEdit.setOnClickListener(view -> {
+			Intent edit = new Intent(this, EditCoopActivity.class);
+			if (coop != null)
+			    edit.putExtra(EditCoopActivity.EDIT_ID, Long.toString(coop.id));
+			startActivity(edit);
+		});
+		
+		// Edit Events...
+		
+		binding.mainSwitchCoop.setOnClickListener(view -> {
+			startActivity(new Intent(this, ListCoopsActivity.class));
+		});
 
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences sharedPref = getSharedPreferences(
+			PREFERENCES,
+			Context.MODE_PRIVATE
+		);
 		String savedName = sharedPref.getString("PlayerName", "");
 		binding.mainPlayerName.setText(savedName);
 		binding.mainSaveName.setOnClickListener(view -> {
 			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putString("PlayerName", view.toString());
+			editor.putString("PlayerName", binding.mainPlayerName.getText().toString());
 			editor.apply();
 
 			Toast.makeText(this, "Player Name Saved.", Toast.LENGTH_SHORT).show();
 		});
-//
-//		binding.CopyReport.setOnClickListener(v -> {
-//			try {
-//				Coop testing = Coop.fetchSelectedCoop(this);
-//                NotificationReader.processNotifications(testing);
-//				testing.save(this);
-//
-//				Toast.makeText(MainActivity.this, "This must have worked!", Toast.LENGTH_SHORT).show();
-//			} catch(Exception err) {
-//				Log.i("", "Failed to get notifications.", err);
-//			}
-//        });
-//
+
 //		binding.CopyDReport.setOnClickListener(v -> {
 //			Coop.createCoop().save(this);
 //		});
 		
-//		Cursor coops = Coop.fetchCoops(this);
-//		
-//		SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-//			this,
-//			android.R.layout.simple_spinner_item,
-//			coops,
-//			new String[] { DatabaseHelper.COOP_NAME },
-//			new int[] { android.R.id.text1 },
-//			0);
-//		
-//		binding.SelectExistingCoop.setAdapter(adapter);
-//		binding.SelectExistingCoop.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//				@Override
-//				public void onNothingSelected(AdapterView<?> arg0) {
-//					// TODO: Implement this method
-//				}
-//				
-//				@Override
-//				public void onItemSelected(AdapterView<?> parent, View arg1, int arg2, long id) {
-//					// TODO: Implement this method
-//					
-//					Toast.makeText(parent.getContext(), "You picked " + id, Toast.LENGTH_LONG).show();
-//				}
-//		});
     }
     
     @Override

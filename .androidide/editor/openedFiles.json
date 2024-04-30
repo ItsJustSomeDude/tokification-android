@@ -1,125 +1,20 @@
 {
   "allFiles": [
     {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/ListCoopsActivity.java",
-      "selection": {
-        "end": {
-          "column": 33,
-          "index": 2384,
-          "line": 79
-        },
-        "start": {
-          "column": 33,
-          "index": 2384,
-          "line": 79
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/res/layout/activity_list_coops.xml",
-      "selection": {
-        "end": {
-          "column": 54,
-          "index": 1635,
-          "line": 40
-        },
-        "start": {
-          "column": 54,
-          "index": 1635,
-          "line": 40
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/res/layout/activity_edit_coop.xml",
-      "selection": {
-        "end": {
-          "column": 46,
-          "index": 1355,
-          "line": 28
-        },
-        "start": {
-          "column": 4,
-          "index": 1078,
-          "line": 24
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Database.java",
-      "selection": {
-        "end": {
-          "column": 7,
-          "index": 4555,
-          "line": 180
-        },
-        "start": {
-          "column": 7,
-          "index": 4555,
-          "line": 180
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/MainActivity.java",
-      "selection": {
-        "end": {
-          "column": 4,
-          "index": 1713,
-          "line": 55
-        },
-        "start": {
-          "column": 4,
-          "index": 1713,
-          "line": 55
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/res/layout/activity_main.xml",
-      "selection": {
-        "end": {
-          "column": 49,
-          "index": 1365,
-          "line": 33
-        },
-        "start": {
-          "column": 49,
-          "index": 1365,
-          "line": 33
-        }
-      }
-    },
-    {
       "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Reports.java",
       "selection": {
         "end": {
-          "column": 3,
-          "index": 1475,
-          "line": 45
+          "column": 37,
+          "index": 2455,
+          "line": 78
         },
         "start": {
-          "column": 3,
-          "index": 1475,
-          "line": 45
-        }
-      }
-    },
-    {
-      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Event.java",
-      "selection": {
-        "end": {
-          "column": 2,
-          "index": 947,
-          "line": 34
-        },
-        "start": {
-          "column": 1,
-          "index": 499,
-          "line": 22
+          "column": 37,
+          "index": 2455,
+          "line": 78
         }
       }
     }
   ],
-  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/ListCoopsActivity.java"
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/Reports.java"
 }

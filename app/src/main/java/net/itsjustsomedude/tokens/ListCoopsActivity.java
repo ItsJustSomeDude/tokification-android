@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import net.itsjustsomedude.tokens.databinding.ActivityListCoopsBinding;
@@ -20,6 +23,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 	private ActivityListCoopsBinding binding;
 	
 	SimpleCursorAdapter adapter;
+	ActivityResultLauncher<Intent> returnHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +34,27 @@ public class ListCoopsActivity extends AppCompatActivity {
 		setSupportActionBar(binding.toolbar);
 		setTitle("Edit Co-op");
 		
+		returnHandler = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				result -> {
+					//if (result.getResultCode() != Activity.RESULT_OK) return;
+						
+					Database db2 = new Database(this);
+					db2.open();
+				    Cursor coops2 = db2.fetchCoops();
+					adapter.changeCursor(coops2);
+					adapter.notifyDataSetChanged();
+				}
+			);
+		
 		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
 		binding.toolbar.setNavigationOnClickListener(v -> {
 			startActivity(new Intent(this, MainActivity.class));
 		});
-
-
 		
 		Database db = new Database(this);
 		db.open();
 		Cursor coops = db.fetchCoops();
-		coops.moveToFirst();
 		
 		Log.i("Heh", "Found " + coops.getCount());
 		
@@ -64,23 +78,8 @@ public class ListCoopsActivity extends AppCompatActivity {
 			Intent editIntent = new Intent(getApplicationContext(), EditCoopActivity.class);
 			editIntent.putExtra(EditCoopActivity.EDIT_ID, id);
 
-			startActivity(editIntent);
+			returnHandler.launch(editIntent);
 		});
-
-		db.close();
-	}
-	
-	@Override
-	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
-		super.onActivityResult(arg0, arg1, arg2);
-		// TODO: Implement this method
-		
-		Database db = new Database(this);
-		db.open();
-		Cursor coops = db.fetchCoops();
-		coops.moveToFirst();
-		
-		adapter.notifyDataSetChanged();
 
 		db.close();
 	}
@@ -96,7 +95,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.add_coop) {
 			Intent editIntent = new Intent(getApplicationContext(), EditCoopActivity.class);
-			startActivity(editIntent);
+			returnHandler.launch(editIntent);
 		}
 		return super.onOptionsItemSelected(item);
 	}

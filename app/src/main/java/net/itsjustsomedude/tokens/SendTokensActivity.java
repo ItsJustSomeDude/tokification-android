@@ -43,7 +43,7 @@ public class SendTokensActivity extends AppCompatActivity {
 		
 		binding.test.setText(coop.name + ", " + coop.id);
 		
-		String[] people = coop.getPeople();
+		String[] people = coop.getPeople(null);
 		if (people.length < 1) people = new String[] { "No people!" };
 		ArrayAdapter<String> personAdapter = new ArrayAdapter<String>(
 			this,

@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
@@ -34,27 +35,58 @@ public class Coop {
 		return toAdd;
 	}
 	
-	public void save(Context ctx) {
+	public Coop save(Context ctx) {
 		Database db = new Database(ctx);
 		db.open();
 		db.saveCoop(this);
 		
 		Log.i(TAG, "Saved coop!");
+		
+		return this;
 	}
 	
-	public String[] getPeople() {
+	public void delete(Context ctx) {
+		// Not saved, so don't try to delete.
+		if (this.id == 0) return;
+		
+		Database db = new Database(ctx);
+		db.open();
+		db.deleteCoop(this.id);
+		db.close();
+	}
+	
+	public String[] getPeople(String sinkName) {
 		ArrayList<String> out = new ArrayList<String>();
 		
 		for (Event ev : this.events) {
 			if (!out.contains(ev.person)) out.add(ev.person);
 		}
 		
+		if (sinkName != null) out.add(sinkName);
+		
 		return out.toArray(new String[0]);
 	}
 	
+	public static void setSelectedCoop(Context ctx, long id) {
+		SharedPreferences sharedPref = ctx.getSharedPreferences(
+			MainActivity.PREFERENCES,
+			Context.MODE_PRIVATE
+		);
+		SharedPreferences.Editor edit = sharedPref.edit();
+		edit.putLong("SelectedCoop", id);
+		edit.apply();
+	}
+	
 	public static Coop fetchSelectedCoop(Context ctx) {
-		//TODO: get this from Shared Prefs.
-		long selectedCoop = 1l;
+		SharedPreferences sharedPref = ctx.getSharedPreferences(
+			MainActivity.PREFERENCES,
+			Context.MODE_PRIVATE
+		);
+		long selectedCoop = sharedPref.getLong("SelectedCoop", -1);
+		
+		if (selectedCoop == -1) {
+			return null;
+		}
 		
 		Database db = new Database(ctx);
 		db.open();
@@ -72,6 +104,6 @@ public class Coop {
 	}
 	
 	public static Coop createCoop() {
-		return new Coop(0, "better858", null, null, new ArrayList<Event>());
+		return new Coop(0, "New Coop", null, null, new ArrayList<Event>());
 	}
 }

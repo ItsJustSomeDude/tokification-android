@@ -49,7 +49,7 @@ public class Database {
 		long newId = -1;
 		if (coop.id == 0) {
 			// Coop has no id, so insert new.
-		    database.insert(
+		    newId = database.insert(
 			    DatabaseHelper.COOPS_TABLE,
 			    null,
 			    cv
@@ -67,14 +67,14 @@ public class Database {
 		
 		// If this is -1, means existing coop.
 		// This is used to store the coop ID in the Events.
-		if (newId == -1)
-		    newId = coop.id;
+		if (newId != -1)
+		    coop.id = newId;
 		
 		for (Event ev : coop.events) {
 			String t = df.format(ev.time.getTime());
 			
 			ContentValues ecv = new ContentValues();
-			ecv.put(DatabaseHelper.EVENT_COOP, newId);
+			ecv.put(DatabaseHelper.EVENT_COOP, coop.id);
 			ecv.put(DatabaseHelper.EVENT_TIME, t);
 			ecv.put(DatabaseHelper.EVENT_COUNT, ev.count);
 			ecv.put(DatabaseHelper.EVENT_DIR, ev.direction);
@@ -121,7 +121,7 @@ public class Database {
 			coopCols,
 			DatabaseHelper._ID + " = " + _id,
 			null, null, null, null);
-		if (coop == null) {
+		if (coop == null || coop.getCount() < 1) {
 			return null;
 		}
 		coop.moveToFirst();
@@ -200,6 +200,8 @@ public class Database {
 	}
 	
 	public void deleteCoop(long _id) {
-		database.delete(DatabaseHelper.DB_NAME, DatabaseHelper._ID + " = " + _id, null);
+		database.delete(DatabaseHelper.COOPS_TABLE, DatabaseHelper._ID + " = " + _id, null);
+		
+		// TODO: Clean up Events.
 	}
 }

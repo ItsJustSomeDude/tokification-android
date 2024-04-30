@@ -94,7 +94,7 @@
                     android:text="Edit Events" />
 
                 <Button
-                    android:id="@+id/mainNew"
+                    android:id="@+id/mainSwitchCoop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
