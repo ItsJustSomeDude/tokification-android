@@ -129,6 +129,12 @@
                     android:text="Save" />
             </LinearLayout>
 
+            <Switch
+                android:id="@+id/mainAutoDismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Auto Dismiss Notifications" />
+
 
         </LinearLayout>
 

@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+
 import net.itsjustsomedude.tokens.databinding.ActivityEditCoopBinding;
 
 public class EditCoopActivity extends AppCompatActivity {
@@ -27,15 +29,15 @@ public class EditCoopActivity extends AppCompatActivity {
 	
 	public Coop coop;
 	
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		binding = ActivityEditCoopBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 		setTitle("Edit Co-op");
 		

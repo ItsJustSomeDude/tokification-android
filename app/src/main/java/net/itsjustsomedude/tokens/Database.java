@@ -11,15 +11,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class Database {
 	private static final String TAG = "Database";
 	
 	private DatabaseHelper dbHelper;
-	private Context context;
+	private final Context context;
 	private SQLiteDatabase database;
 	
-	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	
 	public Database(Context c) {
 		context = c;
@@ -63,7 +64,7 @@ public class Database {
 				null
 			);
 		}
-		// Exisiting unmodified coop
+		// Existing unmodified coop
 		
 		// If this is -1, means existing coop.
 		// This is used to store the coop ID in the Events.
@@ -96,7 +97,7 @@ public class Database {
 					null
 				);
 			}
-			// Exisiting Event, not modified.
+			// Existing Event, not modified.
 		}
 	}
 	
@@ -126,7 +127,7 @@ public class Database {
 		}
 		coop.moveToFirst();
 		
-		ArrayList<Event> evs = new ArrayList<Event>();
+		ArrayList<Event> evs = new ArrayList<>();
 		
 		Log.i(TAG, "Finding events where " + DatabaseHelper.EVENT_COOP + " is " + coop.getLong(0));
 		
@@ -141,8 +142,10 @@ public class Database {
 				Calendar t = null;
 				try {
 					Date parsed = df.parse(events.getString(1));
-					t = Calendar.getInstance();
-					t.setTime(parsed);
+					if(parsed != null) {
+						t = Calendar.getInstance();
+						t.setTime(parsed);
+					}
 				} catch(ParseException err) {
 					Log.e("DB", "Invalid date on event!");
 					Log.e("DB", events.getString(1), err);
@@ -158,29 +161,39 @@ public class Database {
 					events.getInt(5)
 				));
 			} while(events.moveToNext());
+
+			events.close();
 		}
 		
 		Calendar start = null;
 		try {
 			Date parsed = df.parse(coop.getString(2));
-			start = Calendar.getInstance();
-			start.setTime(parsed);
-		} catch(ParseException err) {}
+			if(parsed != null) {
+				start = Calendar.getInstance();
+				start.setTime(parsed);
+			}
+		} catch(ParseException ignored) {}
 		
 		Calendar end = null;
 		try {
 			Date parsed = df.parse(coop.getString(3));
-			end = Calendar.getInstance();
-			end.setTime(parsed);
-		} catch(ParseException err) {}
-		
-		return new Coop(
-			coop.getLong(0),
-			coop.getString(1),
-			start,
-			end,
-			evs
+			if(parsed != null) {
+				end = Calendar.getInstance();
+				end.setTime(parsed);
+			}
+		} catch(ParseException ignored) {}
+
+		Coop newCoop = new Coop(
+				coop.getLong(0),
+				coop.getString(1),
+				start,
+				end,
+				evs
 		);
+
+		coop.close();
+
+		return newCoop;
 	}
 
     public Cursor fetchCoops() {
@@ -193,10 +206,22 @@ public class Database {
 			cursor.moveToFirst();
 		}
 		return cursor;
-		
-//		return database.rawQuery(
-//			"SELECT * FROM " + DatabaseHelper.COOPS_TABLE + ";"
-//			, null);
+	}
+
+	public Coop fetchCoopByName(String name) {
+		Cursor coop = database.query(
+				DatabaseHelper.COOPS_TABLE,
+				new String[] { DatabaseHelper._ID },
+				DatabaseHelper.COOP_NAME + " = '" + name + "'",
+				null,
+				null,
+				null,
+				DatabaseHelper._ID + " DESC",
+				"1"
+		);
+		if(coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
+		coop.moveToFirst();
+		return fetchCoop(coop.getLong(0));
 	}
 	
 	public void deleteCoop(long _id) {

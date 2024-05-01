@@ -6,9 +6,9 @@
 
     <item
         android:id="@+id/delete_coop"
-        android:icon="@drawable/abc_ic_clear_material"
+        android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="100"
         android:title="Delete Coop"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
 </menu>

@@ -33,7 +33,7 @@ public class Reports {
             end = start + 12 * 60 * 60;
             endLine = ":warning: No end time set, assuming 12 hours from start time.";
 		} else {
-			end = coop.endTime.getTimeInMillis() / 1000l;
+			end = coop.endTime.getTimeInMillis() / 1000L;
 			startLine = String.format(":alarm_clock: End Time: <t:%1$s> (<t:%1$s:R>)", end);
 		}
 		
@@ -106,7 +106,7 @@ public class Reports {
 		
 		final String url = "https://discord.com/channels/455380663013736479/455512567004004353/1217529083286651082";
         final String[] out = new String[] {
-			"# __Tokification.py__",
+			"# __Tokification__",
             "",
             String.format("Report Generated at <t:%1$s> (<t:%1$s:R>)", now),
             "_This message will be manually updated every 15 to 45 minutes, depending on how busy I am._",
@@ -124,7 +124,7 @@ public class Reports {
             "------------+---------+----+--------+----+---------",
             String.join("\n", table.values()),
             "```",
-            "_This is not a wonky command, but a script written by ItsJustSomeDude. See [the FAQ]({url}) for more info._",
+            String.format("_This is not a wonky command, but a script written by ItsJustSomeDude. See [the FAQ](%s) for more info._", url),
         };
 		
 		return String.join("\n", out);

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 		
 		binding.mainRefresh.setOnClickListener(view -> {
 			try {
-				NotificationReader.processNotifications(coop);
+				NotificationReader.processNotifications();
 				coop.modified = true;
 				coop.save(this);
 				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
@@ -108,10 +108,11 @@ public class MainActivity extends AppCompatActivity {
 			Toast.makeText(this, "Player Name Saved.", Toast.LENGTH_SHORT).show();
 		});
 
-//		binding.CopyDReport.setOnClickListener(v -> {
-//			Coop.createCoop().save(this);
-//		});
-		
+		boolean savedAutoDismiss = sharedPref.getBoolean("AutoDismiss", false);
+		binding.mainAutoDismiss.setChecked(savedAutoDismiss);
+		binding.mainAutoDismiss.setOnCheckedChangeListener((view, status) -> {
+			sharedPref.edit().putBoolean("AutoDismiss", status).apply();
+		});
     }
     
     @Override
