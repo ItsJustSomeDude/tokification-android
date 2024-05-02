@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class NotificationReader {
 	private static final String TAG = "Notifications";
-	private static final String PACKAGE = "com.auxbrain.egginc_IGNORE";
+	private static final String PACKAGE = "com.auxbrain.egginc";
 	private static final String ALT_PACKAGE = "com.termux.api";
 
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");
@@ -88,11 +88,16 @@ public class NotificationReader {
 
 		if (n.getPackageName() == null)
 			return null;
-		if(!n.getPackageName().equals(PACKAGE) && !n.getPackageName().equals(ALT_PACKAGE))
+		if(!n.getPackageName().equals(PACKAGE) && !n.getPackageName().equals(ALT_PACKAGE)) {
+			Log.i(TAG, "Skipping because Package Name.");
 			return null;
+		}
 
-		if (text.contains("new message") || !title.contains("Gift Received"))
+		if (text.contains("new message") || !title.contains("Gift Received")) {
+			Log.i(TAG, "Skipping because of New Messages or not a gift.");
 			return null;
+		}
+			
 
 		// Hacky workaround to make Termux Notifications work.
 		try {
@@ -146,6 +151,7 @@ public class NotificationReader {
 			if (coop.startTime == null || when.before(coop.startTime)) {
 				Log.i(TAG, "Found earlier start!");
 				coop.startTime = when;
+				coop.modified = true;
 			}
 			return n.getKey();
 		}
@@ -176,6 +182,7 @@ public class NotificationReader {
 	}
 
 	private static void saveCache(Database db, HashMap<String, Coop> cache) {
+		Log.i(TAG, "Saving All Coops! " + cache.keySet().toString() + " len " + cache.values().toString());
 		for (Coop coop : cache.values())
 			db.saveCoop(coop);
 	}

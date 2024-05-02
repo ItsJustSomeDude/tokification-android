@@ -43,7 +43,7 @@ public class SendTokensActivity extends AppCompatActivity {
 		
 		binding.test.setText(coop.name + ", " + coop.id);
 		
-		String[] people = coop.getPeople(null);
+		String[] people = coop.getPeople("+Other");
 		if (people.length < 1) people = new String[] { "No people!" };
 		ArrayAdapter<String> personAdapter = new ArrayAdapter<String>(
 			this,
@@ -72,7 +72,17 @@ public class SendTokensActivity extends AppCompatActivity {
 			String person = (String) binding.personSpinner.getSelectedItem();
 			Calendar time = Calendar.getInstance();
 				
+			if (person.equals("+Other")) {
+				person = binding.personName.getText().toString();
+			}
+				
+			if (person.equals("")) {
+				Toast.makeText(this, "Select or enter a person!", Toast.LENGTH_SHORT).show();
+				return;
+			}
+				
 			coop.addEvent(time, count, "received", person);
+			coop.save(this);
 				
 			Toast.makeText(
 				SendTokensActivity.this,

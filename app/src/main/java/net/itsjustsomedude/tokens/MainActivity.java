@@ -1,5 +1,7 @@
 package net.itsjustsomedude.tokens;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 			
 			binding.mainRefresh.setEnabled(false);
 			binding.mainSend.setEnabled(false);
+			binding.CopyReport.setEnabled(false);
+			binding.CopyDReport.setEnabled(false);
 			
 			//binding.mainEdit.setText("Create Coop");
 		}
@@ -62,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 		binding.mainRefresh.setOnClickListener(view -> {
 			try {
 				NotificationReader.processNotifications();
-				coop.modified = true;
-				coop.save(this);
+				//coop.modified = true;
+				//coop.save(this);
 				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
 			} catch(Exception err) {
 				Log.e("", "Failed to get notifications.", err);
@@ -75,8 +79,15 @@ public class MainActivity extends AppCompatActivity {
 			startActivity(new Intent(this, SendTokensActivity.class));
 		});
 		
-		binding.CopyReport.setOnClickListener(v -> {
-			Log.i("Report", Reports.sinkReport(coop));
+		binding.CopyReport.setOnClickListener(view -> {
+			Coop toReport = Coop.fetchSelectedCoop(this);
+				
+			String report = Reports.sinkReport(toReport);
+				
+			ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
+            ClipData clip = ClipData.newPlainText("SinkReport", report);
+            clipboard.setPrimaryClip(clip);
+			Log.i("Report", report);
 		});
 		
 		// detailed report...

@@ -72,6 +72,8 @@ public class Reports {
 			tvalRec.put(person, 0d);
 		}
 		
+		Log.i("Report", "Number of events: " + coop.events.size());
+		
 		for (Event ev : coop.events) {
 			long time = ev.time.getTimeInMillis() / 1000l;
 			
@@ -106,7 +108,7 @@ public class Reports {
 		
 		final String url = "https://discord.com/channels/455380663013736479/455512567004004353/1217529083286651082";
         final String[] out = new String[] {
-			"# __Tokification__",
+			"# __Tokification__ (Android Alpha :eyes:)",
             "",
             String.format("Report Generated at <t:%1$s> (<t:%1$s:R>)", now),
             "_This message will be manually updated every 15 to 45 minutes, depending on how busy I am._",
@@ -124,7 +126,8 @@ public class Reports {
             "------------+---------+----+--------+----+---------",
             String.join("\n", table.values()),
             "```",
-            String.format("_This is not a wonky command, but a script written by ItsJustSomeDude. See [the FAQ](%s) for more info._", url),
+            String.format("_This is not a wonky command, but an app written by ItsJustSomeDude. Stay tuned for further updates!_", url),
+			// See [the FAQ](%s) for more info.
         };
 		
 		return String.join("\n", out);

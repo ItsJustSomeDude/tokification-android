@@ -28,6 +28,8 @@ public class Notifications {
 		int importance = NotificationManager.IMPORTANCE_DEFAULT;
 		NotificationChannel channel = new NotificationChannel(ACTION_CHANNEL, name, importance);
         channel.setDescription(desc);
+		channel.enableVibration(false);
+		channel.setSound(null, null);
 		
 		NotificationManager notificationManager = ctx.getSystemService(NotificationManager.class);
 		notificationManager.createNotificationChannel(channel);

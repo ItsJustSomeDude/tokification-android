@@ -42,6 +42,8 @@ public class Database {
         if (coop.startTime != null) s = df.format(coop.startTime.getTime());
 		if (coop.endTime != null) e = df.format(coop.endTime.getTime());
 		
+		Log.i(TAG, "Got message to update coop " + coop.name + " Start " + s + coop.startTime);
+		
 		ContentValues cv = new ContentValues();
 		cv.put(DatabaseHelper.COOP_NAME, coop.name);
 		cv.put(DatabaseHelper.START_TIME, s);
@@ -63,6 +65,7 @@ public class Database {
 				DatabaseHelper._ID + " = " + coop.id,
 				null
 			);
+			Log.i(TAG, "Updated coop " + coop.name);
 		}
 		// Existing unmodified coop
 		
