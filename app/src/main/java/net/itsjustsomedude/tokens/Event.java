@@ -21,12 +21,12 @@ public class Event {
 	}
 	
 	public double tval(Calendar coopStart, Calendar coopEnd) {
-		long tokenTime = this.time.getTimeInMillis() / 1000l;
-		long startTime = coopStart.getTimeInMillis() / 1000l;
-		long endTime = coopEnd.getTimeInMillis() / 1000l;
+		long tokenTime = this.time.getTimeInMillis() / 1000L;
+		long startTime = coopStart.getTimeInMillis() / 1000L;
+		long endTime = coopEnd.getTimeInMillis() / 1000L;
 		
-		long duration = endTime - startTime;
-		long elapsed = tokenTime - startTime;
+		double duration = endTime - startTime;
+		double elapsed = tokenTime - startTime;
 		
 		double i = Math.pow(1 - 0.9 * (elapsed / duration), 4);
 		double singleValue = Math.max(i, 0.03);

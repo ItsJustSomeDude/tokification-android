@@ -56,7 +56,7 @@ public class Coop {
 	}
 	
 	public String[] getPeople(String sinkName) {
-		ArrayList<String> out = new ArrayList<String>();
+		ArrayList<String> out = new ArrayList<>();
 		
 		for (Event ev : this.events) {
 			if (!out.contains(ev.person)) out.add(ev.person);
@@ -104,6 +104,6 @@ public class Coop {
 	}
 	
 	public static Coop createCoop() {
-		return new Coop(0, "New Coop", null, null, new ArrayList<Event>());
+		return new Coop(0, "New Coop", null, null, new ArrayList<>());
 	}
 }

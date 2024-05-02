@@ -5,17 +5,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class Reports {
-	private Coop coop;
+//	private Coop coop;
 	
-	public Reports(Coop coop) {
-		
-	}
+//	public Reports(Coop coop) {}
 	
 	public static String sinkReport(Coop coop) {
-		long now = Calendar.getInstance().getTimeInMillis() / 1000l;
+		long now = Calendar.getInstance().getTimeInMillis() / 1000L;
 		
-		String startLine = "";
-        String endLine = "";
+		String startLine;
+        String endLine;
 		
 		long start;
 		long end;
@@ -25,7 +23,7 @@ public class Reports {
             start = now - sinceHourStart;
             startLine = ":warning: No start time set, assuming start of current hour.";
 		} else {
-			start = coop.startTime.getTimeInMillis() / 1000l;
+			start = coop.startTime.getTimeInMillis() / 1000L;
 			startLine = String.format("<:contract:589317482901405697> Start Time: <t:%1$s> (<t:%1$s:R>)", start);
 		}
 
@@ -34,10 +32,10 @@ public class Reports {
             endLine = ":warning: No end time set, assuming 12 hours from start time.";
 		} else {
 			end = coop.endTime.getTimeInMillis() / 1000L;
-			startLine = String.format(":alarm_clock: End Time: <t:%1$s> (<t:%1$s:R>)", end);
+			endLine = String.format(":alarm_clock: End Time: <t:%1$s> (<t:%1$s:R>)", end);
 		}
 		
-		ArrayList<String> rVals = new ArrayList<String>();
+		ArrayList<String> rVals = new ArrayList<>();
         if (now < end) {
 			rVals.add("__Running Token Value__");
 			Log.i("Report", "TVal at Current Moment");
@@ -75,7 +73,7 @@ public class Reports {
 		Log.i("Report", "Number of events: " + coop.events.size());
 		
 		for (Event ev : coop.events) {
-			long time = ev.time.getTimeInMillis() / 1000l;
+			long time = ev.time.getTimeInMillis() / 1000L;
 			
 			double tv = tval(start, end, time, ev.count);
 			if (ev.direction.equals("sent")) {
@@ -106,7 +104,7 @@ public class Reports {
 			table.put(person, output);
 		}
 		
-		final String url = "https://discord.com/channels/455380663013736479/455512567004004353/1217529083286651082";
+		//final String url = "https://discord.com/channels/455380663013736479/455512567004004353/1217529083286651082";
         final String[] out = new String[] {
 			"# __Tokification__ (Android Alpha :eyes:)",
             "",
@@ -126,7 +124,7 @@ public class Reports {
             "------------+---------+----+--------+----+---------",
             String.join("\n", table.values()),
             "```",
-            String.format("_This is not a wonky command, but an app written by ItsJustSomeDude. Stay tuned for further updates!_", url),
+            /*String.format(*/"_This is not a wonky command, but an app written by ItsJustSomeDude. Stay tuned for further updates!_"/*, url)*/,
 			// See [the FAQ](%s) for more info.
         };
 		
@@ -151,9 +149,9 @@ public class Reports {
     }
 
     public static double tval(Calendar coopStart, Calendar coopEnd, Calendar token, int count) {
-		long tokenTime = token.getTimeInMillis() / 1000l;
-		long startTime = coopStart.getTimeInMillis() / 1000l;
-		long endTime = coopEnd.getTimeInMillis() / 1000l;
+		long tokenTime = token.getTimeInMillis() / 1000L;
+		long startTime = coopStart.getTimeInMillis() / 1000L;
+		long endTime = coopEnd.getTimeInMillis() / 1000L;
 		
 		return tval(startTime, endTime, tokenTime, count);
 	}

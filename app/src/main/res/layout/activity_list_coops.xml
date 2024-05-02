@@ -33,9 +33,12 @@
     </ListView>
 
     <TextView
-         android:layout_height="wrap_content"
-         android:layout_width="wrap_content"
-         android:id="@+id/empty"
-         android:text="No Coops!" />
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Coops!"
+        android:visibility="gone"
+        app:layout_anchor="@+id/list_view"
+        app:layout_anchorGravity="center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

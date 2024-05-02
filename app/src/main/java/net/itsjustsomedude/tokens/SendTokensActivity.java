@@ -1,12 +1,10 @@
 package net.itsjustsomedude.tokens;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import net.itsjustsomedude.tokens.databinding.ActivitySendTokensBinding;
@@ -18,7 +16,7 @@ public class SendTokensActivity extends AppCompatActivity {
 	private ActivitySendTokensBinding binding;
 	
 	private Coop coop;
-	private Date openedAt = new Date();
+	private final Date openedAt = new Date();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +43,7 @@ public class SendTokensActivity extends AppCompatActivity {
 		
 		String[] people = coop.getPeople("+Other");
 		if (people.length < 1) people = new String[] { "No people!" };
-		ArrayAdapter<String> personAdapter = new ArrayAdapter<String>(
+		ArrayAdapter<String> personAdapter = new ArrayAdapter<>(
 			this,
 			android.R.layout.simple_spinner_item,
 			people);
@@ -57,7 +55,7 @@ public class SendTokensActivity extends AppCompatActivity {
 		String[] numberOptions = new String[10];
 		for (int i = 0; i < 10; i++)
 		    numberOptions[i] = i + 1 + "";
-		ArrayAdapter<String> numAdapter = new ArrayAdapter<String>(
+		ArrayAdapter<String> numAdapter = new ArrayAdapter<>(
 			this,
 			android.R.layout.simple_spinner_item,
 			numberOptions);
@@ -76,7 +74,7 @@ public class SendTokensActivity extends AppCompatActivity {
 				person = binding.personName.getText().toString();
 			}
 				
-			if (person.equals("")) {
+			if (person.isEmpty()) {
 				Toast.makeText(this, "Select or enter a person!", Toast.LENGTH_SHORT).show();
 				return;
 			}

@@ -3,31 +3,14 @@ package net.itsjustsomedude.tokens;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import java.io.Writer;
-import java.util.logging.Logger;
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
-
-
-import android.service.notification.NotificationListenerService;
-import android.service.notification.StatusBarNotification;
-import android.util.JsonWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import android.app.Notification;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -66,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 		binding.mainRefresh.setOnClickListener(view -> {
 			try {
 				NotificationReader.processNotifications();
-				//coop.modified = true;
-				//coop.save(this);
 				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
 			} catch(Exception err) {
 				Log.e("", "Failed to get notifications.", err);
@@ -81,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
 		
 		binding.CopyReport.setOnClickListener(view -> {
 			Coop toReport = Coop.fetchSelectedCoop(this);
-				
-			String report = Reports.sinkReport(toReport);
+
+            assert toReport != null;
+            String report = Reports.sinkReport(toReport);
 				
 			ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
             ClipData clip = ClipData.newPlainText("SinkReport", report);

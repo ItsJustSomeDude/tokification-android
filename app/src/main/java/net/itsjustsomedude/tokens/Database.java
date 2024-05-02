@@ -39,16 +39,16 @@ public class Database {
 	public void saveCoop(Coop coop) {
 		String s = "";
 		String e = "";
-        if (coop.startTime != null) s = df.format(coop.startTime.getTime());
+		if (coop.startTime != null) s = df.format(coop.startTime.getTime());
 		if (coop.endTime != null) e = df.format(coop.endTime.getTime());
-		
+
 		Log.i(TAG, "Got message to update coop " + coop.name + " Start " + s + coop.startTime);
-		
+
 		ContentValues cv = new ContentValues();
 		cv.put(DatabaseHelper.COOP_NAME, coop.name);
 		cv.put(DatabaseHelper.START_TIME, s);
 		cv.put(DatabaseHelper.END_TIME, e);
-		
+
 		long newId = -1;
 		if (coop.id == 0) {
 			// Coop has no id, so insert new.
@@ -68,15 +68,15 @@ public class Database {
 			Log.i(TAG, "Updated coop " + coop.name);
 		}
 		// Existing unmodified coop
-		
+
 		// If this is -1, means existing coop.
 		// This is used to store the coop ID in the Events.
 		if (newId != -1)
 		    coop.id = newId;
-		
+
 		for (Event ev : coop.events) {
 			String t = df.format(ev.time.getTime());
-			
+
 			ContentValues ecv = new ContentValues();
 			ecv.put(DatabaseHelper.EVENT_COOP, coop.id);
 			ecv.put(DatabaseHelper.EVENT_TIME, t);
@@ -84,7 +84,7 @@ public class Database {
 			ecv.put(DatabaseHelper.EVENT_DIR, ev.direction);
 			ecv.put(DatabaseHelper.EVENT_PERSON, ev.person);
 			ecv.put(DatabaseHelper.EVENT_NOTE_ID, ev.notification);
-			
+
 			if (ev.id == 0) {
 				// New event
 				database.insert(
@@ -224,7 +224,9 @@ public class Database {
 		);
 		if(coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
 		coop.moveToFirst();
-		return fetchCoop(coop.getLong(0));
+		long id = coop.getLong(0);
+		coop.close();
+		return fetchCoop(id);
 	}
 	
 	public void deleteCoop(long _id) {

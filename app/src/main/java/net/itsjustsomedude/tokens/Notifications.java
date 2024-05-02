@@ -27,7 +27,7 @@ public class Notifications {
 		String desc = ctx.getString(R.string.action_channel_desc);
 		int importance = NotificationManager.IMPORTANCE_DEFAULT;
 		NotificationChannel channel = new NotificationChannel(ACTION_CHANNEL, name, importance);
-        channel.setDescription(desc);
+		channel.setDescription(desc);
 		channel.enableVibration(false);
 		channel.setSound(null, null);
 		
@@ -71,9 +71,8 @@ public class Notifications {
 			ctx,
 			Manifest.permission.POST_NOTIFICATIONS
 		    ) != PackageManager.PERMISSION_GRANTED) {
-			Toast.makeText(ctx, "//TODO: Request notification permissions :)", Toast.LENGTH_LONG);
+			Toast.makeText(ctx, "//TODO: Request notification permissions :)", Toast.LENGTH_LONG).show();
 			Log.i(TAG, "We don't have notification permissions!'");
-			//TODO: ask for permission.
 
             //String[] toRequest = new String[] { Manifest.permission.POST_NOTIFICATIONS };
 			//ActivityCompat.requestPermissions(ctx., toRequest, 1);

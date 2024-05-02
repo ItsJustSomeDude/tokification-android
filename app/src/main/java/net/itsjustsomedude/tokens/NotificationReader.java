@@ -6,10 +6,8 @@ import android.content.Context;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -182,7 +180,7 @@ public class NotificationReader {
 	}
 
 	private static void saveCache(Database db, HashMap<String, Coop> cache) {
-		Log.i(TAG, "Saving All Coops! " + cache.keySet().toString() + " len " + cache.values().toString());
+		Log.i(TAG, "Saving All Coops! " + cache.keySet() + " len " + cache.values());
 		for (Coop coop : cache.values())
 			db.saveCoop(coop);
 	}

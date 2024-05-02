@@ -42,47 +42,55 @@
                  android:singleLine="true"
                  android:ems="10"
                  android:inputType="text"
-                 android:id="@+id/editCoopCode" />
+                 android:id="@+id/editCoopCode"
+                android:autofillHints="" />
 
             <LinearLayout
                  android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
-                 android:orientation="horizontal">
+                 android:orientation="horizontal"
+                style="android:attr/buttonBarStyle">
 
                 <Button
                      android:layout_height="wrap_content"
                      android:layout_width="wrap_content"
                      android:text="Start Date"
-                     android:id="@+id/editCoopStartDateButton" />
+                     android:id="@+id/editCoopStartDateButton"
+                    style="?android:attr/buttonBarButtonStyle" />
 
                 <Button
                      android:layout_height="wrap_content"
                      android:layout_width="wrap_content"
                      android:text="Start Time"
-                     android:id="@+id/editCoopStartTimeButton" />
+                     android:id="@+id/editCoopStartTimeButton"
+                    style="?android:attr/buttonBarButtonStyle" />
 
             </LinearLayout>
 
             <LinearLayout
                  android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
-                 android:orientation="horizontal">
+                 android:orientation="horizontal"
+                style="android:attr/buttonBarStyle"
+                  >
 
                 <Button
                      android:layout_height="wrap_content"
                      android:layout_width="wrap_content"
                      android:text="End Date"
-                     android:id="@+id/editCoopEndDateButton" />
+                     android:id="@+id/editCoopEndDateButton"
+                    style="?android:attr/buttonBarButtonStyle" />
 
                 <Button
                      android:layout_height="wrap_content"
                      android:layout_width="wrap_content"
                      android:text="End Time"
-                     android:id="@+id/editCoopEndTimeButton" />
+                     android:id="@+id/editCoopEndTimeButton"
+                    style="?android:attr/buttonBarButtonStyle" />
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                  android:layout_height="48dp"
                  android:layout_width="wrap_content"
                  android:textOn="Sink Mode"
