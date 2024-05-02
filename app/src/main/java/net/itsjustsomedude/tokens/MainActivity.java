@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 		
 		Notifications.createChannels(this);
 		Notifications.sendActions(this);
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 		} else {
 			binding.selectedCoop.setText("No Coop Selected!");
 			
-			binding.mainRefresh.setEnabled(false);
+//			binding.mainRefresh.setEnabled(false);
 			binding.mainSend.setEnabled(false);
 			binding.CopyReport.setEnabled(false);
 			binding.CopyDReport.setEnabled(false);
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 				
 			ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE); 
             ClipData clip = ClipData.newPlainText("SinkReport", report);
-            clipboard.setPrimaryClip(clip);
+			clipboard.setPrimaryClip(clip);
 			Log.i("Report", report);
 		});
 		
@@ -105,6 +105,14 @@ public class MainActivity extends AppCompatActivity {
 		binding.mainAutoDismiss.setChecked(savedAutoDismiss);
 		binding.mainAutoDismiss.setOnCheckedChangeListener((view, status) -> {
 			sharedPref.edit().putBoolean("AutoDismiss", status).apply();
+		});
+
+		binding.fakeSend.setOnClickListener(view -> {
+			Notifications.sendFake(
+					this,
+					binding.fakePlayer.getText().toString(),
+					binding.fakeCoop.getText().toString(),
+					binding.fakeType.isChecked());
 		});
     }
     

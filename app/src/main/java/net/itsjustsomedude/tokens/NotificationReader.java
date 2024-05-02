@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class NotificationReader {
 	private static final String TAG = "Notifications";
 	private static final String PACKAGE = "com.auxbrain.egginc";
-	private static final String ALT_PACKAGE = "com.termux.api";
+	private static final String ALT_PACKAGE = "net.itsjustsomedude.tokens";
 
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");
 	private static final Pattern tokenCountRegex = Pattern.compile("(?<=has sent you a gift of )([0-9]+)");
@@ -95,12 +95,6 @@ public class NotificationReader {
 			Log.i(TAG, "Skipping because of New Messages or not a gift.");
 			return null;
 		}
-			
-
-		// Hacky workaround to make Termux Notifications work.
-		try {
-			if(n.getPackageName().equals(ALT_PACKAGE)) id = Integer.parseInt(n.getTag());
-		} catch (Exception ignored) {}
 
 		Log.i(TAG, "Processing note " + id + title +  text);
 
