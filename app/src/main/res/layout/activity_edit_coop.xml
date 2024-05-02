@@ -1,124 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-     xmlns:android="http://schemas.android.com/apk/res/android"
-     xmlns:app="http://schemas.android.com/apk/res-auto"
-     xmlns:tools="http://schemas.android.com/tools"
-     android:layout_height="match_parent"
-     android:layout_width="match_parent"
-     android:id="@+id/coordinator">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent"
+	android:id="@+id/coordinator">
 
-    <com.google.android.material.appbar.AppBarLayout
-         android:layout_height="wrap_content"
-         android:layout_width="match_parent"
-         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
-         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-         android:id="@+id/appbar">
+	<com.google.android.material.appbar.AppBarLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+		android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+		android:id="@+id/appbar">
 
-        <com.google.android.material.appbar.MaterialToolbar
-             android:layout_height="?attr/actionBarSize"
-             android:layout_width="match_parent"
-             android:background="@color/colorPrimary"
-             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-             android:id="@+id/toolbar" />
+		<com.google.android.material.appbar.MaterialToolbar
+			android:layout_height="?attr/actionBarSize"
+			android:layout_width="match_parent"
+			android:background="@color/colorPrimary"
+			app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+			android:id="@+id/toolbar" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+	</com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
-         android:layout_height="match_parent"
-         android:layout_width="match_parent"
-         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-         android:id="@+id/nested_scroll_view">
+	<androidx.core.widget.NestedScrollView
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+		android:id="@+id/nested_scroll_view">
 
-        <LinearLayout
-             android:layout_height="wrap_content"
-             android:layout_width="match_parent"
-             android:orientation="vertical">
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:orientation="vertical">
 
-            <EditText
-                 android:layout_height="48dp"
-                 android:layout_width="match_parent"
-                 android:selectAllOnFocus="true"
-                 android:hint="Co-op code"
-                 android:singleLine="true"
-                 android:ems="10"
-                 android:inputType="text"
-                 android:id="@+id/editCoopCode"
-                android:autofillHints="" />
+			<EditText
+				android:layout_height="48dp"
+				android:layout_width="match_parent"
+				android:selectAllOnFocus="true"
+				android:hint="Co-op code"
+				android:singleLine="true"
+				android:ems="10"
+				android:inputType="text"
+				android:id="@+id/editCoopCode"
+				android:autofillHints="" />
 
-            <LinearLayout
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:orientation="horizontal"
-                style="android:attr/buttonBarStyle">
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal"
+				style="android:attr/buttonBarStyle">
 
-                <Button
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="Start Date"
-                     android:id="@+id/editCoopStartDateButton"
-                    style="?android:attr/buttonBarButtonStyle" />
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Start Date"
+					android:id="@+id/editCoopStartDateButton"
+					style="?android:attr/buttonBarButtonStyle" />
 
-                <Button
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="Start Time"
-                     android:id="@+id/editCoopStartTimeButton"
-                    style="?android:attr/buttonBarButtonStyle" />
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Start Time"
+					android:id="@+id/editCoopStartTimeButton"
+					style="?android:attr/buttonBarButtonStyle" />
 
-            </LinearLayout>
+			</LinearLayout>
 
-            <LinearLayout
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:orientation="horizontal"
-                style="android:attr/buttonBarStyle"
-                  >
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal"
+				style="android:attr/buttonBarStyle">
 
-                <Button
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="End Date"
-                     android:id="@+id/editCoopEndDateButton"
-                    style="?android:attr/buttonBarButtonStyle" />
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="End Date"
+					android:id="@+id/editCoopEndDateButton"
+					style="?android:attr/buttonBarButtonStyle" />
 
-                <Button
-                     android:layout_height="wrap_content"
-                     android:layout_width="wrap_content"
-                     android:text="End Time"
-                     android:id="@+id/editCoopEndTimeButton"
-                    style="?android:attr/buttonBarButtonStyle" />
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="End Time"
+					android:id="@+id/editCoopEndTimeButton"
+					style="?android:attr/buttonBarButtonStyle" />
 
-            </LinearLayout>
+			</LinearLayout>
 
-            <androidx.appcompat.widget.SwitchCompat
-                 android:layout_height="48dp"
-                 android:layout_width="wrap_content"
-                 android:textOn="Sink Mode"
-                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                 android:textOff="Normal Mode"
-                 android:id="@+id/editCoopMode"
-                 android:text="Sink Mode" />
+			<androidx.appcompat.widget.SwitchCompat
+				android:layout_height="48dp"
+				android:layout_width="wrap_content"
+				android:textOn="Sink Mode"
+				android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+				android:textOff="Normal Mode"
+				android:id="@+id/editCoopMode"
+				android:text="Sink Mode" />
 
-            <Button
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:id="@+id/editCoopSave"
-                 android:text="Save" />
+			<Button
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:id="@+id/editCoopSave"
+				android:text="Save" />
 
-            <Button
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:id="@+id/editCoopDelete"
-                 android:text="Delete" />
+			<Button
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:id="@+id/editCoopDelete"
+				android:text="Delete" />
 
-            <Button
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:id="@+id/editCoopSetActive"
-                 android:text="Set as Active" />
+			<Button
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:id="@+id/editCoopSetActive"
+				android:text="Set as Active" />
 
-        </LinearLayout>
+		</LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+	</androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

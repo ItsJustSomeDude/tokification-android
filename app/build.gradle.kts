@@ -1,25 +1,24 @@
-
 plugins {
     id("com.android.application")
-    
+
 }
 
 android {
     namespace = "net.itsjustsomedude.tokens"
     compileSdk = 33
-    
+
     defaultConfig {
         applicationId = "net.itsjustsomedude.tokens"
         minSdk = 21
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
-        
-        vectorDrawables { 
+
+        vectorDrawables {
             useSupportLibrary = true
         }
     }
-    
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -28,15 +27,18 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
     buildFeatures {
         viewBinding = true
-        
+
     }
-    
+
 }
 
 dependencies {

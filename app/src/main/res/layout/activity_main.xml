@@ -1,190 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/coordinatorLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Tokification" />
+	<com.google.android.material.appbar.MaterialToolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:title="Tokification" />
 
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+	<ScrollView
+		android:id="@+id/scrollView2"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/selected_coop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Selected Coop: "
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+			<TextView
+				android:id="@+id/selected_coop"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Selected Coop: "
+				android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/mainRefresh"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Refresh" />
+				<Button
+					android:id="@+id/mainRefresh"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Refresh" />
 
-                <Button
-                    android:id="@+id/mainSend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Send Tokens" />
-            </LinearLayout>
+				<Button
+					android:id="@+id/mainSend"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="Send Tokens" />
+			</LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/CopyReport"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Copy Report" />
+				<Button
+					android:id="@+id/CopyReport"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="Copy Report" />
 
-                <Button
-                    android:id="@+id/CopyDReport"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Detailed Report" />
+				<Button
+					android:id="@+id/CopyDReport"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="Detailed Report" />
 
-            </LinearLayout>
+			</LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/mainEdit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Edit Coop" />
+				<Button
+					android:id="@+id/mainEdit"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="Edit Coop" />
 
-                <Button
-                    android:id="@+id/mainEditEvents"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Edit Events" />
+				<Button
+					android:id="@+id/mainEditEvents"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="Edit Events" />
 
-                <Button
-                    android:id="@+id/mainSwitchCoop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Switch Coop" />
+				<Button
+					android:id="@+id/mainSwitchCoop"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:text="Switch Coop" />
 
-            </LinearLayout>
+			</LinearLayout>
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="?android:attr/listDivider" />
+			<View
+				android:id="@+id/divider"
+				android:layout_width="match_parent"
+				android:layout_height="3dp"
+				android:background="?android:attr/listDivider" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/mainPlayerName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:ems="10"
-                    android:hint="Player Name"
-                    android:inputType="text"
-                    android:singleLine="true" />
+				<EditText
+					android:id="@+id/mainPlayerName"
+					android:layout_width="wrap_content"
+					android:layout_height="48dp"
+					android:ems="10"
+					android:hint="Player Name"
+					android:inputType="text"
+					android:singleLine="true" />
 
-                <Button
-                    android:id="@+id/mainSaveName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Save" />
-            </LinearLayout>
+				<Button
+					android:id="@+id/mainSaveName"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Save" />
+			</LinearLayout>
 
-            <Switch
-                android:id="@+id/mainAutoDismiss"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="Auto Dismiss Notifications" />
+			<Switch
+				android:id="@+id/mainAutoDismiss"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:text="Auto Dismiss Notifications" />
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="?android:attr/listDivider" />
+			<View
+				android:id="@+id/divider2"
+				android:layout_width="match_parent"
+				android:layout_height="3dp"
+				android:background="?android:attr/listDivider" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Send Fake Notification" />
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Send Fake Notification" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/fake_player"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="6"
-                    android:hint="Player"
-                    android:inputType="text" />
+				<EditText
+					android:id="@+id/fake_player"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:ems="6"
+					android:hint="Player"
+					android:inputType="text" />
 
-                <EditText
-                    android:id="@+id/fake_coop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="6"
-                    android:hint="Coop"
-                    android:inputType="text" />
+				<EditText
+					android:id="@+id/fake_coop"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:ems="6"
+					android:hint="Coop"
+					android:inputType="text" />
 
-                <Button
-                    android:id="@+id/fake_send"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Send" />
-            </LinearLayout>
+				<Button
+					android:id="@+id/fake_send"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Send" />
+			</LinearLayout>
 
-            <Switch
-                android:id="@+id/fakeType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Send CR?" />
-
-
-        </LinearLayout>
+			<Switch
+				android:id="@+id/fakeType"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Send CR?" />
 
 
-    </ScrollView>
+		</LinearLayout>
+
+
+	</ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

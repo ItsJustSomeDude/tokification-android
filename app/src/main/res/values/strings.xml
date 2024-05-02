@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Tokification</string>
+	<string name="app_name">Tokification</string>
 
 	<string name="action_channel_name">Actions</string>
 	<string name="action_channel_desc">Channel for the clickable "action" notification</string>

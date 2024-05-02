@@ -1,7 +1,9 @@
 package net.itsjustsomedude.tokens;
 
 import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.view.Menu;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
@@ -22,36 +25,36 @@ import net.itsjustsomedude.tokens.databinding.ActivityEditCoopBinding;
 
 public class EditCoopActivity extends AppCompatActivity {
 	private static final String TAG = "EditCoop";
-	
+
 	public static final String EDIT_ID = "id";
-	
+
 	private ActivityEditCoopBinding binding;
-	
+
 	public Coop coop;
-	
+
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		binding = ActivityEditCoopBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 		setTitle("Edit Co-op");
-		
+
 		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
 		binding.toolbar.setNavigationOnClickListener(v -> {
 			startActivity(new Intent(this, ListCoopsActivity.class));
 		});
-		
+
 		Database db = new Database(this);
 		db.open();
-		
+
 		Intent thisIntent = getIntent();
 		String i = thisIntent.getStringExtra(EDIT_ID);
-		if(i != null) {
+		if (i != null) {
 			long id = Long.parseLong(i);
 			coop = db.fetchCoop(id);
 		}
@@ -60,11 +63,11 @@ public class EditCoopActivity extends AppCompatActivity {
 			Log.i(TAG, "Creating new coop.");
 			this.coop = Coop.createCoop();
 		}
-		
+
 		binding.editCoopCode.setText(coop.name);
-		
+
 		setButtonTexts();
-		
+
 		binding.editCoopStartDateButton.setOnClickListener(v -> {
 			int y;
 			int m;
@@ -79,23 +82,23 @@ public class EditCoopActivity extends AppCompatActivity {
 				m = coop.startTime.get(Calendar.MONTH);
 				d = coop.startTime.get(Calendar.DAY_OF_MONTH);
 			}
-				
+
 			DatePickerDialog dialog = new DatePickerDialog(
-				v.getContext(),
-				(DatePicker view, int year, int month, int day) -> {
-					if (coop.startTime == null) {
-						coop.startTime = Calendar.getInstance();
-					}
-					coop.startTime.set(Calendar.YEAR, year);
-					coop.startTime.set(Calendar.MONTH, month);
-					coop.startTime.set(Calendar.DAY_OF_MONTH, day);
-					setButtonTexts();
-				},
-				y, m, d
+					v.getContext(),
+					(DatePicker view, int year, int month, int day) -> {
+						if (coop.startTime == null) {
+							coop.startTime = Calendar.getInstance();
+						}
+						coop.startTime.set(Calendar.YEAR, year);
+						coop.startTime.set(Calendar.MONTH, month);
+						coop.startTime.set(Calendar.DAY_OF_MONTH, day);
+						setButtonTexts();
+					},
+					y, m, d
 			);
 			dialog.show();
 		});
-		
+
 		binding.editCoopStartTimeButton.setOnClickListener(v -> {
 			int h;
 			int m;
@@ -107,23 +110,23 @@ public class EditCoopActivity extends AppCompatActivity {
 				h = coop.startTime.get(Calendar.HOUR_OF_DAY);
 				m = coop.startTime.get(Calendar.MINUTE);
 			}
-				
+
 			TimePickerDialog dialog = new TimePickerDialog(
-				v.getContext(),
-				(TimePicker view, int hour, int minute) -> {
-					if (coop.startTime == null) {
-						coop.startTime = Calendar.getInstance();
-					}
-					coop.startTime.set(Calendar.HOUR_OF_DAY, hour);
-					coop.startTime.set(Calendar.MINUTE, minute);
-					setButtonTexts();
-				},
-				h, m,
-				DateFormat.is24HourFormat(v.getContext())
+					v.getContext(),
+					(TimePicker view, int hour, int minute) -> {
+						if (coop.startTime == null) {
+							coop.startTime = Calendar.getInstance();
+						}
+						coop.startTime.set(Calendar.HOUR_OF_DAY, hour);
+						coop.startTime.set(Calendar.MINUTE, minute);
+						setButtonTexts();
+					},
+					h, m,
+					DateFormat.is24HourFormat(v.getContext())
 			);
 			dialog.show();
 		});
-		
+
 		binding.editCoopEndDateButton.setOnClickListener(v -> {
 			int y;
 			int m;
@@ -138,23 +141,23 @@ public class EditCoopActivity extends AppCompatActivity {
 				m = coop.endTime.get(Calendar.MONTH);
 				d = coop.endTime.get(Calendar.DAY_OF_MONTH);
 			}
-				
+
 			DatePickerDialog dialog = new DatePickerDialog(
-				v.getContext(),
-				(DatePicker view, int year, int month, int day) -> {
-					if (coop.endTime == null) {
-						coop.endTime = Calendar.getInstance();
-					}
-					coop.endTime.set(Calendar.YEAR, year);
-					coop.endTime.set(Calendar.MONTH, month);
-					coop.endTime.set(Calendar.DAY_OF_MONTH, day);
-					setButtonTexts();
-				},
-				y, m, d
+					v.getContext(),
+					(DatePicker view, int year, int month, int day) -> {
+						if (coop.endTime == null) {
+							coop.endTime = Calendar.getInstance();
+						}
+						coop.endTime.set(Calendar.YEAR, year);
+						coop.endTime.set(Calendar.MONTH, month);
+						coop.endTime.set(Calendar.DAY_OF_MONTH, day);
+						setButtonTexts();
+					},
+					y, m, d
 			);
 			dialog.show();
 		});
-		
+
 		binding.editCoopEndTimeButton.setOnClickListener(v -> {
 			int h;
 			int m;
@@ -166,73 +169,73 @@ public class EditCoopActivity extends AppCompatActivity {
 				h = coop.endTime.get(Calendar.HOUR_OF_DAY);
 				m = coop.endTime.get(Calendar.MINUTE);
 			}
-				
+
 			TimePickerDialog dialog = new TimePickerDialog(
-				v.getContext(),
-				(TimePicker view, int hour, int minute) -> {
-					if (coop.endTime == null) {
-						coop.endTime = Calendar.getInstance();
-					}
-					coop.endTime.set(Calendar.HOUR_OF_DAY, hour);
-					coop.endTime.set(Calendar.MINUTE, minute);
-					setButtonTexts();
-				},
-			    h, m,
-				DateFormat.is24HourFormat(v.getContext())
+					v.getContext(),
+					(TimePicker view, int hour, int minute) -> {
+						if (coop.endTime == null) {
+							coop.endTime = Calendar.getInstance();
+						}
+						coop.endTime.set(Calendar.HOUR_OF_DAY, hour);
+						coop.endTime.set(Calendar.MINUTE, minute);
+						setButtonTexts();
+					},
+					h, m,
+					DateFormat.is24HourFormat(v.getContext())
 			);
 			dialog.show();
 		});
-		
+
 		binding.editCoopSave.setOnClickListener(v -> {
 			coop.name = binding.editCoopCode.getText().toString();
 			coop.modified = true;
 			coop.save(this);
 			Toast.makeText(this, "Saved Coop!", Toast.LENGTH_SHORT).show();
 		});
-		
+
 		binding.editCoopDelete.setOnClickListener(view -> {
-				
+
 		});
-		
+
 		binding.editCoopSetActive.setOnClickListener(v -> {
-			if(coop.id != 0) {
-			    Coop.setSelectedCoop(this, coop.id);
+			if (coop.id != 0) {
+				Coop.setSelectedCoop(this, coop.id);
 			} else {
 				Toast.makeText(this, "Save the Co-op first.", Toast.LENGTH_LONG).show();
 			}
 		});
 	}
-	
+
 	public void setButtonTexts() {
 		if (coop.startTime == null) {
 			binding.editCoopStartDateButton.setText("Set Start Date");
-		    binding.editCoopStartTimeButton.setText("Set Start Time");
+			binding.editCoopStartTimeButton.setText("Set Start Time");
 		} else {
 			binding.editCoopStartDateButton.setText(
-			    "Start Date: " +
-			    dateFormat.format(coop.startTime.getTime())
-		    );
+					"Start Date: " +
+							dateFormat.format(coop.startTime.getTime())
+			);
 			binding.editCoopStartTimeButton.setText(
-			    "Start Time: " +
-			    timeFormat.format(coop.startTime.getTime())
-		    );
+					"Start Time: " +
+							timeFormat.format(coop.startTime.getTime())
+			);
 		}
-		
+
 		if (coop.endTime == null) {
 			binding.editCoopEndDateButton.setText("Set End Date");
-		    binding.editCoopEndTimeButton.setText("Set End Time");
+			binding.editCoopEndTimeButton.setText("Set End Time");
 		} else {
 			binding.editCoopEndDateButton.setText(
-			    "End Date: " +
-			    dateFormat.format(coop.endTime.getTime())
-		    );
+					"End Date: " +
+							dateFormat.format(coop.endTime.getTime())
+			);
 			binding.editCoopEndTimeButton.setText(
-			    "End Time: " +
-			    timeFormat.format(coop.endTime.getTime())
-		    );
+					"End Time: " +
+							timeFormat.format(coop.endTime.getTime())
+			);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.coop_edit, menu);
@@ -244,16 +247,16 @@ public class EditCoopActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.delete_coop) {
 			coop.delete(this);
-			
+
 			Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
 			returnHome();
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void returnHome() {
-        Intent home_intent = new Intent(getApplicationContext(), MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(home_intent);
-    }
+		Intent home_intent = new Intent(getApplicationContext(), MainActivity.class)
+				.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(home_intent);
+	}
 }

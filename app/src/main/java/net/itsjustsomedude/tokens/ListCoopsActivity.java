@@ -15,59 +15,60 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import net.itsjustsomedude.tokens.databinding.ActivityListCoopsBinding;
 
 public class ListCoopsActivity extends AppCompatActivity {
-	
+
 	private ActivityListCoopsBinding binding;
-	
+
 	SimpleCursorAdapter adapter;
 	ActivityResultLauncher<Intent> returnHandler;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		binding = ActivityListCoopsBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 		setTitle("Edit Co-op");
-		
+
 		returnHandler = registerForActivityResult(
 				new ActivityResultContracts.StartActivityForResult(),
 				result -> {
 					//if (result.getResultCode() != Activity.RESULT_OK) return;
-						
+
 					Database db2 = new Database(this);
 					db2.open();
-				    Cursor coops2 = db2.fetchCoops();
+					Cursor coops2 = db2.fetchCoops();
 					adapter.changeCursor(coops2);
 					adapter.notifyDataSetChanged();
 				}
-			);
-		
+		);
+
 		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
 		binding.toolbar.setNavigationOnClickListener(v -> {
 			startActivity(new Intent(this, MainActivity.class));
 		});
-		
+
 		Database db = new Database(this);
 		db.open();
 		Cursor coops = db.fetchCoops();
-		
+
 		Log.i("Heh", "Found " + coops.getCount());
-		
+
 		adapter = new SimpleCursorAdapter(
-			this,
-			android.R.layout.simple_list_item_2,
-			coops,
-			new String[] { DatabaseHelper._ID, DatabaseHelper.COOP_NAME },
-			new int[] { android.R.id.text1, android.R.id.text2 },
-			0);
+				this,
+				android.R.layout.simple_list_item_2,
+				coops,
+				new String[]{DatabaseHelper._ID, DatabaseHelper.COOP_NAME},
+				new int[]{android.R.id.text1, android.R.id.text2},
+				0);
 		adapter.notifyDataSetChanged();
-		
+
 		binding.listView.setEmptyView(binding.empty);
-		
+
 		binding.listView.setAdapter(adapter);
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {

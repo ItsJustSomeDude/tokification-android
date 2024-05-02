@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,27 +16,27 @@ import java.util.Locale;
 
 public class Database {
 	private static final String TAG = "Database";
-	
+
 	private DatabaseHelper dbHelper;
 	private final Context context;
 	private SQLiteDatabase database;
-	
+
 	private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-	
+
 	public Database(Context c) {
 		context = c;
 	}
-	
+
 	public Database open() throws SQLException {
 		dbHelper = new DatabaseHelper(context);
 		database = dbHelper.getWritableDatabase();
 		return this;
 	}
-	
+
 	public void close() {
 		dbHelper.close();
 	}
-	
+
 	public void saveCoop(Coop coop) {
 		String s = "";
 		String e = "";
@@ -52,18 +53,18 @@ public class Database {
 		long newId = -1;
 		if (coop.id == 0) {
 			// Coop has no id, so insert new.
-		    newId = database.insert(
-			    DatabaseHelper.COOPS_TABLE,
-			    null,
-			    cv
-		    );
+			newId = database.insert(
+					DatabaseHelper.COOPS_TABLE,
+					null,
+					cv
+			);
 		} else /* if (coop.modified) */ {
 			// Existing record, changed coop, update.
 			database.update(
-				DatabaseHelper.COOPS_TABLE,
-				cv,
-				DatabaseHelper._ID + " = " + coop.id,
-				null
+					DatabaseHelper.COOPS_TABLE,
+					cv,
+					DatabaseHelper._ID + " = " + coop.id,
+					null
 			);
 			Log.i(TAG, "Updated coop " + coop.name);
 		}
@@ -72,7 +73,7 @@ public class Database {
 		// If this is -1, means existing coop.
 		// This is used to store the coop ID in the Events.
 		if (newId != -1)
-		    coop.id = newId;
+			coop.id = newId;
 
 		for (Event ev : coop.events) {
 			String t = df.format(ev.time.getTime());
@@ -88,103 +89,105 @@ public class Database {
 			if (ev.id == 0) {
 				// New event
 				database.insert(
-					DatabaseHelper.EVENTS_TABLE,
-					null,
-					ecv
+						DatabaseHelper.EVENTS_TABLE,
+						null,
+						ecv
 				);
 			} else if (ev.modified) {
 				database.update(
-					DatabaseHelper.EVENTS_TABLE,
-					ecv,
-					DatabaseHelper._ID + " = " + ev.id,
-					null
+						DatabaseHelper.EVENTS_TABLE,
+						ecv,
+						DatabaseHelper._ID + " = " + ev.id,
+						null
 				);
 			}
 			// Existing Event, not modified.
 		}
 	}
-	
+
 	public Coop fetchCoop(long _id) {
-		final String[] coopCols = new String[] {
-			DatabaseHelper._ID,
-			DatabaseHelper.COOP_NAME,
-			DatabaseHelper.START_TIME,
-			DatabaseHelper.END_TIME
+		final String[] coopCols = new String[]{
+				DatabaseHelper._ID,
+				DatabaseHelper.COOP_NAME,
+				DatabaseHelper.START_TIME,
+				DatabaseHelper.END_TIME
 		};
-		final String[] eventCols = new String[] {
-			DatabaseHelper._ID,
-			DatabaseHelper.EVENT_TIME,
-			DatabaseHelper.EVENT_COUNT,
-			DatabaseHelper.EVENT_PERSON,
-			DatabaseHelper.EVENT_DIR,
-			DatabaseHelper.EVENT_NOTE_ID
+		final String[] eventCols = new String[]{
+				DatabaseHelper._ID,
+				DatabaseHelper.EVENT_TIME,
+				DatabaseHelper.EVENT_COUNT,
+				DatabaseHelper.EVENT_PERSON,
+				DatabaseHelper.EVENT_DIR,
+				DatabaseHelper.EVENT_NOTE_ID
 		};
-		
+
 		Cursor coop = database.query(
-			DatabaseHelper.COOPS_TABLE,
-			coopCols,
-			DatabaseHelper._ID + " = " + _id,
-			null, null, null, null);
+				DatabaseHelper.COOPS_TABLE,
+				coopCols,
+				DatabaseHelper._ID + " = " + _id,
+				null, null, null, null);
 		if (coop == null || coop.getCount() < 1) {
 			return null;
 		}
 		coop.moveToFirst();
-		
+
 		ArrayList<Event> evs = new ArrayList<>();
-		
+
 		Log.i(TAG, "Finding events where " + DatabaseHelper.EVENT_COOP + " is " + coop.getLong(0));
-		
+
 		Cursor events = database.query(
-			DatabaseHelper.EVENTS_TABLE,
-			eventCols,
-			// DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "'",
-			DatabaseHelper.EVENT_COOP + " = " + coop.getLong(0),
-			null, null, null, null);
+				DatabaseHelper.EVENTS_TABLE,
+				eventCols,
+				// DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "'",
+				DatabaseHelper.EVENT_COOP + " = " + coop.getLong(0),
+				null, null, null, null);
 		if (events != null && events.moveToFirst()) {
 			do {
 				Calendar t = null;
 				try {
 					Date parsed = df.parse(events.getString(1));
-					if(parsed != null) {
+					if (parsed != null) {
 						t = Calendar.getInstance();
 						t.setTime(parsed);
 					}
-				} catch(ParseException err) {
+				} catch (ParseException err) {
 					Log.e("DB", "Invalid date on event!");
 					Log.e("DB", events.getString(1), err);
 					continue;
 				}
-				
+
 				evs.add(new Event(
-					events.getLong(0),
-					t,
-					events.getInt(2),
-					events.getString(3),
-					events.getString(4),
-					events.getInt(5)
+						events.getLong(0),
+						t,
+						events.getInt(2),
+						events.getString(3),
+						events.getString(4),
+						events.getInt(5)
 				));
-			} while(events.moveToNext());
+			} while (events.moveToNext());
 
 			events.close();
 		}
-		
+
 		Calendar start = null;
 		try {
 			Date parsed = df.parse(coop.getString(2));
-			if(parsed != null) {
+			if (parsed != null) {
 				start = Calendar.getInstance();
 				start.setTime(parsed);
 			}
-		} catch(ParseException ignored) {}
-		
+		} catch (ParseException ignored) {
+		}
+
 		Calendar end = null;
 		try {
 			Date parsed = df.parse(coop.getString(3));
-			if(parsed != null) {
+			if (parsed != null) {
 				end = Calendar.getInstance();
 				end.setTime(parsed);
 			}
-		} catch(ParseException ignored) {}
+		} catch (ParseException ignored) {
+		}
 
 		Coop newCoop = new Coop(
 				coop.getLong(0),
@@ -199,12 +202,12 @@ public class Database {
 		return newCoop;
 	}
 
-    public Cursor fetchCoops() {
-		String[] columns = new String[] { DatabaseHelper._ID, DatabaseHelper.COOP_NAME };
+	public Cursor fetchCoops() {
+		String[] columns = new String[]{DatabaseHelper._ID, DatabaseHelper.COOP_NAME};
 		Cursor cursor = database.query(
-			DatabaseHelper.COOPS_TABLE,
-			columns,
-			null, null, null, null, DatabaseHelper._ID + " DESC");
+				DatabaseHelper.COOPS_TABLE,
+				columns,
+				null, null, null, null, DatabaseHelper._ID + " DESC");
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
@@ -214,7 +217,7 @@ public class Database {
 	public Coop fetchCoopByName(String name) {
 		Cursor coop = database.query(
 				DatabaseHelper.COOPS_TABLE,
-				new String[] { DatabaseHelper._ID },
+				new String[]{DatabaseHelper._ID},
 				DatabaseHelper.COOP_NAME + " = '" + name + "'",
 				null,
 				null,
@@ -222,16 +225,16 @@ public class Database {
 				DatabaseHelper._ID + " DESC",
 				"1"
 		);
-		if(coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
+		if (coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
 		coop.moveToFirst();
 		long id = coop.getLong(0);
 		coop.close();
 		return fetchCoop(id);
 	}
-	
+
 	public void deleteCoop(long _id) {
 		database.delete(DatabaseHelper.COOPS_TABLE, DatabaseHelper._ID + " = " + _id, null);
-		
+
 		// TODO: Clean up Events.
 	}
 }
