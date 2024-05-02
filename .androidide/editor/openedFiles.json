@@ -1,0 +1,95 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/MainActivity.java",
+      "selection": {
+        "end": {
+          "column": 27,
+          "index": 2388,
+          "line": 79
+        },
+        "start": {
+          "column": 3,
+          "index": 2006,
+          "line": 71
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/NotificationReader.java",
+      "selection": {
+        "end": {
+          "column": 54,
+          "index": 5848,
+          "line": 182
+        },
+        "start": {
+          "column": 54,
+          "index": 5848,
+          "line": 182
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/NotificationHelper.java",
+      "selection": {
+        "end": {
+          "column": 66,
+          "index": 2878,
+          "line": 73
+        },
+        "start": {
+          "column": 66,
+          "index": 2878,
+          "line": 73
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/CopyReportActivity.java",
+      "selection": {
+        "end": {
+          "column": 74,
+          "index": 644,
+          "line": 19
+        },
+        "start": {
+          "column": 74,
+          "index": 644,
+          "line": 19
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/AndroidManifest.xml",
+      "selection": {
+        "end": {
+          "column": 26,
+          "index": 853,
+          "line": 28
+        },
+        "start": {
+          "column": 26,
+          "index": 853,
+          "line": 28
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/res/values/themes.xml",
+      "selection": {
+        "end": {
+          "column": 30,
+          "index": 439,
+          "line": 11
+        },
+        "start": {
+          "column": 14,
+          "index": 423,
+          "line": 11
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/Tokification/app/src/main/java/net/itsjustsomedude/tokens/NotificationReader.java"
+}

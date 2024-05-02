@@ -23,6 +23,11 @@
 			android:name="SendTokensActivity"
 			android:exported="true"
 			android:theme="@style/DialogTheme.Dark" />
+		
+		<activity
+			android:name="CopyReportActivity"
+			android:exported="true"
+			android:theme="@style/TransparentTheme" />
 
 		<activity
 			android:name="EditCoopActivity"

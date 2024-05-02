@@ -2,61 +2,56 @@ package net.itsjustsomedude.tokens;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NotificationReader {
 	private static final String TAG = "Notifications";
-	private static final String PACKAGE = "com.auxbrain.egginc";
-	private static final String ALT_PACKAGE = "net.itsjustsomedude.tokens";
+	private static final List<String> ALLOWED_PACKAGES = Arrays.asList(
+		"com.auxbrain.egginc",
+		"net.itsjustsomedude.tokens"
+	);
 
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");
 	private static final Pattern tokenCountRegex = Pattern.compile("(?<=has sent you a gift of )([0-9]+)");
+	
+	private static boolean shouldDismiss = false;
+	private static HashMap<String, Coop> coopCache = new HashMap<>();
+	private static Database db;
 
 	static void processNotifications() {
 		NotificationService notificationService = NotificationService.get();
 		StatusBarNotification[] notifications = notificationService.getActiveNotifications();
 
 		Context ctx = notificationService.getApplicationContext();
-		HashMap<String, Coop> coopCache = new HashMap<>();
-		Database db = new Database(ctx).open();
-
-		boolean shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
-		ArrayList<String> toDismiss = new ArrayList<>();
+	    db = new Database(ctx).open();
+		shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
 
 		for (StatusBarNotification n : notifications) {
-			String k = processNotification(n, db, coopCache);
-			if (shouldDismiss && k != null) {
-				Log.i(TAG, "Preparing to dismiss " + k);
-				toDismiss.add(k);
-			}
+		    processNotification(n);
 		}
 
-		saveCache(db, coopCache);
-
-		if (shouldDismiss) {
-			Log.i(TAG, "Dismissing stuff." + String.join(", ", toDismiss.toArray(new String[0])));
-			notificationService.cancelNotifications(toDismiss.toArray(new String[0]));
-		}
+		saveCache();
+		db.close();
+		db = null;
 	}
 
-	public static String processNotification(StatusBarNotification n, Database db) {
-		HashMap<String, Coop> cache = new HashMap<>();
-		String toDismiss = processNotification(n, db, new HashMap<>());
-		saveCache(db, cache);
-		return toDismiss;
-	}
-
-	public static String processNotification(StatusBarNotification n, Database db, HashMap<String, Coop> cache) {
+	public static void processNotification(StatusBarNotification n) {
 		int id = n.getId();
 //		String key = "";
 		String title = "";
@@ -81,20 +76,17 @@ public class NotificationReader {
 //		if (n.getNotification().getGroup() != null) {
 //			group = n.getNotification().getGroup();
 //		}
-//		if (n.getKey() != null) {
-//			key = n.getKey();
-//		}
 
 		if (n.getPackageName() == null)
-			return null;
-		if (!n.getPackageName().equals(PACKAGE) && !n.getPackageName().equals(ALT_PACKAGE)) {
+			return;
+		if (!ALLOWED_PACKAGES.contains(n.getPackageName())) {
 			Log.i(TAG, "Skipping because Package Name.");
-			return null;
+			return;
 		}
 
 		if (text.contains("new message") || !title.contains("Gift Received")) {
 			Log.i(TAG, "Skipping because of New Messages or not a gift.");
-			return null;
+			return;
 		}
 
 		Log.i(TAG, "Processing note " + id + title + text);
@@ -103,40 +95,43 @@ public class NotificationReader {
 		if (!matches.lookingAt() || matches.groupCount() < 2) {
 			Log.e(TAG, "Person/Coop Regex didn't match for notification content:");
 			Log.e(TAG, text);
-			return null;
+			return;
 		}
 
 		String person = matches.group(1);
 		String coopName = matches.group(2);
 
 		Coop coop;
-		if (cache.containsKey(coopName)) {
+		if (coopCache.containsKey(coopName)) {
 			Log.i(TAG, "Fetched coop from cache.");
-			coop = cache.get(coopName);
+			coop = coopCache.get(coopName);
 		} else {
 			coop = db.fetchCoopByName(coopName);
 			if (coop == null) {
 				Log.i(TAG, "Found notification for coop we don't recognize!");
-				return null;
+				return;
 			}
-			cache.put(coopName, coop);
+			coopCache.put(coopName, coop);
 		}
 
 		if (coop == null) {
 			Log.i(TAG, "Found notification for coop we don't recognize!");
-			return null;
+			return;
 		}
 
 		for (Event ev : coop.events) {
 			// Log.i(TAG, "Checking if event " + ev.notification + " is the same as the current " + id);
-			if (ev.notification == id) return n.getKey();
+			if (ev.notification == id) {
+				removeNotification(n);
+				return;
+			}
 		}
 
 		// Theoretically, this isn't needed because we just fetched the coop based on this value.
 		if (!coop.name.equals(coopName)) {
 			Log.i(TAG, "Skipping notification from wrong coop:");
 			Log.i(TAG, "Expected '" + coop.name + "' but found '" + coopName + "'");
-			return null;
+			return;
 		}
 
 		if (title.contains("🐣")) {
@@ -146,7 +141,8 @@ public class NotificationReader {
 				coop.startTime = when;
 				coop.modified = true;
 			}
-			return n.getKey();
+			removeNotification(n);
+			return;
 		}
 
 		int amount;
@@ -158,7 +154,7 @@ public class NotificationReader {
 				if (!countMatch.find() || countMatch.group(1) == null) {
 					Log.e(TAG, "Count Regex didn't match for notification content:");
 					Log.e(TAG, text);
-					return null;
+					return;
 				}
 				amount = Integer.parseInt(Objects.requireNonNull(countMatch.group(1)));
 			} catch (NumberFormatException err) {
@@ -171,13 +167,52 @@ public class NotificationReader {
 		Log.i(TAG, "Added event from note:");
 		Log.i(TAG, text);
 
-		return n.getKey();
+		removeNotification(n);
+		return;
 	}
 
-	private static void saveCache(Database db, HashMap<String, Coop> cache) {
-		Log.i(TAG, "Saving All Coops! " + cache.keySet() + " len " + cache.values());
-		for (Coop coop : cache.values())
+	private static void saveCache() {
+		Log.i(TAG, "Saving All Coops! " + coopCache.keySet() + " len " + coopCache.values());
+		for (Coop coop : coopCache.values())
 			db.saveCoop(coop);
+		coopCache.clear();
+	}
+	
+	private static void removeNotification(StatusBarNotification n) {
+		// TODO: Comment this out in Prod.
+		if (n.getPackageName().equals("com.auxbrain.egginc")) return;
+	
+		if (!shouldDismiss) return;
+		
+		NotificationService service = NotificationService.get();
+		if (service == null) return;
+		
+		service.cancelNotification(n.getKey());
+	}
+	
+	private static void askToEnable(Context ctx) {
+		Toast.makeText(ctx, "Please give Tokification Notification Access.", Toast.LENGTH_LONG).show();
+        ctx.startActivity(
+			new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+		);
+	}
+	
+	public static boolean verifyServiceRunning(Context ctx) {
+		if (NotificationService.get() == null) {
+			askToEnable(ctx);
+			return false;
+		};
+		
+		ComponentName cn = new ComponentName(ctx, NotificationService.class);
+        String flat = Settings.Secure.getString(ctx.getContentResolver(), "enabled_notification_listeners");
+        final boolean NotificationServiceEnabled = flat != null && flat.contains(cn.flattenToString());
+        if (!NotificationServiceEnabled) {
+            askToEnable(ctx);
+			return false;
+        } else {
+            return true;
+        }
 	}
 
 	// Listener service.
@@ -202,18 +237,15 @@ public class NotificationReader {
 		public void onNotificationPosted(StatusBarNotification sbn) {
 			super.onNotificationPosted(sbn);
 
-			if (sbn.getPackageName() == null || (!sbn.getPackageName().equals(PACKAGE) && !sbn.getPackageName().equals(ALT_PACKAGE)))
+			if (sbn.getPackageName() == null || !ALLOWED_PACKAGES.contains(sbn.getPackageName()))
 				return;
 
 			Context ctx = _this.getApplicationContext();
-			boolean shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
-			Database db = new Database(ctx).open();
-			String toDismiss = processNotification(sbn, db);
-			if (shouldDismiss && toDismiss != null) {
-				Log.i(TAG, "Dismissing stuff.");
-				_this.cancelNotification(toDismiss);
-			}
+			shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
+			db = new Database(ctx).open();
+			processNotification(sbn);
 			db.close();
+			db = null;
 		}
 	}
 }

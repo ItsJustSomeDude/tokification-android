@@ -13,7 +13,7 @@ import java.util.Date;
 import net.itsjustsomedude.tokens.databinding.ActivitySendTokensBinding;
 
 public class SendTokensActivity extends AppCompatActivity {
-	private static final String TAG = "SendTokensActivity";
+	private static final String TAG = "SendTokens";
 	private static final String COOP_PARAM = "Coop";
 
 	private ActivitySendTokensBinding binding;

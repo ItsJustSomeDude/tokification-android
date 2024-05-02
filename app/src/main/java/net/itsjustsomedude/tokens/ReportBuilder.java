@@ -1,98 +1,101 @@
 package net.itsjustsomedude.tokens;
 
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class Reports {
-//	private Coop coop;
+public class ReportBuilder {
+	private static final String TAG = "ReportBuilder";
+	
+	private Coop coop;
+	private String sinkName;
+	
+	private HashMap<String, String> data = new HashMap<>();
 
-//	public Reports(Coop coop) {}
-
-	public static String sinkReport(Coop coop) {
-		long now = Calendar.getInstance().getTimeInMillis() / 1000L;
-
+	public ReportBuilder(Coop coop, String sinkName) {
+		this.coop = coop;
+		this.sinkName = sinkName;
+	}
+	
+	public void calculateValues() {
+		boolean startEstimate = true;
+	    boolean endEstimate = true;
+		long nowEpoch;
+		long startEpoch;
+		long endEpoch;
+		double tvalNow;
+		double tval30Mins;
+		double tval60Mins;
+		String genTimeLine;
 		String startLine;
 		String endLine;
-
-		long start;
-		long end;
-
+		String tvalTable;
+		String futureTable;
+		
+		nowEpoch = Calendar.getInstance().getTimeInMillis() / 1000L;
+		
 		if (coop.startTime == null) {
-			long sinceHourStart = now % 3600;
-			start = now - sinceHourStart;
+			long sinceHourStart = nowEpoch % 3600;
+			startEpoch = nowEpoch - sinceHourStart;
 			startLine = ":warning: No start time set, assuming start of current hour.";
 		} else {
-			start = coop.startTime.getTimeInMillis() / 1000L;
-			startLine = String.format("<:contract:589317482901405697> Start Time: <t:%1$s> (<t:%1$s:R>)", start);
+			startEpoch = coop.startTime.getTimeInMillis() / 1000L;
+			startLine = String.format("<:contract:589317482901405697> Start Time: <t:%1$s> (<t:%1$s:R>)", startEpoch);
+			startEstimate = false;
 		}
-
+		
 		if (coop.endTime == null) {
-			end = start + 12 * 60 * 60;
+			endEpoch = startEpoch + 12 * 60 * 60;
 			endLine = ":warning: No end time set, assuming 12 hours from start time.";
 		} else {
-			end = coop.endTime.getTimeInMillis() / 1000L;
-			endLine = String.format(":alarm_clock: End Time: <t:%1$s> (<t:%1$s:R>)", end);
+			endEpoch = coop.endTime.getTimeInMillis() / 1000L;
+			endLine = String.format(":alarm_clock: End Time: <t:%1$s> (<t:%1$s:R>)", endEpoch);
+			endEstimate = false;
 		}
-
-		ArrayList<String> rVals = new ArrayList<>();
-		if (now < end) {
-			rVals.add("__Running Token Value__");
-			Log.i("Report", "TVal at Current Moment");
-			double tvalNow = round(tval(start, end, now, 1), 4);
-			rVals.add(String.format("<:icon_token:653018008670961665> Now: `%s`", tvalNow));
-
-			//next = round(tval(start, end, now + 30 * 60, 1), 4)
-			//next2 = round(tval(start, end, now + 60 * 60, 1), 4)
-
-			//if next > 0.03:
-			//rVals.append(f"In 30 minutes: `{ next }`",)
-
-			//if next2 > 0.03:
-			//rVals.append(f"In 60 minutes: `{ next2 }`",)
-		} else {
-			rVals.add(":tada: Contract Complete!");
-		}
-
+		
+		tvalNow = tvalNow = round(tval(startEpoch, endEpoch, nowEpoch, 1), 4);
+		tval30Mins = round(tval(startEpoch, endEpoch, nowEpoch + 30 * 60, 1), 4);
+		tval60Mins = round(tval(startEpoch, endEpoch, nowEpoch + 60 * 60, 1), 4);
+		
 		String rowFormat = "%-12.12s|%9.3f|%4d|%8.3f|%4d|%9.3f";
-
 		HashMap<String, String> table = new HashMap<>();
-
+		
 		HashMap<String, Integer> tokensSent = new HashMap<>();
 		HashMap<String, Integer> tokensRec = new HashMap<>();
 		HashMap<String, Double> tvalSent = new HashMap<>();
 		HashMap<String, Double> tvalRec = new HashMap<>();
 
-		for (String person : coop.getPeople("sink")) {
+		for (String person : coop.getPeople(sinkName)) {
 			tokensSent.put(person, 0);
 			tokensRec.put(person, 0);
 			tvalSent.put(person, 0d);
 			tvalRec.put(person, 0d);
 		}
 
-		Log.i("Report", "Number of events: " + coop.events.size());
+		Log.i(TAG, "Number of events: " + coop.events.size());
 
 		for (Event ev : coop.events) {
 			long time = ev.time.getTimeInMillis() / 1000L;
 
-			double tv = tval(start, end, time, ev.count);
+			double tv = tval(startEpoch, endEpoch, time, ev.count);
 			if (ev.direction.equals("sent")) {
 				tokensSent.merge(ev.person, ev.count, Integer::sum);
 				tvalSent.merge(ev.person, tv, Double::sum);
-				// TODO: Add Sink.
+				tokensRec.merge(sinkName, ev.count, Integer::sum);
+				tvalRec.merge(sinkName, tv, Double::sum);
 			} else {
 				tokensRec.merge(ev.person, ev.count, Integer::sum);
 				tvalRec.merge(ev.person, tv, Double::sum);
-				// TODO: Add Sink
+				tokensSent.merge(sinkName, ev.count, Integer::sum);
+				tvalSent.merge(sinkName, tv, Double::sum);
 			}
 		}
 
-		for (String person : coop.getPeople("sink")) {
+		for (String person : coop.getPeople(sinkName)) {
 			double delta = tvalSent.get(person) - tvalRec.get(person);
 
-			Log.i("Report", delta + " Delta");
+			Log.i(TAG, delta + " Delta");
 
 			String output = String.format(
 					rowFormat,
@@ -105,26 +108,60 @@ public class Reports {
 			);
 			table.put(person, output);
 		}
+		tvalTable = String.join("\n", table.values());
+		
+		ArrayList<String> futures = new ArrayList<>();
+		if (nowEpoch < endEpoch) {
+			futures.add("__Running Token Value__");
+			futures.add(String.format("<:icon_token:653018008670961665> Now: `%s`", tvalNow));
 
+			if (tval30Mins > 0.03)
+			    futures.add(String.format("In 30 minutes: `%s`", tval30Mins));
+			if (tval60Mins > 0.03)
+			    futures.add(String.format("In 60 minutes: `%s`", tval60Mins));
+		} else {
+			futures.add(":tada: Contract Complete!");
+		}
+		futureTable = String.join("\n", futures);
+		
+		genTimeLine = String.format("Report Generated at <t:%1$s> (<t:%1$s:R>)", nowEpoch);
+		
+		data.put("startEstimate", Boolean.toString(startEstimate));
+		data.put("endEstimate", Boolean.toString(endEstimate));
+		data.put("nowEpoch", Long.toString(nowEpoch));
+		data.put("startEpoch", Long.toString(startEpoch));
+		data.put("endEpoch", Long.toString(endEpoch));
+		data.put("tvalNow", Double.toString(tvalNow));
+		data.put("tval30Mins", Double.toString(tval30Mins));
+		data.put("tval60Mins", Double.toString(tval60Mins));
+		data.put("genTimeLine", genTimeLine);
+		data.put("startLine", startLine);
+		data.put("endLine", endLine);
+		data.put("tvalTable", tvalTable);
+		data.put("futureTable", futureTable);
+	}
+
+	public String sinkReport() {
+		calculateValues();
 		//final String url = "https://discord.com/channels/455380663013736479/455512567004004353/1217529083286651082";
 		final String[] out = new String[]{
 				"# __Tokification__ (Android Alpha :eyes:)",
 				"",
-				String.format("Report Generated at <t:%1$s> (<t:%1$s:R>)", now),
+				data.get("genTimeLine"),
 				"_This message will be manually updated every 15 to 45 minutes, depending on how busy I am._",
 				"",
 				"__Contract Info__",
-				startLine,
-				endLine,
+				data.get("startLine"),
+				data.get("endLine"),
 				"_Note that all token values are only accurate once the end time is accurate._",
 				"",
-				String.join("\n", rVals),
+				data.get("futureTable"),
 				"",
 				"__Player's Current TVals__ (as seen by the :people_hugging: sink)",
 				"```",
 				"Player      |   Δ TVal| +TS|  +TSVal| -TR|   -TRVal",
 				"------------+---------+----+--------+----+---------",
-				String.join("\n", table.values()),
+				data.get("tvalTable"),
 				"```",
 				/*String.format(*/"_This is not a wonky command, but an app written by ItsJustSomeDude. Stay tuned for further updates!_"/*, url)*/,
 				// See [the FAQ](%s) for more info.

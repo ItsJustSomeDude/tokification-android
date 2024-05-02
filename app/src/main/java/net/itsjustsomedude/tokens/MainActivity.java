@@ -15,25 +15,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+	private static final String TAG = "Main";
 
 	private ActivityMainBinding binding;
-
-	public Coop coop;
 
 	public static final String PREFERENCES = "Prefs";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (!NotificationReader.verifyServiceRunning(this)) {
+			this.finish();
+			return;
+		}
+		
+		NotificationHelper notifications = new NotificationHelper(this);
 
-		Notifications.createChannels(this);
-		Notifications.sendActions(this);
+		notifications.createChannels();
+		notifications.sendActions();
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 
-		coop = Coop.fetchSelectedCoop(this);
+		Coop coop = Coop.fetchSelectedCoop(this);
 
 		if (coop != null) {
 			binding.selectedCoop.setText("Selected Coop: " + coop.name);
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 				NotificationReader.processNotifications();
 				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
 			} catch (Exception err) {
-				Log.e("", "Failed to get notifications.", err);
+				Log.e(TAG, "Failed to get notifications.", err);
 				Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -64,9 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
 		binding.CopyReport.setOnClickListener(view -> {
 			Coop toReport = Coop.fetchSelectedCoop(this);
-
 			assert toReport != null;
-			String report = Reports.sinkReport(toReport);
+				
+			String report = new ReportBuilder(toReport, "ItsJustSomeDude").sinkReport();
 
 			ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 			ClipData clip = ClipData.newPlainText("SinkReport", report);
@@ -110,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		binding.fakeSend.setOnClickListener(view -> {
-			Notifications.sendFake(
-					this,
+			notifications.sendFake(
 					binding.fakePlayer.getText().toString(),
 					binding.fakeCoop.getText().toString(),
 					binding.fakeType.isChecked());
@@ -122,5 +127,11 @@ public class MainActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		this.binding = null;
+	}
+	
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] perms, int[] results) {
+		super.onRequestPermissionsResult(requestCode, perms, results);
+		Toast.makeText(this, "Restart the app to try to resend notifications.", Toast.LENGTH_LONG).show();
 	}
 }

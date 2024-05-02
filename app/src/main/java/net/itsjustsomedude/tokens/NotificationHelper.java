@@ -1,6 +1,7 @@
 package net.itsjustsomedude.tokens;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,14 +19,20 @@ import androidx.core.app.NotificationManagerCompat;
 
 import java.util.Random;
 
-public class Notifications {
+public class NotificationHelper {
 	private static final String TAG = "Notifications";
 
 	private static final String ACTION_CHANNEL = "Actions";
 	private static final String FAKE_CHANNEL = "Fake";
 	private static final int ACTIONS_ID = 770;
+	
+	Context ctx;
+	
+	public NotificationHelper(Context ctx) {
+		this.ctx = ctx;
+	}
 
-	public static void createChannels(Context ctx) {
+	public void createChannels() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
 
 		// Action Channel
@@ -51,7 +58,7 @@ public class Notifications {
 		notificationManager.createNotificationChannel(channel2);
 	}
 
-	public static Notification createActions(Context ctx) {
+	public Notification createActions() {
 		Intent openMenu = new Intent(ctx, MainActivity.class);
 		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
@@ -60,9 +67,13 @@ public class Notifications {
 		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent sendPending = PendingIntent.getActivity(ctx, 0, send, PendingIntent.FLAG_IMMUTABLE);
 
-		Intent editCoop = new Intent(ctx, SendTokensActivity.class);
+		Intent editCoop = new Intent(ctx, EditCoopActivity.class);
 		editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 0, editCoop, PendingIntent.FLAG_IMMUTABLE);
+		
+		Intent quickRefresh = new Intent(ctx, CopyReportActivity.class);
+		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
 
 		return new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
 				.setSmallIcon(android.R.drawable.ic_menu_compass)
@@ -73,16 +84,20 @@ public class Notifications {
 				.setContentIntent(openMenuPending)
 				.addAction(
 						android.R.drawable.arrow_up_float,
-						"Send 6",
+						"Send Tokens",
 						sendPending
 				).addAction(
 						android.R.drawable.edit_text,
 						"Edit Coop",
 						editCoopPending
-				).build();
+				).addAction(
+						android.R.drawable.edit_text,
+						"Copy Report",
+						quickRefreshPending
+			    ).build();
 	}
 
-	public static Notification createFake(Context ctx, String player, String coop, boolean isCR) {
+	public Notification createFake(String player, String coop, boolean isCR) {
 		int rand = new Random().nextInt((20) + 1);
 		String textContent;
 		if (isCR) {
@@ -104,41 +119,40 @@ public class Notifications {
 				.build();
 	}
 
-	public static void sendActions(Context ctx) {
-		if (ActivityCompat.checkSelfPermission(
-				ctx,
-				Manifest.permission.POST_NOTIFICATIONS
-		) != PackageManager.PERMISSION_GRANTED) {
-			Toast.makeText(ctx, "//TODO: Request notification permissions :)", Toast.LENGTH_LONG).show();
-			Log.i(TAG, "We don't have notification permissions!'");
-
-			//String[] toRequest = new String[] { Manifest.permission.POST_NOTIFICATIONS };
-			//ActivityCompat.requestPermissions(ctx., toRequest, 1);
-			return;
-		}
-
-		NotificationManagerCompat mgr = NotificationManagerCompat.from(ctx);
-		mgr.notify(ACTIONS_ID, createActions(ctx));
+	public void sendActions() {
+	    sendNotification(ACTIONS_ID, createActions());
 	}
 
-	public static void sendFake(Context ctx, String player, String coop, boolean isCR) {
-		if (ActivityCompat.checkSelfPermission(
-				ctx,
-				Manifest.permission.POST_NOTIFICATIONS
-		) != PackageManager.PERMISSION_GRANTED) {
-			Toast.makeText(ctx, "//TODO: Request notification permissions :)", Toast.LENGTH_LONG).show();
-			Log.i(TAG, "We don't have notification permissions!'");
-
-			//String[] toRequest = new String[] { Manifest.permission.POST_NOTIFICATIONS };
-			//ActivityCompat.requestPermissions(ctx., toRequest, 1);
-			return;
-		}
-
+	public void sendFake(String player, String coop, boolean isCR) {
 		int id = new Random().nextInt();
 
-		NotificationManagerCompat mgr = NotificationManagerCompat.from(ctx);
-		mgr.notify(id, createFake(ctx, player, coop, isCR));
+		sendNotification(id, createFake(player, coop, isCR));
 	}
-
-
+	
+	private void sendNotification(int id, Notification note) {
+		if (ActivityCompat.checkSelfPermission(
+				ctx,
+				Manifest.permission.POST_NOTIFICATIONS
+		    ) != PackageManager.PERMISSION_GRANTED
+		) {
+			if (!(ctx instanceof Activity)) {
+				Log.e(TAG, "Attempted to send a notification from something a context that's not an activity, and we don't have permissions!");
+				return;
+			}
+			if (!ActivityCompat.shouldShowRequestPermissionRationale(
+			    (Activity) ctx,
+			    Manifest.permission.POST_NOTIFICATIONS)
+			) {
+				Toast.makeText(ctx, "Please grant notification permissions in settings/App Info!", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			String[] toRequest = new String[] { Manifest.permission.POST_NOTIFICATIONS };
+			ActivityCompat.requestPermissions((Activity) ctx, toRequest, 1);
+			
+			return;
+		}
+		
+		NotificationManagerCompat.from(ctx).notify(id, note);
+	}
 }
