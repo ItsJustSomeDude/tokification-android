@@ -20,8 +20,6 @@ import net.itsjustsomedude.tokens.databinding.ActivityListCoopsBinding;
 
 public class ListCoopsActivity extends AppCompatActivity {
 
-	private ActivityListCoopsBinding binding;
-
 	SimpleCursorAdapter adapter;
 	ActivityResultLauncher<Intent> returnHandler;
 
@@ -29,7 +27,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		binding = ActivityListCoopsBinding.inflate(getLayoutInflater());
+		ActivityListCoopsBinding binding = ActivityListCoopsBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 		setTitle("Edit Co-op");
@@ -40,7 +38,6 @@ public class ListCoopsActivity extends AppCompatActivity {
 					//if (result.getResultCode() != Activity.RESULT_OK) return;
 
 					Database db2 = new Database(this);
-					db2.open();
 					Cursor coops2 = db2.fetchCoops();
 					adapter.changeCursor(coops2);
 					adapter.notifyDataSetChanged();
@@ -53,7 +50,6 @@ public class ListCoopsActivity extends AppCompatActivity {
 		});
 
 		Database db = new Database(this);
-		db.open();
 		Cursor coops = db.fetchCoops();
 
 		Log.i("Heh", "Found " + coops.getCount());

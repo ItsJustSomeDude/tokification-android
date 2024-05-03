@@ -50,7 +50,6 @@ public class EditCoopActivity extends AppCompatActivity {
 		});
 
 		Database db = new Database(this);
-		db.open();
 
 		Intent thisIntent = getIntent();
 		String i = thisIntent.getStringExtra(EDIT_ID);
@@ -189,7 +188,9 @@ public class EditCoopActivity extends AppCompatActivity {
 		binding.editCoopSave.setOnClickListener(v -> {
 			coop.name = binding.editCoopCode.getText().toString();
 			coop.modified = true;
-			coop.save(this);
+			Database d = new Database(this);
+			d.saveCoop(coop);
+			d.close();
 			Toast.makeText(this, "Saved Coop!", Toast.LENGTH_SHORT).show();
 		});
 
@@ -246,10 +247,14 @@ public class EditCoopActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.delete_coop) {
-			coop.delete(this);
+			if (coop.id != 0) {
+				Database db = new Database(this);
+				db.deleteCoop(coop.id);
+				db.close();
 
-			Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
-			returnHome();
+				Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
+				returnHome();
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}

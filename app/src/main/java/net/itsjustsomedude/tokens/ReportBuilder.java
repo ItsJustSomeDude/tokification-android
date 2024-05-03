@@ -1,26 +1,28 @@
 package net.itsjustsomedude.tokens;
 
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class ReportBuilder {
 	private static final String TAG = "ReportBuilder";
-	
-	private Coop coop;
-	private String sinkName;
-	
-	private HashMap<String, String> data = new HashMap<>();
+
+	private final Coop coop;
+	private final String sinkName;
+
+	private final HashMap<String, String> data = new HashMap<>();
 
 	public ReportBuilder(Coop coop, String sinkName) {
 		this.coop = coop;
 		this.sinkName = sinkName;
 	}
-	
+
 	public void calculateValues() {
-		boolean startEstimate = true;
-	    boolean endEstimate = true;
+		boolean startEstimate;
+		boolean endEstimate;
 		long nowEpoch;
 		long startEpoch;
 		long endEpoch;
@@ -32,35 +34,37 @@ public class ReportBuilder {
 		String endLine;
 		String tvalTable;
 		String futureTable;
-		
+
 		nowEpoch = Calendar.getInstance().getTimeInMillis() / 1000L;
-		
+
 		if (coop.startTime == null) {
 			long sinceHourStart = nowEpoch % 3600;
 			startEpoch = nowEpoch - sinceHourStart;
 			startLine = ":warning: No start time set, assuming start of current hour.";
+			startEstimate = true;
 		} else {
 			startEpoch = coop.startTime.getTimeInMillis() / 1000L;
 			startLine = String.format("<:contract:589317482901405697> Start Time: <t:%1$s> (<t:%1$s:R>)", startEpoch);
 			startEstimate = false;
 		}
-		
+
 		if (coop.endTime == null) {
 			endEpoch = startEpoch + 12 * 60 * 60;
 			endLine = ":warning: No end time set, assuming 12 hours from start time.";
+			endEstimate = true;
 		} else {
 			endEpoch = coop.endTime.getTimeInMillis() / 1000L;
 			endLine = String.format(":alarm_clock: End Time: <t:%1$s> (<t:%1$s:R>)", endEpoch);
 			endEstimate = false;
 		}
-		
-		tvalNow = tvalNow = round(tval(startEpoch, endEpoch, nowEpoch, 1), 4);
+
+		tvalNow = round(tval(startEpoch, endEpoch, nowEpoch, 1), 4);
 		tval30Mins = round(tval(startEpoch, endEpoch, nowEpoch + 30 * 60, 1), 4);
 		tval60Mins = round(tval(startEpoch, endEpoch, nowEpoch + 60 * 60, 1), 4);
-		
+
 		String rowFormat = "%-12.12s|%9.3f|%4d|%8.3f|%4d|%9.3f";
 		HashMap<String, String> table = new HashMap<>();
-		
+
 		HashMap<String, Integer> tokensSent = new HashMap<>();
 		HashMap<String, Integer> tokensRec = new HashMap<>();
 		HashMap<String, Double> tvalSent = new HashMap<>();
@@ -97,7 +101,7 @@ public class ReportBuilder {
 
 			Log.i(TAG, delta + " Delta");
 
-			String output = String.format(
+			String output = String.format(Locale.US,
 					rowFormat,
 					person,
 					delta,
@@ -109,23 +113,23 @@ public class ReportBuilder {
 			table.put(person, output);
 		}
 		tvalTable = String.join("\n", table.values());
-		
+
 		ArrayList<String> futures = new ArrayList<>();
 		if (nowEpoch < endEpoch) {
 			futures.add("__Running Token Value__");
 			futures.add(String.format("<:icon_token:653018008670961665> Now: `%s`", tvalNow));
 
 			if (tval30Mins > 0.03)
-			    futures.add(String.format("In 30 minutes: `%s`", tval30Mins));
+				futures.add(String.format("In 30 minutes: `%s`", tval30Mins));
 			if (tval60Mins > 0.03)
-			    futures.add(String.format("In 60 minutes: `%s`", tval60Mins));
+				futures.add(String.format("In 60 minutes: `%s`", tval60Mins));
 		} else {
 			futures.add(":tada: Contract Complete!");
 		}
 		futureTable = String.join("\n", futures);
-		
+
 		genTimeLine = String.format("Report Generated at <t:%1$s> (<t:%1$s:R>)", nowEpoch);
-		
+
 		data.put("startEstimate", Boolean.toString(startEstimate));
 		data.put("endEstimate", Boolean.toString(endEstimate));
 		data.put("nowEpoch", Long.toString(nowEpoch));

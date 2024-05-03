@@ -1,7 +1,5 @@
 package net.itsjustsomedude.tokens;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Intent;
 
 import android.content.Context;
@@ -10,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
@@ -24,12 +23,12 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		if (!NotificationReader.verifyServiceRunning(this)) {
 			this.finish();
 			return;
 		}
-		
+
 		NotificationHelper notifications = new NotificationHelper(this);
 
 		notifications.createChannels();
@@ -39,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 
-		Coop coop = Coop.fetchSelectedCoop(this);
+		Database db = new Database(this);
+		Coop coop = db.fetchSelectedCoop();
+		db.close();
 
 		if (coop != null) {
 			binding.selectedCoop.setText("Selected Coop: " + coop.name);
@@ -69,15 +70,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		binding.CopyReport.setOnClickListener(view -> {
-			Coop toReport = Coop.fetchSelectedCoop(this);
-			assert toReport != null;
-				
-			String report = new ReportBuilder(toReport, "ItsJustSomeDude").sinkReport();
-
-			ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-			ClipData clip = ClipData.newPlainText("SinkReport", report);
-			clipboard.setPrimaryClip(clip);
-			Log.i("Report", report);
+			startActivity(new Intent(this, CopyReportActivity.class));
 		});
 
 		// detailed report...
@@ -128,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
 		super.onDestroy();
 		this.binding = null;
 	}
-	
+
 	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] perms, int[] results) {
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] perms, @NonNull int[] results) {
 		super.onRequestPermissionsResult(requestCode, perms, results);
 		Toast.makeText(this, "Restart the app to try to resend notifications.", Toast.LENGTH_LONG).show();
 	}

@@ -25,9 +25,9 @@ public class NotificationHelper {
 	private static final String ACTION_CHANNEL = "Actions";
 	private static final String FAKE_CHANNEL = "Fake";
 	private static final int ACTIONS_ID = 770;
-	
+
 	Context ctx;
-	
+
 	public NotificationHelper(Context ctx) {
 		this.ctx = ctx;
 	}
@@ -70,7 +70,7 @@ public class NotificationHelper {
 		Intent editCoop = new Intent(ctx, EditCoopActivity.class);
 		editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 0, editCoop, PendingIntent.FLAG_IMMUTABLE);
-		
+
 		Intent quickRefresh = new Intent(ctx, CopyReportActivity.class);
 		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
@@ -94,7 +94,7 @@ public class NotificationHelper {
 						android.R.drawable.edit_text,
 						"Copy Report",
 						quickRefreshPending
-			    ).build();
+				).build();
 	}
 
 	public Notification createFake(String player, String coop, boolean isCR) {
@@ -120,7 +120,7 @@ public class NotificationHelper {
 	}
 
 	public void sendActions() {
-	    sendNotification(ACTIONS_ID, createActions());
+		sendNotification(ACTIONS_ID, createActions());
 	}
 
 	public void sendFake(String player, String coop, boolean isCR) {
@@ -128,31 +128,33 @@ public class NotificationHelper {
 
 		sendNotification(id, createFake(player, coop, isCR));
 	}
-	
+
 	private void sendNotification(int id, Notification note) {
 		if (ActivityCompat.checkSelfPermission(
 				ctx,
 				Manifest.permission.POST_NOTIFICATIONS
-		    ) != PackageManager.PERMISSION_GRANTED
+		) != PackageManager.PERMISSION_GRANTED
 		) {
 			if (!(ctx instanceof Activity)) {
 				Log.e(TAG, "Attempted to send a notification from something a context that's not an activity, and we don't have permissions!");
 				return;
 			}
 			if (!ActivityCompat.shouldShowRequestPermissionRationale(
-			    (Activity) ctx,
-			    Manifest.permission.POST_NOTIFICATIONS)
+					(Activity) ctx,
+					Manifest.permission.POST_NOTIFICATIONS)
 			) {
 				Toast.makeText(ctx, "Please grant notification permissions in settings/App Info!", Toast.LENGTH_LONG).show();
 				return;
 			}
-			
-			String[] toRequest = new String[] { Manifest.permission.POST_NOTIFICATIONS };
-			ActivityCompat.requestPermissions((Activity) ctx, toRequest, 1);
-			
+
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+				String[] toRequest = new String[]{Manifest.permission.POST_NOTIFICATIONS};
+				ActivityCompat.requestPermissions((Activity) ctx, toRequest, 1);
+			}
+
 			return;
 		}
-		
+
 		NotificationManagerCompat.from(ctx).notify(id, note);
 	}
 }

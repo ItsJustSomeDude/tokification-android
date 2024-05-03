@@ -11,7 +11,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
 import android.widget.Toast;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -23,35 +23,33 @@ import java.util.regex.Pattern;
 public class NotificationReader {
 	private static final String TAG = "Notifications";
 	private static final List<String> ALLOWED_PACKAGES = Arrays.asList(
-		"com.auxbrain.egginc",
-		"net.itsjustsomedude.tokens"
+			"com.auxbrain.egginc",
+			"net.itsjustsomedude.tokens"
 	);
 
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");
 	private static final Pattern tokenCountRegex = Pattern.compile("(?<=has sent you a gift of )([0-9]+)");
-	
+
 	private static boolean shouldDismiss = false;
-	private static HashMap<String, Coop> coopCache = new HashMap<>();
-	private static Database db;
+	private static final HashMap<String, Coop> coopCache = new HashMap<>();
 
 	static void processNotifications() {
 		NotificationService notificationService = NotificationService.get();
 		StatusBarNotification[] notifications = notificationService.getActiveNotifications();
 
 		Context ctx = notificationService.getApplicationContext();
-	    db = new Database(ctx).open();
+		Database db = new Database(ctx);
 		shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
 
 		for (StatusBarNotification n : notifications) {
-		    processNotification(n);
+			processNotification(db, n);
 		}
 
-		saveCache();
+		saveCache(db);
 		db.close();
-		db = null;
 	}
 
-	public static void processNotification(StatusBarNotification n) {
+	public static void processNotification(Database db, StatusBarNotification n) {
 		int id = n.getId();
 //		String key = "";
 		String title = "";
@@ -168,51 +166,50 @@ public class NotificationReader {
 		Log.i(TAG, text);
 
 		removeNotification(n);
-		return;
 	}
 
-	private static void saveCache() {
+	private static void saveCache(Database db) {
 		Log.i(TAG, "Saving All Coops! " + coopCache.keySet() + " len " + coopCache.values());
 		for (Coop coop : coopCache.values())
 			db.saveCoop(coop);
 		coopCache.clear();
 	}
-	
+
 	private static void removeNotification(StatusBarNotification n) {
 		// TODO: Comment this out in Prod.
 		if (n.getPackageName().equals("com.auxbrain.egginc")) return;
-	
+
 		if (!shouldDismiss) return;
-		
+
 		NotificationService service = NotificationService.get();
 		if (service == null) return;
-		
+
 		service.cancelNotification(n.getKey());
 	}
-	
+
 	private static void askToEnable(Context ctx) {
 		Toast.makeText(ctx, "Please give Tokification Notification Access.", Toast.LENGTH_LONG).show();
-        ctx.startActivity(
-			new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+		ctx.startActivity(
+				new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 		);
 	}
-	
+
 	public static boolean verifyServiceRunning(Context ctx) {
 		if (NotificationService.get() == null) {
 			askToEnable(ctx);
 			return false;
-		};
-		
+		}
+
 		ComponentName cn = new ComponentName(ctx, NotificationService.class);
-        String flat = Settings.Secure.getString(ctx.getContentResolver(), "enabled_notification_listeners");
-        final boolean NotificationServiceEnabled = flat != null && flat.contains(cn.flattenToString());
-        if (!NotificationServiceEnabled) {
-            askToEnable(ctx);
+		String flat = Settings.Secure.getString(ctx.getContentResolver(), "enabled_notification_listeners");
+		final boolean NotificationServiceEnabled = flat != null && flat.contains(cn.flattenToString());
+		if (!NotificationServiceEnabled) {
+			askToEnable(ctx);
 			return false;
-        } else {
-            return true;
-        }
+		} else {
+			return true;
+		}
 	}
 
 	// Listener service.
@@ -242,10 +239,10 @@ public class NotificationReader {
 
 			Context ctx = _this.getApplicationContext();
 			shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
-			db = new Database(ctx).open();
-			processNotification(sbn);
+			Database db = new Database(ctx);
+			processNotification(db, sbn);
+			saveCache(db);
 			db.close();
-			db = null;
 		}
 	}
 }

@@ -2,8 +2,8 @@ package net.itsjustsomedude.tokens;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -17,20 +17,16 @@ import java.util.Locale;
 public class Database {
 	private static final String TAG = "Database";
 
-	private DatabaseHelper dbHelper;
+	private final DatabaseHelper dbHelper;
 	private final Context context;
-	private SQLiteDatabase database;
+	private final SQLiteDatabase database;
 
 	private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 	public Database(Context c) {
 		context = c;
-	}
-
-	public Database open() throws SQLException {
 		dbHelper = new DatabaseHelper(context);
 		database = dbHelper.getWritableDatabase();
-		return this;
 	}
 
 	public void close() {
@@ -214,6 +210,20 @@ public class Database {
 		return cursor;
 	}
 
+	public Coop fetchSelectedCoop() {
+		SharedPreferences sharedPref = context.getSharedPreferences(
+				MainActivity.PREFERENCES,
+				Context.MODE_PRIVATE
+		);
+		long selectedCoop = sharedPref.getLong("SelectedCoop", -1);
+
+		if (selectedCoop == -1) {
+			return null;
+		}
+
+		return fetchCoop(selectedCoop);
+	}
+
 	public Coop fetchCoopByName(String name) {
 		Cursor coop = database.query(
 				DatabaseHelper.COOPS_TABLE,
@@ -235,6 +245,6 @@ public class Database {
 	public void deleteCoop(long _id) {
 		database.delete(DatabaseHelper.COOPS_TABLE, DatabaseHelper._ID + " = " + _id, null);
 
-		// TODO: Clean up Events.
+		// TODO: Clean up left-over Events.
 	}
 }
