@@ -15,8 +15,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String COOP_NAME = "CoopName";
 	public static final String START_TIME = "StartTime";
 	public static final String END_TIME = "EndTime";
+	public static final String COOP_SINK_MODE = "SinkMode";
 
 	public static final String EVENT_COOP = "Coop";
+	public static final String EVENT_GROUP = "Contract";
 	public static final String EVENT_TIME = "Time";
 	public static final String EVENT_COUNT = "Count";
 	public static final String EVENT_PERSON = "Person";
@@ -25,20 +27,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	static final String DB_NAME = "Coops.db";
 
-	static final int VERSION = 7;
+	static final int VERSION = 9;
 
-	private static final String CREATE_COOPS_TABLE = "CREATE TABLE " +
+	private static final String CREATE_COOPS_TABLE = "CREATE TABLE IF NOT EXISTS " +
 			COOPS_TABLE + "(" +
 			_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			COOP_NAME + " TEXT NOT NULL, " +
-			START_TIME + " TEXT, " +
-			END_TIME + " TEXT);";
+			START_TIME + " INTEGER, " +
+			END_TIME + " INTEGER, " +
+			COOP_SINK_MODE + " INTEGER DEFAULT 0);";
 
-	private static final String CREATE_EVENTS_TABLE = "CREATE TABLE " +
+	private static final String CREATE_EVENTS_TABLE = "CREATE TABLE IF NOT EXISTS " +
 			EVENTS_TABLE + "(" +
 			_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-			EVENT_COOP + " INTEGER NOT NULL, " +
-			EVENT_TIME + " TEXT, " +
+			EVENT_COOP + " TEXT NOT NULL, " +
+			EVENT_GROUP + " TEXT, " +
+			EVENT_TIME + " INTEGER, " +
 			EVENT_COUNT + " INTEGER, " +
 			EVENT_PERSON + " TEXT, " +
 			EVENT_DIR + " TEXT, " +
@@ -58,9 +62,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
 		Log.i(TAG, "Upgrading DB.");
-		//TODO: make a real migration.
-		db.execSQL("DROP TABLE IF EXISTS " + COOPS_TABLE);
 		db.execSQL("DROP TABLE IF EXISTS " + EVENTS_TABLE);
+		db.execSQL("DROP TABLE IF EXISTS " + COOPS_TABLE);
 		onCreate(db);
 	}
 }

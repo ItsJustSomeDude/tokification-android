@@ -15,25 +15,32 @@ public class Coop {
 	public Calendar endTime;
 	public ArrayList<Event> events;
 
+	public boolean sinkMode;
+
 	public boolean modified = false;
 
-	public Coop(long i, String n, Calendar s, Calendar e, ArrayList<Event> ev) {
+	public Coop(long i, String n, Calendar s, Calendar e, boolean sinkMode, ArrayList<Event> ev) {
 		this.id = i;
 		this.name = n;
 		this.startTime = s;
 		this.endTime = e;
+		this.sinkMode = sinkMode;
 		this.events = ev;
 	}
 
-	public Event addEvent(Calendar time, int count, String direction, String person) {
-		return this.addEvent(time, count, direction, person, 0);
+	public void addEvent(Event toAdd) {
+		this.events.add(toAdd);
 	}
 
-	public Event addEvent(Calendar time, int count, String direction, String person, int notification) {
-		Event toAdd = new Event(0, time, count, person, direction, notification);
-		this.events.add(toAdd);
-		return toAdd;
-	}
+//	public Event addEvent(Calendar time, int count, String direction, String person) {
+//		return this.addEvent(time, count, direction, person, 0);
+//	}
+
+//	public Event addEvent(Calendar time, int count, String direction, String person, int notification) {
+//		Event toAdd = new Event(0, time, count, person, direction, notification);
+//		this.events.add(toAdd);
+//		return toAdd;
+//	}
 
 	public String[] getPeople(String sinkName) {
 		ArrayList<String> out = new ArrayList<>();
@@ -55,9 +62,5 @@ public class Coop {
 		SharedPreferences.Editor edit = sharedPref.edit();
 		edit.putLong("SelectedCoop", id);
 		edit.apply();
-	}
-
-	public static Coop createCoop() {
-		return new Coop(0, "New Coop", null, null, new ArrayList<>());
 	}
 }

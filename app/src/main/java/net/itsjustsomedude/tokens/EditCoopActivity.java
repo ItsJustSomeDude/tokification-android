@@ -60,7 +60,7 @@ public class EditCoopActivity extends AppCompatActivity {
 
 		if (coop == null) {
 			Log.i(TAG, "Creating new coop.");
-			this.coop = Coop.createCoop();
+			this.coop = db.createCoop();
 		}
 
 		binding.editCoopCode.setText(coop.name);

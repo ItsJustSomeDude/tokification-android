@@ -6,14 +6,18 @@ public class Event {
 	public long id;
 	public Calendar time;
 	public int count;
+	public String coop;
+	public String group;
 	public String person;
 	public String direction;
 	public int notification;
 
 	public boolean modified = false;
 
-	public Event(long _id, Calendar time, int count, String person, String direction, int note) {
+	public Event(long _id, String coop, String group, Calendar time, int count, String person, String direction, int note) {
 		this.id = _id;
+		this.coop = coop;
+		this.group = group;
 		this.time = time;
 		this.count = count;
 		this.person = person;
@@ -21,17 +25,21 @@ public class Event {
 		this.notification = note;
 	}
 
-	public double tval(Calendar coopStart, Calendar coopEnd) {
-		long tokenTime = this.time.getTimeInMillis() / 1000L;
-		long startTime = coopStart.getTimeInMillis() / 1000L;
-		long endTime = coopEnd.getTimeInMillis() / 1000L;
-
-		double duration = endTime - startTime;
-		double elapsed = tokenTime - startTime;
-
-		double i = Math.pow(1 - 0.9 * (elapsed / duration), 4);
-		double singleValue = Math.max(i, 0.03);
-
-		return singleValue * this.count;
+	public void setModified() {
+		this.modified = true;
 	}
+
+//	public double tval(Calendar coopStart, Calendar coopEnd) {
+//		long tokenTime = this.time.getTimeInMillis() / 1000L;
+//		long startTime = coopStart.getTimeInMillis() / 1000L;
+//		long endTime = coopEnd.getTimeInMillis() / 1000L;
+//
+//		double duration = endTime - startTime;
+//		double elapsed = tokenTime - startTime;
+//
+//		double i = Math.pow(1 - 0.9 * (elapsed / duration), 4);
+//		double singleValue = Math.max(i, 0.03);
+//
+//		return singleValue * this.count;
+//	}
 }

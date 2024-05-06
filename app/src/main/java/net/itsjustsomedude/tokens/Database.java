@@ -21,8 +21,6 @@ public class Database {
 	private final Context context;
 	private final SQLiteDatabase database;
 
-	private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-
 	public Database(Context c) {
 		context = c;
 		dbHelper = new DatabaseHelper(context);
@@ -33,11 +31,82 @@ public class Database {
 		dbHelper.close();
 	}
 
+	public boolean eventExists(int eventNote) {
+		Cursor test = database.query(
+				DatabaseHelper.EVENTS_TABLE,
+				new String[]{DatabaseHelper.EVENT_NOTE_ID},
+				DatabaseHelper.EVENT_NOTE_ID + " = " + eventNote,
+				null, null, null, null, "1"
+		);
+		boolean exists = test.getCount() > 0;
+		test.close();
+		return exists;
+	}
+
+	public Event createEvent(String coop, String group, Calendar time, int count, String direction, String person) {
+		return createEvent(coop, group, time, count, direction, person, 0);
+	}
+
+	public Event createEvent(String coop, String group, Calendar time, int count, String direction, String person, int notification) {
+		long t = time.getTimeInMillis() / 1000L;
+
+		ContentValues cv = new ContentValues();
+		cv.put(DatabaseHelper.EVENT_COOP, coop);
+		cv.put(DatabaseHelper.EVENT_GROUP, group);
+		cv.put(DatabaseHelper.EVENT_TIME, t);
+		cv.put(DatabaseHelper.EVENT_COUNT, count);
+		cv.put(DatabaseHelper.EVENT_DIR, direction);
+		cv.put(DatabaseHelper.EVENT_PERSON, person);
+		cv.put(DatabaseHelper.EVENT_NOTE_ID, notification);
+
+		long newId = database.insert(
+				DatabaseHelper.EVENTS_TABLE,
+				null,
+				cv
+		);
+
+		return new Event(newId, coop, group, time, count, person, direction, notification);
+	}
+
+	public Coop createCoop() {
+		ContentValues cv = new ContentValues();
+		cv.put(DatabaseHelper.COOP_NAME, "New Coop");
+		cv.put(DatabaseHelper.START_TIME, 0);
+		cv.put(DatabaseHelper.END_TIME, 0);
+		cv.put(DatabaseHelper.COOP_SINK_MODE, false);
+
+		long newId = database.insert(
+				DatabaseHelper.COOPS_TABLE,
+				null,
+				cv
+		);
+
+		return new Coop(newId, "New Coop", null, null, false, new ArrayList<>());
+	}
+
+	public void saveEvent(Event event) {
+		long t = event.time.getTimeInMillis() / 1000L;
+
+		ContentValues cv = new ContentValues();
+		cv.put(DatabaseHelper.EVENT_COOP, event.coop);
+		cv.put(DatabaseHelper.EVENT_GROUP, event.group);
+		cv.put(DatabaseHelper.EVENT_TIME, t);
+		cv.put(DatabaseHelper.EVENT_COUNT, event.count);
+		cv.put(DatabaseHelper.EVENT_DIR, event.direction);
+		cv.put(DatabaseHelper.EVENT_PERSON, event.person);
+		cv.put(DatabaseHelper.EVENT_NOTE_ID, event.notification);
+
+		database.update(
+				DatabaseHelper.EVENTS_TABLE,
+				cv,
+				DatabaseHelper._ID + " = " + event.id,
+				null
+		);
+	}
+
 	public void saveCoop(Coop coop) {
-		String s = "";
-		String e = "";
-		if (coop.startTime != null) s = df.format(coop.startTime.getTime());
-		if (coop.endTime != null) e = df.format(coop.endTime.getTime());
+		long s = coop.startTime == null ? 0 : coop.startTime.getTimeInMillis() / 1000L;
+		long e = coop.endTime == null ? 0 : coop.endTime.getTimeInMillis() / 1000L;
 
 		Log.i(TAG, "Got message to update coop " + coop.name + " Start " + s + coop.startTime);
 
@@ -45,59 +114,19 @@ public class Database {
 		cv.put(DatabaseHelper.COOP_NAME, coop.name);
 		cv.put(DatabaseHelper.START_TIME, s);
 		cv.put(DatabaseHelper.END_TIME, e);
+		cv.put(DatabaseHelper.COOP_SINK_MODE, coop.sinkMode);
 
-		long newId = -1;
-		if (coop.id == 0) {
-			// Coop has no id, so insert new.
-			newId = database.insert(
-					DatabaseHelper.COOPS_TABLE,
-					null,
-					cv
-			);
-		} else /* if (coop.modified) */ {
-			// Existing record, changed coop, update.
-			database.update(
-					DatabaseHelper.COOPS_TABLE,
-					cv,
-					DatabaseHelper._ID + " = " + coop.id,
-					null
-			);
-			Log.i(TAG, "Updated coop " + coop.name);
-		}
-		// Existing unmodified coop
-
-		// If this is -1, means existing coop.
-		// This is used to store the coop ID in the Events.
-		if (newId != -1)
-			coop.id = newId;
+		database.update(
+				DatabaseHelper.COOPS_TABLE,
+				cv,
+				DatabaseHelper._ID + " = " + coop.id,
+				null
+		);
 
 		for (Event ev : coop.events) {
-			String t = df.format(ev.time.getTime());
+			if (!ev.modified) continue;
 
-			ContentValues ecv = new ContentValues();
-			ecv.put(DatabaseHelper.EVENT_COOP, coop.id);
-			ecv.put(DatabaseHelper.EVENT_TIME, t);
-			ecv.put(DatabaseHelper.EVENT_COUNT, ev.count);
-			ecv.put(DatabaseHelper.EVENT_DIR, ev.direction);
-			ecv.put(DatabaseHelper.EVENT_PERSON, ev.person);
-			ecv.put(DatabaseHelper.EVENT_NOTE_ID, ev.notification);
-
-			if (ev.id == 0) {
-				// New event
-				database.insert(
-						DatabaseHelper.EVENTS_TABLE,
-						null,
-						ecv
-				);
-			} else if (ev.modified) {
-				database.update(
-						DatabaseHelper.EVENTS_TABLE,
-						ecv,
-						DatabaseHelper._ID + " = " + ev.id,
-						null
-				);
-			}
-			// Existing Event, not modified.
+			saveEvent(ev);
 		}
 	}
 
@@ -106,10 +135,13 @@ public class Database {
 				DatabaseHelper._ID,
 				DatabaseHelper.COOP_NAME,
 				DatabaseHelper.START_TIME,
-				DatabaseHelper.END_TIME
+				DatabaseHelper.END_TIME,
+				DatabaseHelper.COOP_SINK_MODE
 		};
 		final String[] eventCols = new String[]{
 				DatabaseHelper._ID,
+				DatabaseHelper.EVENT_COOP,
+				DatabaseHelper.EVENT_GROUP,
 				DatabaseHelper.EVENT_TIME,
 				DatabaseHelper.EVENT_COUNT,
 				DatabaseHelper.EVENT_PERSON,
@@ -129,60 +161,71 @@ public class Database {
 
 		ArrayList<Event> evs = new ArrayList<>();
 
-		Log.i(TAG, "Finding events where " + DatabaseHelper.EVENT_COOP + " is " + coop.getLong(0));
+
+		// If start time is unset, get everything from the past 2 days.
+		long effectiveStart;
+		if (coop.getLong(2) == 0) {
+			// Get beginning of yesterday
+			Calendar altStart = Calendar.getInstance();
+			altStart.add(Calendar.DAY_OF_MONTH, -1);
+			altStart.set(Calendar.HOUR_OF_DAY, 0);
+			altStart.set(Calendar.MINUTE, 0);
+			altStart.set(Calendar.SECOND, 0);
+			altStart.set(Calendar.MILLISECOND, 0);
+
+			effectiveStart = altStart.getTimeInMillis() / 1000L;
+		} else {
+			effectiveStart = coop.getLong(2);
+		}
+
+		long effectiveEnd;
+		if (coop.getLong(3) == 0) {
+			// Get 72 hours past the start time
+			effectiveEnd = effectiveStart + 60 * 60 * 72;
+		} else {
+			effectiveEnd = coop.getLong(3);
+		}
 
 		Cursor events = database.query(
 				DatabaseHelper.EVENTS_TABLE,
 				eventCols,
-				// DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "'",
-				DatabaseHelper.EVENT_COOP + " = " + coop.getLong(0),
+				DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "' AND " +
+						DatabaseHelper.EVENT_TIME + " BETWEEN " + effectiveStart + " AND " + effectiveEnd,
 				null, null, null, null);
 		if (events != null && events.moveToFirst()) {
 			do {
-				Calendar t = null;
-				try {
-					Date parsed = df.parse(events.getString(1));
-					if (parsed != null) {
-						t = Calendar.getInstance();
-						t.setTime(parsed);
-					}
-				} catch (ParseException err) {
-					Log.e("DB", "Invalid date on event!");
-					Log.e("DB", events.getString(1), err);
-					continue;
-				}
+				Calendar t = Calendar.getInstance();
+				t.setTimeInMillis(events.getLong(3));
 
 				evs.add(new Event(
 						events.getLong(0),
+						events.getString(1),
+						events.getString(2),
 						t,
-						events.getInt(2),
-						events.getString(3),
-						events.getString(4),
-						events.getInt(5)
+						events.getInt(4),
+						events.getString(5),
+						events.getString(6),
+						events.getInt(7)
 				));
 			} while (events.moveToNext());
 
 			events.close();
 		}
 
-		Calendar start = null;
-		try {
-			Date parsed = df.parse(coop.getString(2));
-			if (parsed != null) {
-				start = Calendar.getInstance();
-				start.setTime(parsed);
-			}
-		} catch (ParseException ignored) {
+		Calendar start;
+		if (coop.getLong(2) == 0)
+			start = null;
+		else {
+			start = Calendar.getInstance();
+			start.setTimeInMillis(coop.getLong(2));
 		}
 
-		Calendar end = null;
-		try {
-			Date parsed = df.parse(coop.getString(3));
-			if (parsed != null) {
-				end = Calendar.getInstance();
-				end.setTime(parsed);
-			}
-		} catch (ParseException ignored) {
+		Calendar end;
+		if (coop.getLong(3) == 0)
+			end = null;
+		else {
+			end = Calendar.getInstance();
+			end.setTimeInMillis(coop.getLong(3));
 		}
 
 		Coop newCoop = new Coop(
@@ -190,9 +233,9 @@ public class Database {
 				coop.getString(1),
 				start,
 				end,
+				false,
 				evs
 		);
-
 		coop.close();
 
 		return newCoop;

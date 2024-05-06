@@ -83,11 +83,8 @@ public class SendTokensActivity extends AppCompatActivity {
 				return;
 			}
 
-			coop.addEvent(openedAt, count, "received", person);
-
-			Database db2 = new Database(this);
-			db2.saveCoop(coop);
-			db2.close();
+			Event newEvent = db.createEvent(coop.name, "", openedAt, count, "received", person);
+			coop.addEvent(newEvent);
 
 			Toast.makeText(
 					SendTokensActivity.this,
