@@ -1,20 +1,20 @@
 package net.itsjustsomedude.tokens;
 
 import android.os.Bundle;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import net.itsjustsomedude.tokens.databinding.ActivitySendTokensBinding;
 
 public class SendTokensActivity extends AppCompatActivity {
 	private static final String TAG = "SendTokens";
-	private static final String COOP_PARAM = "Coop";
+	public static final String PARAM_COOP = "Coop";
+	public static final String PARAM_PLAYER = "Player";
+	public static final String PARAM_COUNT = "Count";
 
 	private ActivitySendTokensBinding binding;
 
@@ -34,9 +34,9 @@ public class SendTokensActivity extends AppCompatActivity {
 		Database db = new Database(this);
 
 		Bundle b = getIntent().getExtras();
-		if (b != null && b.getLong(COOP_PARAM) != 0) {
+		if (b != null && b.getLong(PARAM_COOP) != 0) {
 			// Coop ID passed in, probably launched from app.
-			coop = db.fetchCoop(b.getLong(COOP_PARAM));
+			coop = db.fetchCoop(b.getLong(PARAM_COOP));
 		} else {
 			// No coop, probably from notification, used default.
 			coop = db.fetchSelectedCoop();
