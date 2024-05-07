@@ -1,6 +1,8 @@
 package net.itsjustsomedude.tokens;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -24,7 +26,7 @@ public class SendTokensActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setTitle("Send Tokens");
 
 		binding = ActivitySendTokensBinding.inflate(getLayoutInflater());
@@ -32,21 +34,37 @@ public class SendTokensActivity extends AppCompatActivity {
 		//setSupportActionBar(binding.toolbar);
 
 		Database db = new Database(this);
+		
+		String defaultPlayer = null;
+		int defaultCount = 0;
 
 		Bundle b = getIntent().getExtras();
 		if (b != null && b.getLong(PARAM_COOP) != 0) {
-			// Coop ID passed in, probably launched from app.
 			coop = db.fetchCoop(b.getLong(PARAM_COOP));
 		} else {
 			// No coop, probably from notification, used default.
 			coop = db.fetchSelectedCoop();
 		}
+		
+		if (b != null) {
+			if (b.getString(PARAM_PLAYER) != null)
+			    defaultPlayer = b.getString(PARAM_PLAYER);
+			
+			if (b.getInt(PARAM_COUNT) != 0)
+			    defaultCount = b.getInt(PARAM_COUNT);
+		}
 		db.close();
 
 		binding.test.setText(coop.name + ", " + coop.id);
 
-		String[] people = coop.getPeople("+Other");
-		if (people.length < 1) people = new String[]{"No people!"};
+		String[] people; 
+		if (defaultPlayer == null) {
+			people = coop.getPeople("+Other");
+		} else {
+            people = new String[]{defaultPlayer};
+			//binding.personSpinner.setVisibility(View.GONE);
+		}
+		
 		ArrayAdapter<String> personAdapter = new ArrayAdapter<>(
 				this,
 				android.R.layout.simple_spinner_item,
@@ -67,7 +85,7 @@ public class SendTokensActivity extends AppCompatActivity {
 		numAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 		binding.sendCountDropdown.setAdapter(numAdapter);
-		binding.sendCountDropdown.setSelection(6 - 1);
+		binding.sendCountDropdown.setSelection(defaultCount == 0 ? 6 - 1 : defaultCount);
 
 		binding.sendButton.setOnClickListener(v -> {
 			int count = binding.sendCountDropdown.getSelectedItemPosition() + 1;

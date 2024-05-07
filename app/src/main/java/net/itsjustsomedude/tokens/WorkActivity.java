@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,6 +30,7 @@ public class WorkActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		Intent thisIntent = getIntent();
 		boolean shouldRefresh = thisIntent.getBooleanExtra(PARAM_REFRESH, false);
@@ -67,6 +69,7 @@ public class WorkActivity extends AppCompatActivity {
 			returnHandler.launch(
 					new Intent(this, SendTokensActivity.class)
 							.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink")
+							.putExtra(SendTokensActivity.PARAM_COUNT, 2)
 			);
 
 		// If something is supposed to happen after that activity, bail out.
@@ -75,6 +78,8 @@ public class WorkActivity extends AppCompatActivity {
 
 		if (shouldCopyReport)
 			copyReport();
+		
+		this.finish();
 	}
 
 	private void refreshNotes() {

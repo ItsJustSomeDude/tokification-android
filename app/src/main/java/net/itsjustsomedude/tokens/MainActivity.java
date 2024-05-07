@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 	private ActivityMainBinding binding;
 
 	public static final String PREFERENCES = "Prefs";
+	
+	Coop coop;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
 		NotificationHelper notifications = new NotificationHelper(this);
 
 		notifications.createChannels();
-		notifications.sendActions();
+		notifications.sendSinkActions();
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 
 		Database db = new Database(this);
-		Coop coop = db.fetchSelectedCoop();
+		coop = db.fetchSelectedCoop();
 		db.close();
 
 		if (coop != null) {
@@ -56,36 +60,62 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		binding.mainRefresh.setOnClickListener(view -> {
-			try {
-				NotificationReader.processNotifications();
-				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
-			} catch (Exception err) {
-				Log.e(TAG, "Failed to get notifications.", err);
-				Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
-			}
+			startActivity(
+				new Intent(this, WorkActivity.class)
+				    .putExtra(WorkActivity.PARAM_REFRESH, true)
+			);
 		});
 
 		binding.mainSend.setOnClickListener(view -> {
-			startActivity(new Intent(this, SendTokensActivity.class));
+			startActivity(
+				new Intent(this, WorkActivity.class)
+					.putExtra(WorkActivity.PARAM_SEND, true)
+			);
 		});
 
 		binding.CopyReport.setOnClickListener(view -> {
-			startActivity(new Intent(this, WorkActivity.class));
+			startActivity(
+				new Intent(this, WorkActivity.class)
+					.putExtra(WorkActivity.PARAM_REFRESH, true)
+					.putExtra(WorkActivity.PARAM_COPY_REPORT, true)
+			);
 		});
 
 		// detailed report...
 
+		ActivityResultLauncher<Intent> returnHandler = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				result -> {
+					//if (result.getResultCode() != Activity.RESULT_OK) return;
+
+					Database db2 = new Database(this);
+				    coop = db2.fetchSelectedCoop();
+				    if (coop != null) {
+					    binding.selectedCoop.setText("Selected Coop: " + coop.name);
+				    } else {
+						binding.selectedCoop.setText("No Coop Selected!");
+
+						binding.mainRefresh.setEnabled(false);
+					    binding.mainSend.setEnabled(false);
+					    binding.CopyReport.setEnabled(false);
+					    binding.CopyDReport.setEnabled(false);
+
+					    binding.mainEdit.setEnabled(false);
+					}
+				}
+		);
+		
 		binding.mainEdit.setOnClickListener(view -> {
 			Intent edit = new Intent(this, EditCoopActivity.class);
 			if (coop != null)
 				edit.putExtra(EditCoopActivity.EDIT_ID, Long.toString(coop.id));
-			startActivity(edit);
+			returnHandler.launch(edit);
 		});
 
 		// Edit Events...
 
 		binding.mainSwitchCoop.setOnClickListener(view -> {
-			startActivity(new Intent(this, ListCoopsActivity.class));
+			returnHandler.launch(new Intent(this, ListCoopsActivity.class));
 		});
 
 		SharedPreferences sharedPref = getSharedPreferences(
@@ -115,7 +145,15 @@ public class MainActivity extends AppCompatActivity {
 					binding.fakeType.isChecked());
 		});
 	}
-
+	
+//	private Coop getCoop() {
+//		return this.coop;
+//	}
+//	
+//	private void setCoop(Coop coop) {
+//		this.coop = coop;
+//	}
+//
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

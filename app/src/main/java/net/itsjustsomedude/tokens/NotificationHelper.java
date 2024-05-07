@@ -58,13 +58,13 @@ public class NotificationHelper {
 		notificationManager.createNotificationChannel(channel2);
 	}
 
-	public Notification createActions() {
+	public Notification createSinkActions() {
 		Intent openMenu = new Intent(ctx, MainActivity.class);
 		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent send = new Intent(ctx, SendTokensActivity.class);
-		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent sendPending = PendingIntent.getActivity(ctx, 0, send, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent editCoop = new Intent(ctx, EditCoopActivity.class);
@@ -96,6 +96,46 @@ public class NotificationHelper {
 						quickRefreshPending
 				).build();
 	}
+	
+	public Notification createNormalActions() {
+		Intent openMenu = new Intent(ctx, MainActivity.class);
+		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
+
+		Intent send1 = new Intent(ctx, WorkActivity.class);
+		send1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		send1.putExtra(WorkActivity.PARAM_REFRESH, true);
+		PendingIntent send1Pending = PendingIntent.getActivity(ctx, 0, send1, PendingIntent.FLAG_IMMUTABLE);
+
+		Intent send = new Intent(ctx, EditCoopActivity.class);
+		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent sendPending = PendingIntent.getActivity(ctx, 0, send, PendingIntent.FLAG_IMMUTABLE);
+
+		Intent quickRefresh = new Intent(ctx, WorkActivity.class);
+		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
+
+		return new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
+				.setSmallIcon(android.R.drawable.ic_menu_compass)
+				.setContentTitle("Tokification")
+				.setContentText("<Insert TVal info here>")
+				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+				.setAutoCancel(false)
+				.setContentIntent(openMenuPending)
+				.addAction(
+						android.R.drawable.arrow_up_float,
+						"Sink 1 Token",
+						send1Pending
+				).addAction(
+						android.R.drawable.edit_text,
+						"Sink Tokens",
+						sendPending
+				).addAction(
+						android.R.drawable.edit_text,
+						"Refresh",
+						quickRefreshPending
+				).build();
+	}
 
 	public Notification createFake(String player, String coop, boolean isCR) {
 		int rand = new Random().nextInt((20) + 1);
@@ -119,8 +159,8 @@ public class NotificationHelper {
 				.build();
 	}
 
-	public void sendActions() {
-		sendNotification(ACTIONS_ID, createActions());
+	public void sendSinkActions() {
+		sendNotification(ACTIONS_ID, createSinkActions());
 	}
 
 	public void sendFake(String player, String coop, boolean isCR) {
