@@ -40,7 +40,7 @@ public class ReportBuilder {
 		if (coop.startTime == null) {
 			long sinceHourStart = nowEpoch % 3600;
 			startEpoch = nowEpoch - sinceHourStart;
-			startLine = ":warning: No start time set, assuming start of current hour.";
+			startLine = ":warning: No start time set, assuming start of current hour." + startEpoch;
 			startEstimate = true;
 		} else {
 			startEpoch = coop.startTime.getTimeInMillis() / 1000L;
@@ -50,7 +50,7 @@ public class ReportBuilder {
 
 		if (coop.endTime == null) {
 			endEpoch = startEpoch + 12 * 60 * 60;
-			endLine = ":warning: No end time set, assuming 12 hours from start time.";
+			endLine = ":warning: No end time set, assuming 12 hours from start time." + endEpoch;
 			endEstimate = true;
 		} else {
 			endEpoch = coop.endTime.getTimeInMillis() / 1000L;

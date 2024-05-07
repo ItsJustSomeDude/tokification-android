@@ -20,12 +20,12 @@ public class SendTokensActivity extends AppCompatActivity {
 
 	private Coop coop;
 	private final Calendar openedAt = Calendar.getInstance();
-	;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setTitle("Send Tokens");
 
 		binding = ActivitySendTokensBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
@@ -37,7 +37,6 @@ public class SendTokensActivity extends AppCompatActivity {
 		if (b != null && b.getLong(COOP_PARAM) != 0) {
 			// Coop ID passed in, probably launched from app.
 			coop = db.fetchCoop(b.getLong(COOP_PARAM));
-			db.close();
 		} else {
 			// No coop, probably from notification, used default.
 			coop = db.fetchSelectedCoop();
@@ -83,8 +82,10 @@ public class SendTokensActivity extends AppCompatActivity {
 				return;
 			}
 
-			Event newEvent = db.createEvent(coop.name, "", openedAt, count, "received", person);
+			Database db2 = new Database(this);
+			Event newEvent = db2.createEvent(coop.name, "", openedAt, count, "received", person);
 			coop.addEvent(newEvent);
+			db2.close();
 
 			Toast.makeText(
 					SendTokensActivity.this,

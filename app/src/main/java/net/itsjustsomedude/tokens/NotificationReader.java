@@ -133,7 +133,7 @@ public class NotificationReader {
 	}
 
 	private static void askToEnable(Context ctx, String message) {
-		Toast.makeText(ctx, "", Toast.LENGTH_LONG).show();
+		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
 		ctx.startActivity(
 				new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
 						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

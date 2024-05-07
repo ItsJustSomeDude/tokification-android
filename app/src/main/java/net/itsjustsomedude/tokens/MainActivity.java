@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		binding.CopyReport.setOnClickListener(view -> {
-			startActivity(new Intent(this, CopyReportActivity.class));
+			startActivity(new Intent(this, WorkActivity.class));
 		});
 
 		// detailed report...

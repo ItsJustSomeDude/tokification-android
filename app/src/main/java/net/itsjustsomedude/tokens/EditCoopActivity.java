@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens;
 
+import android.app.AlertDialog;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -248,12 +249,29 @@ public class EditCoopActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.delete_coop) {
 			if (coop.id != 0) {
-				Database db = new Database(this);
-				db.deleteCoop(coop.id);
-				db.close();
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Delete Coop?");
+				builder.setMessage("Are you sure you want to delete this coop?");
+				builder.setPositiveButton("Yes", (dialog, which) -> {
+					Database db = new Database(this);
+				    db.deleteCoop(coop.id);
+				    db.close();
 
-				Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
-				returnHome();
+				    Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
+				    returnHome();
+				});
+				builder.setNegativeButton("No", (dialog, which) -> {
+					
+				});
+				builder.setNeutralButton("Delete Keeping Events", (dialog, which) -> {
+					Database db = new Database(this);
+				    db.deleteCoop(coop.id);
+				    db.close();
+
+				    Toast.makeText(this, "Deleted.", Toast.LENGTH_SHORT).show();
+				    returnHome();
+				});
+				builder.create().show();
 			}
 		}
 		return super.onOptionsItemSelected(item);

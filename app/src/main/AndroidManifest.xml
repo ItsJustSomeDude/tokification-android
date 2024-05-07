@@ -25,7 +25,7 @@
 			android:theme="@style/DialogTheme.Dark" />
 		
 		<activity
-			android:name="CopyReportActivity"
+			android:name="WorkActivity"
 			android:exported="true"
 			android:theme="@style/TransparentTheme" />
 

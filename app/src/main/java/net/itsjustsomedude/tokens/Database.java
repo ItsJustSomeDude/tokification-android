@@ -195,7 +195,7 @@ public class Database {
 		if (events != null && events.moveToFirst()) {
 			do {
 				Calendar t = Calendar.getInstance();
-				t.setTimeInMillis(events.getLong(3));
+				t.setTimeInMillis(events.getLong(3) * 1000L);
 
 				evs.add(new Event(
 						events.getLong(0),
