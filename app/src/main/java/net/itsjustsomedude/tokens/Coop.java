@@ -31,17 +31,7 @@ public class Coop {
 	public void addEvent(Event toAdd) {
 		this.events.add(toAdd);
 	}
-
-//	public Event addEvent(Calendar time, int count, String direction, String person) {
-//		return this.addEvent(time, count, direction, person, 0);
-//	}
-
-//	public Event addEvent(Calendar time, int count, String direction, String person, int notification) {
-//		Event toAdd = new Event(0, time, count, person, direction, notification);
-//		this.events.add(toAdd);
-//		return toAdd;
-//	}
-
+	
 	public String[] getPeople(String sinkName) {
 		ArrayList<String> out = new ArrayList<>();
 

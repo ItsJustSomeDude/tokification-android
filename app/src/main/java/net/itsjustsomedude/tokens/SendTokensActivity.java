@@ -1,6 +1,7 @@
 package net.itsjustsomedude.tokens;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,9 @@ public class SendTokensActivity extends AppCompatActivity {
 	public static final String PARAM_COOP = "Coop";
 	public static final String PARAM_PLAYER = "Player";
 	public static final String PARAM_COUNT = "Count";
+	public static final String PARAM_SKIP_REFRESH = "Refresh";
+	public static final String PARAM_COPY_REPORT = "Report";
+	public static final String PARAM_SKIP_SEND = "Report";
 
 	private ActivitySendTokensBinding binding;
 
@@ -33,38 +37,53 @@ public class SendTokensActivity extends AppCompatActivity {
 		setContentView(binding.getRoot());
 		//setSupportActionBar(binding.toolbar);
 
+		Bundle b = getIntent().getExtras();
 		Database db = new Database(this);
-		
+
+		if (b != null && !b.getBoolean(PARAM_SKIP_REFRESH, false)) {
+			try {
+				NotificationReader.processNotifications();
+				Toast.makeText(this, "This must have worked!", Toast.LENGTH_SHORT).show();
+			} catch (Exception err) {
+				Log.e(TAG, "Failed to get notifications.", err);
+				Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		if (b != null && b.getBoolean(PARAM_SKIP_SEND, false)) {
+			this.finish();
+			return;
+		}
+
 		String defaultPlayer = null;
 		int defaultCount = 0;
 
-		Bundle b = getIntent().getExtras();
 		if (b != null && b.getLong(PARAM_COOP) != 0) {
 			coop = db.fetchCoop(b.getLong(PARAM_COOP));
 		} else {
 			// No coop, probably from notification, used default.
 			coop = db.fetchSelectedCoop();
 		}
-		
+
 		if (b != null) {
 			if (b.getString(PARAM_PLAYER) != null)
-			    defaultPlayer = b.getString(PARAM_PLAYER);
-			
+				defaultPlayer = b.getString(PARAM_PLAYER);
+
 			if (b.getInt(PARAM_COUNT) != 0)
-			    defaultCount = b.getInt(PARAM_COUNT);
+				defaultCount = b.getInt(PARAM_COUNT);
 		}
 		db.close();
 
 		binding.test.setText(coop.name + ", " + coop.id);
 
-		String[] people; 
+		String[] people;
 		if (defaultPlayer == null) {
 			people = coop.getPeople("+Other");
 		} else {
-            people = new String[]{defaultPlayer};
+			people = new String[]{defaultPlayer};
 			//binding.personSpinner.setVisibility(View.GONE);
 		}
-		
+
 		ArrayAdapter<String> personAdapter = new ArrayAdapter<>(
 				this,
 				android.R.layout.simple_spinner_item,

@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 	private ActivityMainBinding binding;
 
 	public static final String PREFERENCES = "Prefs";
-	
+
 	Coop coop;
 
 	@Override
@@ -61,23 +61,23 @@ public class MainActivity extends AppCompatActivity {
 
 		binding.mainRefresh.setOnClickListener(view -> {
 			startActivity(
-				new Intent(this, WorkActivity.class)
-				    .putExtra(WorkActivity.PARAM_REFRESH, true)
+					new Intent(this, WorkActivity.class)
+							.putExtra(WorkActivity.PARAM_REFRESH, true)
 			);
 		});
 
 		binding.mainSend.setOnClickListener(view -> {
 			startActivity(
-				new Intent(this, WorkActivity.class)
-					.putExtra(WorkActivity.PARAM_SEND, true)
+					new Intent(this, WorkActivity.class)
+							.putExtra(WorkActivity.PARAM_SEND, true)
 			);
 		});
 
 		binding.CopyReport.setOnClickListener(view -> {
 			startActivity(
-				new Intent(this, WorkActivity.class)
-					.putExtra(WorkActivity.PARAM_REFRESH, true)
-					.putExtra(WorkActivity.PARAM_COPY_REPORT, true)
+					new Intent(this, WorkActivity.class)
+							.putExtra(WorkActivity.PARAM_REFRESH, true)
+							.putExtra(WorkActivity.PARAM_COPY_REPORT, true)
 			);
 		});
 
@@ -89,22 +89,22 @@ public class MainActivity extends AppCompatActivity {
 					//if (result.getResultCode() != Activity.RESULT_OK) return;
 
 					Database db2 = new Database(this);
-				    coop = db2.fetchSelectedCoop();
-				    if (coop != null) {
-					    binding.selectedCoop.setText("Selected Coop: " + coop.name);
-				    } else {
+					coop = db2.fetchSelectedCoop();
+					if (coop != null) {
+						binding.selectedCoop.setText("Selected Coop: " + coop.name);
+					} else {
 						binding.selectedCoop.setText("No Coop Selected!");
 
 						binding.mainRefresh.setEnabled(false);
-					    binding.mainSend.setEnabled(false);
-					    binding.CopyReport.setEnabled(false);
-					    binding.CopyDReport.setEnabled(false);
+						binding.mainSend.setEnabled(false);
+						binding.CopyReport.setEnabled(false);
+						binding.CopyDReport.setEnabled(false);
 
-					    binding.mainEdit.setEnabled(false);
+						binding.mainEdit.setEnabled(false);
 					}
 				}
 		);
-		
+
 		binding.mainEdit.setOnClickListener(view -> {
 			Intent edit = new Intent(this, EditCoopActivity.class);
 			if (coop != null)
@@ -145,15 +145,7 @@ public class MainActivity extends AppCompatActivity {
 					binding.fakeType.isChecked());
 		});
 	}
-	
-//	private Coop getCoop() {
-//		return this.coop;
-//	}
-//	
-//	private void setCoop(Coop coop) {
-//		this.coop = coop;
-//	}
-//
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
