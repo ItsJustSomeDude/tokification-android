@@ -161,6 +161,21 @@ public class Database {
 
 		ArrayList<Event> evs = new ArrayList<>();
 
+		Calendar start;
+		if (coop.getLong(2) == 0)
+			start = null;
+		else {
+			start = Calendar.getInstance();
+			start.setTimeInMillis(coop.getLong(2) * 1000L);
+		}
+
+		Calendar end;
+		if (coop.getLong(3) == 0)
+			end = null;
+		else {
+			end = Calendar.getInstance();
+			end.setTimeInMillis(coop.getLong(3) * 1000L);
+		}
 
 		// If start time is unset, get everything from the past 2 days.
 		long effectiveStart;
@@ -196,6 +211,10 @@ public class Database {
 			do {
 				Calendar t = Calendar.getInstance();
 				t.setTimeInMillis(events.getLong(3) * 1000L);
+				
+				if (start == null || t.before(start)) {
+					start = t;
+				}
 
 				evs.add(new Event(
 						events.getLong(0),
@@ -210,22 +229,6 @@ public class Database {
 			} while (events.moveToNext());
 
 			events.close();
-		}
-
-		Calendar start;
-		if (coop.getLong(2) == 0)
-			start = null;
-		else {
-			start = Calendar.getInstance();
-			start.setTimeInMillis(coop.getLong(2) * 1000L);
-		}
-
-		Calendar end;
-		if (coop.getLong(3) == 0)
-			end = null;
-		else {
-			end = Calendar.getInstance();
-			end.setTimeInMillis(coop.getLong(3) * 1000L);
 		}
 
 		Coop newCoop = new Coop(

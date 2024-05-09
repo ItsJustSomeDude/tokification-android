@@ -73,7 +73,8 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:id="@+id/main_reports_buttons">
 
 				<Button
 					android:id="@+id/CopyDReport"
@@ -88,6 +89,12 @@
 					android:text="Copy Report" />
 
 			</LinearLayout>
+			
+			<TextView
+				android:id="@+id/main_current_report"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:visibility="gone" />
 
 			<View
 				android:id="@+id/divider"

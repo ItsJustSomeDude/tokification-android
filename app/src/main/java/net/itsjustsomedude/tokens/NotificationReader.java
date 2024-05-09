@@ -9,7 +9,6 @@ import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
-
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -92,6 +91,8 @@ public class NotificationReader {
 
 		if (title.contains("🐣")) {
 			Log.i(TAG, "Processing CR");
+			// Count of 0 indicates a CR.
+			db.createEvent(coopName, group, when, 0, "sent", person, id);
 			if (shouldDismiss) removeNotification(n);
 			return;
 		}
@@ -124,7 +125,7 @@ public class NotificationReader {
 
 	private static void removeNotification(StatusBarNotification n) {
 		// TODO: Comment this out in Prod.
-		if (n.getPackageName().equals("com.auxbrain.egginc")) return;
+		// if (n.getPackageName().equals("com.auxbrain.egginc")) return;
 
 		NotificationService service = NotificationService.get();
 		if (service == null) return;

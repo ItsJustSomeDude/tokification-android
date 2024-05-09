@@ -91,6 +91,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.add_coop) {
 			Intent editIntent = new Intent(getApplicationContext(), EditCoopActivity.class);
+			editIntent.putExtra(EditCoopActivity.PARAM_NEW, true);
 			returnHandler.launch(editIntent);
 		}
 		return super.onOptionsItemSelected(item);

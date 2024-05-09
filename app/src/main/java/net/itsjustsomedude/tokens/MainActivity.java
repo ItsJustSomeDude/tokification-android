@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -38,11 +39,14 @@ public class MainActivity extends AppCompatActivity {
 		NotificationHelper notifications = new NotificationHelper(this);
 
 		notifications.createChannels();
-		notifications.sendSinkActions();
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
+		
+		//TODO: remove after adding these options.
+		binding.CopyDReport.setEnabled(false);
+		binding.mainEditEvents.setEnabled(false);
 
 		Database db = new Database(this);
 		coop = db.fetchSelectedCoop();
@@ -50,10 +54,22 @@ public class MainActivity extends AppCompatActivity {
 
 		if (coop != null) {
 			binding.selectedCoop.setText("Selected Coop: " + coop.name);
+			
+			if (coop.sinkMode) {
+				notifications.sendSinkActions();
+				binding.mainCurrentReport.setVisibility(View.GONE);
+				binding.mainReportsButtons.setVisibility(View.VISIBLE);
+			} else {
+			    binding.mainCurrentReport.setVisibility(View.VISIBLE);
+				binding.mainReportsButtons.setVisibility(View.GONE);
+						
+			    String report = new ReportBuilder(coop, "You").normalReport();
+			    binding.mainCurrentReport.setText(report);
+			    notifications.sendNormalActions(report);
+            }
 		} else {
 			binding.selectedCoop.setText("No Coop Selected!");
-
-//			binding.mainRefresh.setEnabled(false);
+			
 			binding.mainSend.setEnabled(false);
 			binding.CopyReport.setEnabled(false);
 			binding.CopyDReport.setEnabled(false);
@@ -81,8 +97,22 @@ public class MainActivity extends AppCompatActivity {
 
 					Database db2 = new Database(this);
 					coop = db2.fetchSelectedCoop();
+				    db2.close();
 					if (coop != null) {
 						binding.selectedCoop.setText("Selected Coop: " + coop.name);
+					    
+					    if (coop.sinkMode) {
+							notifications.sendSinkActions();
+							binding.mainCurrentReport.setVisibility(View.GONE);
+						    binding.mainReportsButtons.setVisibility(View.VISIBLE);
+						} else {
+						    binding.mainCurrentReport.setVisibility(View.VISIBLE);
+						    binding.mainReportsButtons.setVisibility(View.GONE);
+						
+						    String report = new ReportBuilder(coop, "You").normalReport();
+						    binding.mainCurrentReport.setText(report);
+						    notifications.sendNormalActions(report);
+					    }
 					} else {
 						binding.selectedCoop.setText("No Coop Selected!");
 

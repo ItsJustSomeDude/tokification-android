@@ -20,12 +20,15 @@ import net.itsjustsomedude.tokens.databinding.ActivitySendTokensBinding;
 
 public class SendTokensActivity extends AppCompatActivity {
 	private static final String TAG = "SendTokens";
+	
 	public static final String PARAM_COOP = "Coop";
 	public static final String PARAM_PLAYER = "Player";
 	public static final String PARAM_COUNT = "Count";
-	public static final String PARAM_SKIP_REFRESH = "Refresh";
+	public static final String PARAM_REFRESH = "Refresh";
 	public static final String PARAM_COPY_REPORT = "Report";
-	public static final String PARAM_SKIP_SEND = "SkipSend";
+	public static final String PARAM_NO_SEND = "SkipSend";
+	public static final String PARAM_AUTO_SEND = "AutoSend";
+	public static final String PARAM_UPDATE_NOTIFICATION = "RefreshNote";
 
 	private ActivitySendTokensBinding binding;
 
@@ -42,44 +45,62 @@ public class SendTokensActivity extends AppCompatActivity {
 		setContentView(binding.getRoot());
 		//setSupportActionBar(binding.toolbar);
 
-		Bundle b = getIntent().getExtras();
-
-		if (b != null && !b.getBoolean(PARAM_SKIP_REFRESH, false)) {
-			try {
-				NotificationReader.processNotifications();
-				Toast.makeText(this, "Refreshed Notifications.", Toast.LENGTH_SHORT).show();
-			} catch (Exception err) {
-				Log.e(TAG, "Failed to get notifications.", err);
-				Toast.makeText(this, "Failed to refresh!", Toast.LENGTH_SHORT).show();
-			}
+		Intent b = getIntent();
+		if (b == null) {
+			Log.e(TAG, "No idea how this happened.");
+		    Toast.makeText(this, "Tell Dude: The Send Activity Launched wrongly.", Toast.LENGTH_LONG).show();
+			return;
 		}
+		
+		boolean refresh = b.getBooleanExtra(PARAM_REFRESH, false);
+		boolean copyReport = b.getBooleanExtra(PARAM_COPY_REPORT, false);
+		boolean noSend = b.getBooleanExtra(PARAM_NO_SEND, false);
+		boolean autoSend = b.getBooleanExtra(PARAM_AUTO_SEND, false);
+		boolean updateNotification = b.getBooleanExtra(PARAM_UPDATE_NOTIFICATION, false);
+		long coopId = b.getLongExtra(PARAM_COOP, 0);
+		String defaultPlayer = b.getCharSequenceExtra(PARAM_PLAYER) != null
+		    ? b.getCharSequenceExtra(PARAM_PLAYER).toString()
+		    : null;
+		int defaultCount = b.getIntExtra(PARAM_COUNT, 6);
 
 		Database db = new Database(this);
-		if (b != null && b.getLong(PARAM_COOP) != 0) {
-			coop = db.fetchCoop(b.getLong(PARAM_COOP));
+		if (coopId != 0) {
+			coop = db.fetchCoop(coopId);
 		} else {
 			// No coop, probably from notification, used default.
 			coop = db.fetchSelectedCoop();
 		}
         db.close();
 		
-		if (b != null && b.getBoolean(PARAM_SKIP_SEND, false)) {
-			if (b.getBoolean(PARAM_COPY_REPORT, false)) {
-				copyReport(coop);
-			}
+		preDialogActions(refresh);
+		
+		if (noSend) {
+			postDialogActions(copyReport, updateNotification);
 			
 			this.finish();
 			return;
 		}
 		
-		String defaultPlayer = null;
-		int defaultCount = 0;
-		if (b != null) {
-			if (b.getString(PARAM_PLAYER) != null)
-				defaultPlayer = b.getString(PARAM_PLAYER);
+		if (autoSend) {
+			if (defaultPlayer == null || defaultCount == 0) {
+				Toast.makeText(this, "Tell Dude that not all defaults were set!", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			Database db3 = new Database(this);
+			Event newEvent = db3.createEvent(coop.name, "", openedAt, defaultCount, "received", defaultPlayer);
+			coop.addEvent(newEvent);
+			db3.close();
 
-			if (b.getInt(PARAM_COUNT) != 0)
-				defaultCount = b.getInt(PARAM_COUNT);
+			Toast.makeText(
+					SendTokensActivity.this,
+					"Recorded: " + defaultPlayer + " received " + defaultCount,
+					Toast.LENGTH_SHORT
+			).show();
+			
+			postDialogActions(copyReport, updateNotification);
+			this.finish();
+			return;
 		}
 
 		binding.test.setText(coop.name + ", " + coop.id);
@@ -89,7 +110,8 @@ public class SendTokensActivity extends AppCompatActivity {
 			people = coop.getPeople("+Other");
 		} else {
 			people = new String[]{defaultPlayer};
-			//binding.personSpinner.setVisibility(View.GONE);
+			binding.personSpinner.setEnabled(false);
+			binding.personName.setEnabled(false);
 		}
 
 		ArrayAdapter<String> personAdapter = new ArrayAdapter<>(
@@ -121,7 +143,7 @@ public class SendTokensActivity extends AppCompatActivity {
 			if (person.equals("+Other")) {
 				person = binding.personName.getText().toString();
 			}
-
+				
 			if (person.isEmpty()) {
 				Toast.makeText(this, "Select or enter a person!", Toast.LENGTH_SHORT).show();
 				return;
@@ -138,34 +160,56 @@ public class SendTokensActivity extends AppCompatActivity {
 					Toast.LENGTH_SHORT
 			).show();
 				
-			if (b != null && b.getBoolean(PARAM_COPY_REPORT, false)) {
-				copyReport(coop);
-			}
-
+			postDialogActions(copyReport, updateNotification);
 			this.finish();
 		});
 	}
 	
-	private void copyReport(Coop coop) {
-		SharedPreferences sharedPref = getSharedPreferences(
+	private void preDialogActions(boolean refresh) {
+		if (refresh) {
+			try {
+				NotificationReader.processNotifications();
+				Toast.makeText(this, "Refreshed Notifications.", Toast.LENGTH_SHORT).show();
+			} catch (Exception err) {
+				Log.e(TAG, "Failed to get notifications.", err);
+				Toast.makeText(this, "Failed to refresh!", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	
+	private void postDialogActions(boolean copyReport, boolean updateNote) {
+		if (copyReport) {
+			SharedPreferences sharedPref = getSharedPreferences(
 				MainActivity.PREFERENCES,
 				Context.MODE_PRIVATE
-		);
-		String savedName = sharedPref.getString("PlayerName", "Sink");
+		    );
+		    String savedName = sharedPref.getString("PlayerName", "Sink");
 
-		String report = new ReportBuilder(coop, savedName).sinkReport();
+		    String report = new ReportBuilder(coop, savedName).sinkReport();
 
-		ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-		ClipData clip = ClipData.newPlainText("SinkReport", report);
-		clipboard.setPrimaryClip(clip);
+		    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+		    ClipData clip = ClipData.newPlainText("SinkReport", report);
+		    clipboard.setPrimaryClip(clip);
+		}
+		
+		if (updateNote) {
+			NotificationHelper nh = new NotificationHelper(this);
+			
+			if (coop.sinkMode)
+			    nh.sendSinkActions();
+			else {
+				String report = new ReportBuilder(coop, "You").normalReport();
+				nh.sendNormalActions(report);
+			}
+		}
 	}
 	
 	public static void copyReport(Context ctx, boolean refresh) {
 		Intent intent = new Intent(ctx, SendTokensActivity.class);
-		intent.putExtra(PARAM_SKIP_SEND, true);
+		intent.putExtra(PARAM_NO_SEND, true);
 		intent.putExtra(PARAM_COPY_REPORT, true);
 		
-		if (!refresh) intent.putExtra(PARAM_SKIP_REFRESH, true);
+		if (refresh) intent.putExtra(PARAM_REFRESH, true);
 		
 		ctx.startActivity(intent);
 	}
@@ -173,7 +217,8 @@ public class SendTokensActivity extends AppCompatActivity {
 	public static void refreshNotes(Context ctx) {
 		Intent intent = new Intent(ctx, SendTokensActivity.class);
 		
-		intent.putExtra(PARAM_SKIP_SEND, true);
+		intent.putExtra(PARAM_NO_SEND, true);
+		intent.putExtra(PARAM_REFRESH, true);
 		
 		ctx.startActivity(intent);
 	}

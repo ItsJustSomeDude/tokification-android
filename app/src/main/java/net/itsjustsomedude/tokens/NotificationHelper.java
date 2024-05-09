@@ -58,25 +58,26 @@ public class NotificationHelper {
 		notificationManager.createNotificationChannel(channel2);
 	}
 
-	public Notification createSinkActions() {
+	public void sendSinkActions() {
 		Intent openMenu = new Intent(ctx, MainActivity.class);
-		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
+		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 1, openMenu, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent send = new Intent(ctx, SendTokensActivity.class);
-		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent sendPending = PendingIntent.getActivity(ctx, 0, send, PendingIntent.FLAG_IMMUTABLE);
+		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
+		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent editCoop = new Intent(ctx, EditCoopActivity.class);
-		editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 0, editCoop, PendingIntent.FLAG_IMMUTABLE);
+		//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 3, editCoop, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent quickRefresh = new Intent(ctx, SendTokensActivity.class);
-		quickRefresh.putExtra(SendTokensActivity.PARAM_SKIP_SEND, true);
-		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
+		//quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
+		quickRefresh.putExtra(SendTokensActivity.PARAM_NO_SEND, true);
+		quickRefresh.putExtra(SendTokensActivity.PARAM_COPY_REPORT, true);
+		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 4, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
 
-		return new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
+		Notification note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
 				.setSmallIcon(android.R.drawable.ic_menu_compass)
 				.setContentTitle("Tokification")
 				.setContentText("Click to open the menu.")
@@ -96,34 +97,39 @@ public class NotificationHelper {
 						"Copy Report",
 						quickRefreshPending
 				).build();
+		
+		sendNotification(ACTIONS_ID, note);
 	}
 	
-	public Notification createNormalActions() {
+	public void sendNormalActions(String report) {
 		Intent openMenu = new Intent(ctx, MainActivity.class);
-		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
+		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
+		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 11, openMenu, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent send1 = new Intent(ctx, SendTokensActivity.class);
-		send1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		//send1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
 		send1.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink");
 		send1.putExtra(SendTokensActivity.PARAM_COUNT, 1);
-		PendingIntent send1Pending = PendingIntent.getActivity(ctx, 0, send1, PendingIntent.FLAG_IMMUTABLE);
+		send1.putExtra(SendTokensActivity.PARAM_AUTO_SEND, true);
+		PendingIntent send1Pending = PendingIntent.getActivity(ctx, 12, send1, PendingIntent.FLAG_IMMUTABLE);
 
-		Intent send = new Intent(ctx, EditCoopActivity.class);
-		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		Intent send = new Intent(ctx, SendTokensActivity.class);
+		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
 		send.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink");
 		send.putExtra(SendTokensActivity.PARAM_COUNT, 2);
-		PendingIntent sendPending = PendingIntent.getActivity(ctx, 0, send, PendingIntent.FLAG_IMMUTABLE);
+		PendingIntent sendPending = PendingIntent.getActivity(ctx, 13, send, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent quickRefresh = new Intent(ctx, SendTokensActivity.class);
-		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		quickRefresh.putExtra(SendTokensActivity.PARAM_SKIP_SEND, true);
-		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
+		//quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		quickRefresh.putExtra(SendTokensActivity.PARAM_NO_SEND, true);
+		quickRefresh.putExtra(SendTokensActivity.PARAM_UPDATE_NOTIFICATION, true);
+		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 14, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
 
-		return new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
+		Notification note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
 				.setSmallIcon(android.R.drawable.ic_menu_compass)
 				.setContentTitle("Tokification")
-				.setContentText("<Insert TVal info here>")
+				.setContentText(report)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(report))
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 				.setAutoCancel(false)
 				.setContentIntent(openMenuPending)
@@ -140,38 +146,32 @@ public class NotificationHelper {
 						"Refresh",
 						quickRefreshPending
 				).build();
+		
+		sendNotification(ACTIONS_ID, note);
 	}
 
-	public Notification createFake(String player, String coop, boolean isCR) {
+	public void sendFake(String player, String coop, boolean isCR) {
 		int rand = new Random().nextInt((20) + 1);
 		String textContent;
 		if (isCR) {
 			textContent = player +
-					" (" + coop + ") has " +
-					"hatched " + rand + "chickens for you!";
+					" (" + coop + ") has hatched " + rand + " chickens for you!";
 		} else {
 			textContent = player +
 					" (" + coop + ") has sent you a " +
 					(rand == 1 ? "Boost Token!" : "gift of " + rand + " Boost Tokens!");
 		}
 
-		return new NotificationCompat.Builder(ctx, FAKE_CHANNEL)
+		Notification note = new NotificationCompat.Builder(ctx, FAKE_CHANNEL)
 				.setSmallIcon(android.R.drawable.star_off)
 				.setContentTitle(isCR ? "\uD83D\uDC23 Gift Received" : "\uD83D\uDCE6 Gift Received")
 				.setContentText(textContent)
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //				.setGroup("fake-coop-2001")
 				.build();
-	}
-
-	public void sendSinkActions() {
-		sendNotification(ACTIONS_ID, createSinkActions());
-	}
-
-	public void sendFake(String player, String coop, boolean isCR) {
+		
 		int id = new Random().nextInt();
-
-		sendNotification(id, createFake(player, coop, isCR));
+		sendNotification(id, note);
 	}
 
 	private void sendNotification(int id, Notification note) {

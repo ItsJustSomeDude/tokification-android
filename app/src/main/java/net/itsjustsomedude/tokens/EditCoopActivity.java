@@ -28,10 +28,11 @@ public class EditCoopActivity extends AppCompatActivity {
 	private static final String TAG = "EditCoop";
 
 	public static final String EDIT_ID = "id";
+	public static final String PARAM_NEW = "New";
 
 	private ActivityEditCoopBinding binding;
 
-	public Coop coop;
+	public Coop coop = null;
 
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
@@ -53,6 +54,11 @@ public class EditCoopActivity extends AppCompatActivity {
 		Database db = new Database(this);
 
 		Intent thisIntent = getIntent();
+		if (thisIntent.getBooleanExtra(PARAM_NEW, false)) {
+			Log.i(TAG, "Creating new coop.");
+			coop = db.createCoop();
+		}
+		
 		String i = thisIntent.getStringExtra(EDIT_ID);
 		if (i != null) {
 			long id = Long.parseLong(i);
@@ -60,8 +66,13 @@ public class EditCoopActivity extends AppCompatActivity {
 		}
 
 		if (coop == null) {
-			Log.i(TAG, "Creating new coop.");
-			this.coop = db.createCoop();
+			Log.i(TAG, "Grabbing Selected Coop.");
+			coop = db.fetchSelectedCoop();
+		}
+		
+		if (coop == null) {
+			Log.i(TAG, "Creating new coop... 2");
+			coop = db.createCoop();
 		}
 
 		binding.editCoopCode.setText(coop.name);

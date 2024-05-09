@@ -22,7 +22,8 @@
 		<activity
 			android:name="SendTokensActivity"
 			android:exported="true"
-			android:theme="@style/DialogTheme.Dark" />
+			android:theme="@style/DialogTheme.Dark" 
+			android:noHistory="true" />
 		
 		<activity
 			android:name="WorkActivity"
