@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context="net.itsjustsomedude.tokens.ListCoopsActivity">
+
+	<item
+		android:id="@+id/mainSettings"
+		android:icon="@android:drawable/ic_menu_preferences"
+		android:orderInCategory="100"
+		android:title="Settings"
+		app:showAsAction="ifRoom" />
+
+	<item
+		android:id="@+id/mainRefresh"
+		android:icon="@android:drawable/ic_menu_rotate"
+		android:orderInCategory="100"
+		android:title="Refresh"
+		app:showAsAction="ifRoom" />
+
+</menu>

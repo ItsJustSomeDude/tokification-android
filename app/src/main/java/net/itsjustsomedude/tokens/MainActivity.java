@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -59,10 +61,6 @@ public class MainActivity extends AppCompatActivity {
 			//binding.mainEdit.setText("Create Coop");
 		}
 
-		binding.mainRefresh.setOnClickListener(view -> {
-			SendTokensActivity.refreshNotes(this);
-		});
-
 		binding.mainSend.setOnClickListener(view -> {
 			if (coop.sinkMode)
 				SendTokensActivity.sendTokens(this);
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 					} else {
 						binding.selectedCoop.setText("No Coop Selected!");
 
-						binding.mainRefresh.setEnabled(false);
 						binding.mainSend.setEnabled(false);
 						binding.CopyReport.setEnabled(false);
 						binding.CopyDReport.setEnabled(false);
@@ -140,14 +137,29 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		this.binding = null;
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.mainRefresh) {
+			SendTokensActivity.refreshNotes(this);
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] perms, @NonNull int[] results) {
 		super.onRequestPermissionsResult(requestCode, perms, results);
 		Toast.makeText(this, "Restart the app to try to resend notifications.", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		this.binding = null;
 	}
 }

@@ -233,7 +233,7 @@ public class Database {
 				coop.getString(1),
 				start,
 				end,
-				coop.getInt(4) == 1 ? true : false,
+				coop.getInt(4) == 1,
 				evs
 		);
 		coop.close();
