@@ -71,7 +71,8 @@ public class NotificationHelper {
 		editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 0, editCoop, PendingIntent.FLAG_IMMUTABLE);
 
-		Intent quickRefresh = new Intent(ctx, WorkActivity.class);
+		Intent quickRefresh = new Intent(ctx, SendTokensActivity.class);
+		quickRefresh.putExtra(SendTokensActivity.PARAM_SKIP_SEND, true);
 		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
 
@@ -102,17 +103,21 @@ public class NotificationHelper {
 		openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 0, openMenu, PendingIntent.FLAG_IMMUTABLE);
 
-		Intent send1 = new Intent(ctx, WorkActivity.class);
+		Intent send1 = new Intent(ctx, SendTokensActivity.class);
 		send1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		send1.putExtra(WorkActivity.PARAM_REFRESH, true);
+		send1.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink");
+		send1.putExtra(SendTokensActivity.PARAM_COUNT, 1);
 		PendingIntent send1Pending = PendingIntent.getActivity(ctx, 0, send1, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent send = new Intent(ctx, EditCoopActivity.class);
 		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		send.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink");
+		send.putExtra(SendTokensActivity.PARAM_COUNT, 2);
 		PendingIntent sendPending = PendingIntent.getActivity(ctx, 0, send, PendingIntent.FLAG_IMMUTABLE);
 
-		Intent quickRefresh = new Intent(ctx, WorkActivity.class);
+		Intent quickRefresh = new Intent(ctx, SendTokensActivity.class);
 		quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		quickRefresh.putExtra(SendTokensActivity.PARAM_SKIP_SEND, true);
 		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 0, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
 
 		return new NotificationCompat.Builder(ctx, ACTION_CHANNEL)

@@ -106,12 +106,6 @@
 			<Button
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:id="@+id/editCoopDelete"
-				android:text="Delete" />
-
-			<Button
-				android:layout_height="wrap_content"
-				android:layout_width="wrap_content"
 				android:id="@+id/editCoopSetActive"
 				android:text="Set as Active" />
 

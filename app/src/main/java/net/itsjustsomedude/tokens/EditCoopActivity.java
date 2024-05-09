@@ -65,6 +65,7 @@ public class EditCoopActivity extends AppCompatActivity {
 		}
 
 		binding.editCoopCode.setText(coop.name);
+		binding.editCoopMode.setChecked(coop.sinkMode);
 
 		setButtonTexts();
 
@@ -188,20 +189,19 @@ public class EditCoopActivity extends AppCompatActivity {
 
 		binding.editCoopSave.setOnClickListener(v -> {
 			coop.name = binding.editCoopCode.getText().toString();
+			coop.sinkMode = binding.editCoopMode.isChecked();
 			coop.modified = true;
 			Database d = new Database(this);
 			d.saveCoop(coop);
 			d.close();
 			Toast.makeText(this, "Saved Coop!", Toast.LENGTH_SHORT).show();
-		});
-
-		binding.editCoopDelete.setOnClickListener(view -> {
-
+			//returnHome();
 		});
 
 		binding.editCoopSetActive.setOnClickListener(v -> {
 			if (coop.id != 0) {
 				Coop.setSelectedCoop(this, coop.id);
+				Toast.makeText(this, "Coop set as active.", Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(this, "Save the Co-op first.", Toast.LENGTH_LONG).show();
 			}
@@ -261,7 +261,7 @@ public class EditCoopActivity extends AppCompatActivity {
 				    returnHome();
 				});
 				builder.setNegativeButton("No", (dialog, which) -> {
-					
+						
 				});
 				builder.setNeutralButton("Delete Keeping Events", (dialog, which) -> {
 					Database db = new Database(this);

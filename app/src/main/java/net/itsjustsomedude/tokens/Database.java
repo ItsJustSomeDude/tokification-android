@@ -217,7 +217,7 @@ public class Database {
 			start = null;
 		else {
 			start = Calendar.getInstance();
-			start.setTimeInMillis(coop.getLong(2));
+			start.setTimeInMillis(coop.getLong(2) * 1000L);
 		}
 
 		Calendar end;
@@ -225,7 +225,7 @@ public class Database {
 			end = null;
 		else {
 			end = Calendar.getInstance();
-			end.setTimeInMillis(coop.getLong(3));
+			end.setTimeInMillis(coop.getLong(3) * 1000L);
 		}
 
 		Coop newCoop = new Coop(
@@ -233,7 +233,7 @@ public class Database {
 				coop.getString(1),
 				start,
 				end,
-				false,
+				coop.getInt(4) == 1 ? true : false,
 				evs
 		);
 		coop.close();

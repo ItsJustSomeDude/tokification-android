@@ -60,25 +60,18 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		binding.mainRefresh.setOnClickListener(view -> {
-			startActivity(
-					new Intent(this, WorkActivity.class)
-							.putExtra(WorkActivity.PARAM_REFRESH, true)
-			);
+			SendTokensActivity.refreshNotes(this);
 		});
 
 		binding.mainSend.setOnClickListener(view -> {
-			startActivity(
-					new Intent(this, WorkActivity.class)
-							.putExtra(WorkActivity.PARAM_SEND, true)
-			);
+			if (coop.sinkMode)
+				SendTokensActivity.sendTokens(this);
+			else
+				SendTokensActivity.sinkTokens(this, 2);
 		});
 
 		binding.CopyReport.setOnClickListener(view -> {
-			startActivity(
-					new Intent(this, WorkActivity.class)
-							.putExtra(WorkActivity.PARAM_REFRESH, true)
-							.putExtra(WorkActivity.PARAM_COPY_REPORT, true)
-			);
+			SendTokensActivity.copyReport(this, true);
 		});
 
 		// detailed report...
