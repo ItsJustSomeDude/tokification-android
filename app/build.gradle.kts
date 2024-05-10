@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
 
@@ -14,6 +16,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        resValue("string", "app_name", "Tokification")
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -24,6 +28,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    signingConfigs {
+        create("release") {
+            val properties = Properties().apply {
+                load(File("signing.properties").reader())
+            }
+            storeFile = File(properties.getProperty("storeFilePath"))
+            storePassword = properties.getProperty("storePassword")
+            keyPassword = properties.getProperty("keyPassword")
+            keyAlias = "key1"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -31,6 +47,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "app_name", "Tokification")
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            resValue("string", "app_name", "Tokification - Debug")
         }
     }
 
@@ -38,11 +60,10 @@ android {
         viewBinding = true
 
     }
-
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.10.1")
+//    implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
