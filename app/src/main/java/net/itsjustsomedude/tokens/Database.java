@@ -208,9 +208,21 @@ public class Database {
 						DatabaseHelper.EVENT_TIME + " BETWEEN " + effectiveStart + " AND " + effectiveEnd,
 				null, null, null, null);
 		if (events != null && events.moveToFirst()) {
+			
+			// TODO: A bandaid fix for duplicated events!
+			long prevTime = 0;
+			String prevPlayer = "";
+			
 			do {
 				Calendar t = Calendar.getInstance();
 				t.setTimeInMillis(events.getLong(3) * 1000L);
+				
+				if (t.getTimeInMillis() == prevTime && prevPlayer.equals(events.getString(5))) {
+					continue;
+				} else {
+					prevTime = t.getTimeInMillis();
+					prevPlayer = events.getString(5);
+				}
 				
 				if (start == null || t.before(start)) {
 					start = t;

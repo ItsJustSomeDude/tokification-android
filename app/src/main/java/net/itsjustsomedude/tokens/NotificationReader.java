@@ -23,7 +23,8 @@ public class NotificationReader {
 	private static final String TAG = "Notifications";
 	private static final List<String> ALLOWED_PACKAGES = Arrays.asList(
 			"com.auxbrain.egginc",
-			"net.itsjustsomedude.tokens"
+			"net.itsjustsomedude.tokens",
+		    "net.itsjustsomedude.tokens.debug"
 	);
 
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");

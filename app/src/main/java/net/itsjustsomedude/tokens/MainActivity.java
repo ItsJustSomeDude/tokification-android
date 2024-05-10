@@ -31,14 +31,15 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		NotificationHelper notifications = new NotificationHelper(this);
+
+		notifications.createChannels();
+		notifications.ensurePermissions();
+		
 		if (!NotificationReader.verifyServiceRunning(this)) {
 			this.finish();
 			return;
 		}
-
-		NotificationHelper notifications = new NotificationHelper(this);
-
-		notifications.createChannels();
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());

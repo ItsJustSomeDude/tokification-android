@@ -1,5 +1,4 @@
-import java.io.FileInputStream
-import java.util.Properties
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id("com.android.application")
@@ -28,18 +27,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
-    val keystoreProperties = Properties()
-    keystoreProperties.load(FileInputStream("signing.properties"))
-
+	
+	
+	val localProps = gradleLocalProperties(rootDir)
     signingConfigs {
         create("release") {
-            storeFile = file(keystoreProperties.getProperty("storeFilePath"))
-            storePassword = keystoreProperties.getProperty("storePassword")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storeFile = file(localProps.getProperty("storeFilePath"))
+            storePassword = localProps.getProperty("storePassword")
+            keyPassword = localProps.getProperty("storePassword")
             keyAlias = "key1"
         }
     }
+	println("Loaded local.properties signing keys.")
 
     buildTypes {
         release {

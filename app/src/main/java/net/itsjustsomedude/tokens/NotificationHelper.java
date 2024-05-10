@@ -202,4 +202,29 @@ public class NotificationHelper {
 
 		NotificationManagerCompat.from(ctx).notify(id, note);
 	}
+	
+	public void ensurePermissions() {
+		if (ActivityCompat.checkSelfPermission(
+				ctx,
+				Manifest.permission.POST_NOTIFICATIONS
+		) != PackageManager.PERMISSION_GRANTED
+		) {
+			if (!(ctx instanceof Activity)) {
+				Log.e(TAG, "Attempted to send a notification from something a context that's not an activity, and we don't have permissions!");
+				return;
+			}
+//			if (!ActivityCompat.shouldShowRequestPermissionRationale(
+//					(Activity) ctx,
+//					Manifest.permission.POST_NOTIFICATIONS)
+//			) {
+//				Toast.makeText(ctx, "Please grant notification permissions in settings/App Info!", Toast.LENGTH_LONG).show();
+//				return;
+//			}
+
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+				String[] toRequest = new String[]{Manifest.permission.POST_NOTIFICATIONS};
+				ActivityCompat.requestPermissions((Activity) ctx, toRequest, 1);
+			}
+		}
+	}
 }
