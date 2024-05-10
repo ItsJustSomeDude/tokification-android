@@ -1,3 +1,4 @@
+import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -28,14 +29,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    val keystoreProperties = Properties()
+    keystoreProperties.load(FileInputStream("signing.properties"))
+
     signingConfigs {
         create("release") {
-            val properties = Properties().apply {
-                load(File("signing.properties").reader())
-            }
-            storeFile = File(properties.getProperty("storeFilePath"))
-            storePassword = properties.getProperty("storePassword")
-            keyPassword = properties.getProperty("keyPassword")
+            storeFile = file(keystoreProperties.getProperty("storeFilePath"))
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
             keyAlias = "key1"
         }
     }
