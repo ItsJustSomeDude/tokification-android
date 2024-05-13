@@ -64,6 +64,7 @@ android {
 
 dependencies {
 //    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.preference:preference:1.1.1")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

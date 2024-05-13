@@ -137,13 +137,25 @@
 			android:text="@string/unset_button"
 			app:layout_constraintStart_toStartOf="@+id/end_time_title"
 			app:layout_constraintTop_toBottomOf="@+id/end_time_title" />
+		
+		<androidx.appcompat.widget.SwitchCompat
+			android:id="@+id/mode_switch"
+			android:layout_width="wrap_content"
+			android:layout_height="48dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="Sink Mode"
+			android:textOn="Sink Mode"
+			android:textOff="Normal Mode"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/end_time_button" />
 
 		<androidx.constraintlayout.widget.ConstraintLayout
 			android:id="@+id/sink_report_section"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/end_date_button">
+			app:layout_constraintTop_toBottomOf="@id/mode_switch">
 
 			<Spinner
 				android:id="@+id/report_select"
@@ -171,8 +183,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/end_date_button" />
-
+			app:layout_constraintTop_toBottomOf="@+id/mode_switch" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

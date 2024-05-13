@@ -34,128 +34,94 @@ public class NotificationHelper {
 
 	public void createChannels() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
+		
+		NotificationChannel actionChannel = new NotificationChannel(
+			ACTION_CHANNEL,
+			ctx.getString(R.string.action_channel_name),
+		    NotificationManager.IMPORTANCE_DEFAULT);
+		actionChannel.setDescription(ctx.getString(R.string.action_channel_desc));
+		actionChannel.enableVibration(false);
+		actionChannel.setSound(null, null);
 
-		// Action Channel
-		CharSequence name = ctx.getString(R.string.action_channel_name);
-		String desc = ctx.getString(R.string.action_channel_desc);
-		int importance = NotificationManager.IMPORTANCE_DEFAULT;
-		NotificationChannel channel = new NotificationChannel(ACTION_CHANNEL, name, importance);
-		channel.setDescription(desc);
-		channel.enableVibration(false);
-		channel.setSound(null, null);
-
-		// Fake Channel
-		CharSequence name2 = ctx.getString(R.string.fake_channel_name);
-		String desc2 = ctx.getString(R.string.fake_channel_desc);
-		int importance2 = NotificationManager.IMPORTANCE_DEFAULT;
-		NotificationChannel channel2 = new NotificationChannel(FAKE_CHANNEL, name2, importance2);
-		channel2.setDescription(desc2);
-		channel2.enableVibration(false);
-		channel2.setSound(null, null);
+		NotificationChannel fakeChannel = new NotificationChannel(
+			FAKE_CHANNEL,
+			ctx.getString(R.string.fake_channel_name),
+			NotificationManager.IMPORTANCE_DEFAULT);
+		fakeChannel.setDescription(ctx.getString(R.string.fake_channel_desc));
+		fakeChannel.enableVibration(false);
+		fakeChannel.setSound(null, null);
 
 		NotificationManager notificationManager = ctx.getSystemService(NotificationManager.class);
-		notificationManager.createNotificationChannel(channel);
-		notificationManager.createNotificationChannel(channel2);
-	}
-
-	public void sendSinkActions() {
-		Intent openMenu = new Intent(ctx, MainActivity.class);
-		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 1, openMenu, PendingIntent.FLAG_IMMUTABLE);
-
-		Intent send = new Intent(ctx, SendTokensActivity.class);
-		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE);
-
-		Intent editCoop = new Intent(ctx, MainActivity.class);
-		//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 3, editCoop, PendingIntent.FLAG_IMMUTABLE);
-
-		Intent quickRefresh = new Intent(ctx, SendTokensActivity.class);
-		//quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		quickRefresh.putExtra(SendTokensActivity.PARAM_NO_SEND, true);
-		quickRefresh.putExtra(SendTokensActivity.PARAM_COPY_REPORT, true);
-		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 4, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
-
-		Notification note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
-				.setSmallIcon(android.R.drawable.ic_menu_compass)
-				.setContentTitle("Tokification")
-				.setContentText("Click to open the menu.")
-				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
-				.setAutoCancel(false)
-				.setContentIntent(openMenuPending)
-				.addAction(
-						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
-						"Send Tokens",
-						sendPending
-				).addAction(
-						androidx.appcompat.R.drawable.abc_btn_colored_material,
-						"Edit Coop",
-						editCoopPending
-				).addAction(
-						androidx.appcompat.R.drawable.abc_ic_ab_back_material,
-						"Copy Report",
-						quickRefreshPending
-				).build();
-
-		sendNotification(ACTIONS_ID, note);
-	}
-
-	public void sendNormalActions(String report) {
-		Intent openMenu = new Intent(ctx, MainActivity.class);
-		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 11, openMenu, PendingIntent.FLAG_IMMUTABLE);
-
-		Intent send1 = new Intent(ctx, SendTokensActivity.class);
-		//send1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		send1.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink");
-		send1.putExtra(SendTokensActivity.PARAM_COUNT, 1);
-		send1.putExtra(SendTokensActivity.PARAM_AUTO_SEND, true);
-		PendingIntent send1Pending = PendingIntent.getActivity(ctx, 12, send1, PendingIntent.FLAG_IMMUTABLE);
-
-		Intent send = new Intent(ctx, SendTokensActivity.class);
-		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		send.putExtra(SendTokensActivity.PARAM_PLAYER, "Sink");
-		send.putExtra(SendTokensActivity.PARAM_COUNT, 2);
-		PendingIntent sendPending = PendingIntent.getActivity(ctx, 13, send, PendingIntent.FLAG_IMMUTABLE);
-
-		Intent quickRefresh = new Intent(ctx, SendTokensActivity.class);
-		//quickRefresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		quickRefresh.putExtra(SendTokensActivity.PARAM_NO_SEND, true);
-		quickRefresh.putExtra(SendTokensActivity.PARAM_UPDATE_NOTIFICATION, true);
-		PendingIntent quickRefreshPending = PendingIntent.getActivity(ctx, 14, quickRefresh, PendingIntent.FLAG_IMMUTABLE);
-
-		Notification note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
-				.setSmallIcon(android.R.drawable.ic_menu_compass)
-				.setContentTitle("Tokification")
-				.setContentText(report)
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(report))
-				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
-				.setAutoCancel(false)
-				.setContentIntent(openMenuPending)
-				.addAction(
-						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
-						"Sink 1 Token",
-						send1Pending
-				).addAction(
-						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
-						"Sink Tokens",
-						sendPending
-				).addAction(
-						android.R.drawable.ic_menu_rotate,
-						"Refresh",
-						quickRefreshPending
-				).build();
-
-		sendNotification(ACTIONS_ID, note);
+		notificationManager.createNotificationChannel(actionChannel);
+		notificationManager.createNotificationChannel(fakeChannel);
 	}
 
 	public void sendActions(Coop coop) {
+		// Normal Click always opens menu.
+		// First button always opens Send
+		// Second is Sink 1 if Normal Mode
+		// Second is Copy Report if Sink Mode
+		// Third is Refresh if Normal mode.
+		
 		Intent openMenu = new Intent(ctx, MainActivity.class);
 		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
 		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 11, openMenu, PendingIntent.FLAG_IMMUTABLE);
-
 		
+		Intent send = new Intent(ctx, EditEventActivity.class);
+		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
+		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE);
+		
+		NotificationCompat.Builder note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
+				.setSmallIcon(android.R.drawable.ic_menu_compass)
+				.setContentTitle(coop.name)
+				.setAutoCancel(false)
+				.setContentIntent(openMenuPending)
+				.addAction(
+					androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
+					"Send Tokens",
+					sendPending
+			    )
+				// These should only matter for versions before Channels were a thing.
+				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+				.setVibrate(null)
+				.setSound(null);
+		
+		if (coop.sinkMode) {
+		    Intent copy = new Intent(ctx, MainActivity.class);
+		    //editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		    PendingIntent copyPending = PendingIntent.getActivity(ctx, 3, copy, PendingIntent.FLAG_IMMUTABLE);
+			
+			note.setContentText("Click to open the menu.")
+			    .addAction(
+					androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
+					"Copy Report",
+					copyPending
+			    );
+		} else {
+			Intent sink1 = new Intent(ctx, EditEventActivity.class);
+		    //editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		    PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 3, sink1, PendingIntent.FLAG_IMMUTABLE);
+			
+			Intent refresh = new Intent(ctx, EditEventActivity.class);
+		    //editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		    PendingIntent refreshPending = PendingIntent.getActivity(ctx, 3, refreshPending, PendingIntent.FLAG_IMMUTABLE);
+			
+			String report = new ReportBuilder(coop, "You").normalReport();
+			
+			note.setContentText(report)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(report))
+			    .addAction(
+					androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
+					"Send 1 Token",
+					sink1Pending
+			    ).addAction(
+					android.R.drawable.ic_menu_rotate,
+					"Refresh",
+					refreshPending
+			    );
+		}
+		
+		sendNotification(ACTIONS_ID, note.build());
 	}
 
 	public void sendFake(String player, String coop, boolean isCR) {

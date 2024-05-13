@@ -10,7 +10,7 @@
 
 	<string name="no_coop_selected">No Coop Selected!</string>
 	<string name="no_coops">No Coops! Add one by clicking (+)</string>
-	<string name="generate_report">Generate Report</string>
+	<string name="generate_report">Generate</string>
 	<string name="edit_events" formatted="true">Edit Events (%1$d)</string>
 
 	<string name="unset_button">Set</string>
@@ -21,18 +21,9 @@
 	<string name="title_activity_settings">SettingsActivity</string>
 
 	<!-- Preference Titles -->
-	<string name="messages_header">Messages</string>
-	<string name="sync_header">Sync</string>
-
-	<!-- Messages Preferences -->
-	<string name="signature_title">Your signature</string>
-	<string name="reply_title">Default reply action</string>
-
-	<!-- Sync Preferences -->
-	<string name="sync_title">Sync email periodically</string>
-	<string name="attachment_title">Download incoming attachments</string>
-	<string name="attachment_summary_on">Automatically download attachments for incoming emails
-	</string>
-	<string name="attachment_summary_off">Only download attachments when manually requested</string>
+	<string name="settings_header">Options</string>
+	<string name="settings_name_title">Your In-Game Name</string>
+	<string name="default_mode_title">Default Coop Mode</string>
+	<string name="auto_dismiss_title">Auto-dismiss Notifications</string>
 
 </resources>

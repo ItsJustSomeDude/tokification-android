@@ -133,8 +133,8 @@ public class CoopInfoFragment extends Fragment {
 		binding.eventsEdit.setText(eventsButtonText);
 		binding.eventsAdd.setOnClickListener(view ->
 				activityCallback.launch(
-						new Intent(requireContext(), SendTokensActivity.class)
-								.putExtra(SendTokensActivity.PARAM_COOP, coop.id)
+						new Intent(requireContext(), EditEventActivity.class)
+								.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id)
 				)
 		);
 
@@ -149,7 +149,6 @@ public class CoopInfoFragment extends Fragment {
 					timeFormat.format(coop.startTime.getTime())
 			);
 		}
-
 		binding.startDateButton.setOnClickListener(view ->
 				datePicker(requireContext(), coop.startTime, cal -> {
 					coop.startTime = cal;
@@ -192,10 +191,30 @@ public class CoopInfoFragment extends Fragment {
 					render();
 				})
 		);
+		
+		binding.modeSwitch.setChecked(coop.sinkMode);
+		binding.modeSwitch.setOnCheckedChangeListener((view, newState) -> {
+			coop.sinkMode = newState;
+			database.saveCoop(coop);
+			render();
+		});
+		
+		if (coop.sinkMode) {
+			binding.report.setVisibility(View.GONE);
+			binding.sinkReportSection.setVisibility(View.VISIBLE);
+			//TODO: Don't hard-code reports, set the ddl list here.
+		} else {
+			String report = new ReportBuilder(coop, "You").normalReport();
+			binding.report.setText(report);
+			binding.report.setVisibility(View.VISIBLE);
+			binding.sinkReportSection.setVisibility(View.GONE);
+		}
 
 		binding.reportGenerate.setOnClickListener(view -> {
-			if (binding.reportSelect.getSelectedItemPosition() == 0)
-				SendTokensActivity.copyReport(getContext(), coop.id, false);
+			if (binding.reportSelect.getSelectedItemPosition() == 0) {
+				String report = new ReportBuilder(coop, "Temp").sinkReport();
+				ReportBuilder.copyText(requireContext(), report);
+			}
 			else
 				Toast.makeText(requireContext(), "Not implemented yet...", Toast.LENGTH_SHORT).show();
 		});

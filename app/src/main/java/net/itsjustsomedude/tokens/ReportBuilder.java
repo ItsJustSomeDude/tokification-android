@@ -1,5 +1,9 @@
 package net.itsjustsomedude.tokens;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -212,5 +216,11 @@ public class ReportBuilder {
 		long endTime = coopEnd.getTimeInMillis() / 1000L;
 
 		return tval(startTime, endTime, tokenTime, count);
+	}
+	
+	public static void copyText(Context ctx, String toCopy) {
+        ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("SinkReport", toCopy);
+        clipboard.setPrimaryClip(clip);
 	}
 }

@@ -2,20 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	tools:context="net.itsjustsomedude.tokens.ListCoopsActivity">
+	tools:context="net.itsjustsomedude.tokens.MainActivity">
 
 	<item
-		android:id="@+id/mainRefresh"
+		android:id="@+id/main_refresh"
 		android:icon="@android:drawable/ic_menu_rotate"
 		android:orderInCategory="100"
 		android:title="Refresh"
 		app:showAsAction="ifRoom" />
+	
+	<item
+		android:id="@+id/main_settings"
+		android:orderInCategory="200"
+		android:icon="@android:drawable/ic_menu_preferences"
+		android:title="Settings"
+		app:showAsAction="ifRoom" />
 
 	<item
-		android:id="@+id/mainSettings"
-		android:orderInCategory="200"
+		android:id="@+id/main_select_coop"
+		android:orderInCategory="300"
 		android:icon="@android:drawable/ic_menu_more"
-		android:title="Settings"
+		android:title="Select Coop"
 		app:showAsAction="ifRoom" />
 
 </menu>

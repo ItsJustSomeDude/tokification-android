@@ -73,6 +73,9 @@ public class ListCoopsActivity extends AppCompatActivity {
 					"Yes",
 					v -> {
 						database.deleteCoop(viewId, true);
+						coops = database.fetchCoops();
+
+						adapter.notifyDataSetChanged();
 					},
 					"No",
 					v -> {

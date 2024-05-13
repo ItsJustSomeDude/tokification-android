@@ -93,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.mainRefresh) {
-			SendTokensActivity.refreshNotes(this);
-		} else if (id == R.id.mainSettings) {
+		if (id == R.id.main_refresh) {
+			NotificationReader.processNotifications();
+		} else if (id == R.id.main_settings) {
+			startActivity(new Intent(this, SettingsActivity.class));
+		} else if (id ==  R.id.main_select_coop) {
 			startActivity(new Intent(this, ListCoopsActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
