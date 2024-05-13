@@ -1,6 +1,8 @@
 package net.itsjustsomedude.tokens;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,39 +22,27 @@ import net.itsjustsomedude.tokens.databinding.ActivityListCoopsBinding;
 
 public class ListCoopsActivity extends AppCompatActivity {
 
+	ActivityListCoopsBinding binding;
 	SimpleCursorAdapter adapter;
-	ActivityResultLauncher<Intent> returnHandler;
+	Database database;
+	Cursor coops;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		ActivityListCoopsBinding binding = ActivityListCoopsBinding.inflate(getLayoutInflater());
+		binding = ActivityListCoopsBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
-		setTitle("Edit Co-op");
+		setTitle("Select Co-op");
 
-		returnHandler = registerForActivityResult(
-				new ActivityResultContracts.StartActivityForResult(),
-				result -> {
-					//if (result.getResultCode() != Activity.RESULT_OK) return;
-
-					Database db2 = new Database(this);
-					Cursor coops2 = db2.fetchCoops();
-					adapter.changeCursor(coops2);
-					adapter.notifyDataSetChanged();
-				}
-		);
+		database = new Database(this);
+		coops = database.fetchCoops();
 
 		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
 		binding.toolbar.setNavigationOnClickListener(v -> {
 			startActivity(new Intent(this, MainActivity.class));
 		});
-
-		Database db = new Database(this);
-		Cursor coops = db.fetchCoops();
-
-		Log.i("Heh", "Found " + coops.getCount());
 
 		adapter = new SimpleCursorAdapter(
 				this,
@@ -64,20 +54,41 @@ public class ListCoopsActivity extends AppCompatActivity {
 		adapter.notifyDataSetChanged();
 
 		binding.listView.setEmptyView(binding.empty);
-
 		binding.listView.setAdapter(adapter);
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
-			TextView idView = view.findViewById(android.R.id.text1);
-			String id = idView.getText().toString();
+			SharedPreferences sharedPref = getSharedPreferences(MainActivity.PREFERENCES, Context.MODE_PRIVATE);
+			sharedPref.edit()
+					.putLong("SelectedCoop", viewId)
+					.apply();
 
-			Intent editIntent = new Intent(getApplicationContext(), EditCoopActivity.class);
-			editIntent.putExtra(EditCoopActivity.EDIT_ID, id);
-
-			returnHandler.launch(editIntent);
+			startActivity(new Intent(this, MainActivity.class));
 		});
 
-		db.close();
+		binding.listView.setOnItemLongClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
+			SimpleDialogs.yesNoPicker(
+					this,
+					"Delete Coop",
+					"Are you sure you want to delete this coop?",
+					"Yes",
+					v -> {
+						database.deleteCoop(viewId, true);
+					},
+					"No",
+					v -> {
+					},
+					"Delete Keeping Events",
+					v -> {
+						database.deleteCoop(viewId, false);
+						coops = database.fetchCoops();
+
+						adapter.notifyDataSetChanged();
+					}
+			);
+
+			// Consume the event.
+			return true;
+		});
 	}
 
 	@Override
@@ -90,10 +101,20 @@ public class ListCoopsActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.add_coop) {
-			Intent editIntent = new Intent(getApplicationContext(), EditCoopActivity.class);
-			editIntent.putExtra(EditCoopActivity.PARAM_NEW, true);
-			returnHandler.launch(editIntent);
+			Coop newCoop = database.createCoop();
+			SharedPreferences sharedPref = getSharedPreferences(MainActivity.PREFERENCES, Context.MODE_PRIVATE);
+			sharedPref.edit()
+					.putLong("SelectedCoop", newCoop.id)
+					.apply();
+			startActivity(new Intent(this, MainActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		binding = null;
+		database.close();
 	}
 }

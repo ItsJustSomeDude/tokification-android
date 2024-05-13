@@ -16,7 +16,6 @@ import java.util.Locale;
 
 public class Database {
 	private static final String TAG = "Database";
-
 	private final DatabaseHelper dbHelper;
 	private final Context context;
 	private final SQLiteDatabase database;
@@ -208,22 +207,22 @@ public class Database {
 						DatabaseHelper.EVENT_TIME + " BETWEEN " + effectiveStart + " AND " + effectiveEnd,
 				null, null, null, null);
 		if (events != null && events.moveToFirst()) {
-			
+
 			// TODO: A bandaid fix for duplicated events!
 			long prevTime = 0;
 			String prevPlayer = "";
-			
+
 			do {
 				Calendar t = Calendar.getInstance();
 				t.setTimeInMillis(events.getLong(3) * 1000L);
-				
+
 				if (t.getTimeInMillis() == prevTime && prevPlayer.equals(events.getString(5))) {
 					continue;
 				} else {
 					prevTime = t.getTimeInMillis();
 					prevPlayer = events.getString(5);
 				}
-				
+
 				if (start == null || t.before(start)) {
 					start = t;
 				}
@@ -282,25 +281,25 @@ public class Database {
 		return fetchCoop(selectedCoop);
 	}
 
-	public Coop fetchCoopByName(String name) {
-		Cursor coop = database.query(
-				DatabaseHelper.COOPS_TABLE,
-				new String[]{DatabaseHelper._ID},
-				DatabaseHelper.COOP_NAME + " = '" + name + "'",
-				null,
-				null,
-				null,
-				DatabaseHelper._ID + " DESC",
-				"1"
-		);
-		if (coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
-		coop.moveToFirst();
-		long id = coop.getLong(0);
-		coop.close();
-		return fetchCoop(id);
-	}
+//	public Coop fetchCoopByName(String name) {
+//		Cursor coop = database.query(
+//				DatabaseHelper.COOPS_TABLE,
+//				new String[]{DatabaseHelper._ID},
+//				DatabaseHelper.COOP_NAME + " = '" + name + "'",
+//				null,
+//				null,
+//				null,
+//				DatabaseHelper._ID + " DESC",
+//				"1"
+//		);
+//		if (coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
+//		coop.moveToFirst();
+//		long id = coop.getLong(0);
+//		coop.close();
+//		return fetchCoop(id);
+//	}
 
-	public void deleteCoop(long _id) {
+	public void deleteCoop(long _id, boolean deleteEvents) {
 		database.delete(DatabaseHelper.COOPS_TABLE, DatabaseHelper._ID + " = " + _id, null);
 
 		// TODO: Clean up left-over Events.

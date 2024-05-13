@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".CoopInfoFragment">
+
+	<TextView
+		android:id="@+id/no_coop_selected"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="4dp"
+		android:layout_marginTop="4dp"
+		android:text="@string/no_coop_selected"
+		android:visibility="gone"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/innerLayout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<TextView
+			android:id="@+id/coop_name"
+			android:layout_width="wrap_content"
+			android:layout_height="48dp"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="8dp"
+			android:text=""
+			android:textAppearance="@style/TextAppearance.AppCompat.Large"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<ImageButton
+			android:id="@+id/name_edit"
+			android:layout_width="wrap_content"
+			android:layout_height="0dp"
+			android:adjustViewBounds="false"
+			android:contentDescription="Edit Coop Name"
+			app:layout_constraintBottom_toBottomOf="@+id/coop_name"
+			app:layout_constraintStart_toEndOf="@+id/coop_name"
+			app:layout_constraintTop_toTopOf="@+id/coop_name"
+			app:srcCompat="@android:drawable/ic_menu_edit" />
+
+		<Button
+			android:id="@+id/events_edit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/edit_events"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/coop_name" />
+
+		<ImageButton
+			android:id="@+id/events_add"
+			android:layout_width="wrap_content"
+			android:layout_height="0dp"
+			android:contentDescription="Add Event"
+			app:layout_constraintBottom_toBottomOf="@+id/events_edit"
+			app:layout_constraintStart_toEndOf="@+id/events_edit"
+			app:layout_constraintTop_toTopOf="@+id/events_edit"
+			app:srcCompat="@android:drawable/ic_menu_add" />
+
+		<TextView
+			android:id="@+id/start_date_title"
+			android:layout_width="wrap_content"
+			android:layout_height="16dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/start_date_label"
+			app:layout_constraintStart_toStartOf="@+id/start_date_button"
+			app:layout_constraintTop_toBottomOf="@+id/events_edit" />
+
+		<Button
+			android:id="@+id/start_date_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:text="@string/unset_button"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/start_date_title" />
+
+		<TextView
+			android:id="@+id/start_time_title"
+			android:layout_width="wrap_content"
+			android:layout_height="16dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/start_time_label"
+			app:layout_constraintStart_toEndOf="@+id/start_date_button"
+			app:layout_constraintTop_toBottomOf="@+id/events_edit" />
+
+		<Button
+			android:id="@+id/start_time_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/unset_button"
+			app:layout_constraintStart_toStartOf="@+id/start_time_title"
+			app:layout_constraintTop_toBottomOf="@+id/start_time_title" />
+
+		<TextView
+			android:id="@+id/end_date_title"
+			android:layout_width="wrap_content"
+			android:layout_height="16dp"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/end_date_label"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/start_date_button" />
+
+		<Button
+			android:id="@+id/end_date_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:text="@string/unset_button"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/end_date_title" />
+
+		<TextView
+			android:id="@+id/end_time_title"
+			android:layout_width="wrap_content"
+			android:layout_height="16dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/end_time_label"
+			app:layout_constraintStart_toEndOf="@+id/end_date_button"
+			app:layout_constraintTop_toBottomOf="@+id/start_date_button" />
+
+		<Button
+			android:id="@+id/end_time_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/unset_button"
+			app:layout_constraintStart_toStartOf="@+id/end_time_title"
+			app:layout_constraintTop_toBottomOf="@+id/end_time_title" />
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/sink_report_section"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/end_date_button">
+
+			<Spinner
+				android:id="@+id/report_select"
+				android:layout_width="0dp"
+				android:layout_height="48dp"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="4dp"
+				android:entries="@array/report_names"
+				android:minWidth="150dp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<Button
+				android:id="@+id/report_generate"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/generate_report"
+				app:layout_constraintStart_toEndOf="@+id/report_select"
+				app:layout_constraintTop_toTopOf="@+id/report_select" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+		<TextView
+			android:id="@+id/report"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/end_date_button" />
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

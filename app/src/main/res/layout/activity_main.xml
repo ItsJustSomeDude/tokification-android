@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/coordinatorLayout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	tools:context=".MainActivity">
@@ -12,7 +11,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-		app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent">
 
@@ -25,172 +23,154 @@
 
 	</com.google.android.material.appbar.AppBarLayout>
 
-	<ScrollView
-		android:id="@+id/scrollView2"
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/scrollView"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/appbar">
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical">
-
-			<TextView
-				android:id="@+id/selected_coop"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="Selected Coop: "
-				android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-			<Button
-				android:id="@+id/mainSwitchCoop"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="Switch Coop" />
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:orientation="horizontal">
-
-				<Button
-					android:id="@+id/mainEditEvents"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Edit Events" />
-
-				<Button
-					android:id="@+id/mainEdit"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Edit Coop" />
-
-			</LinearLayout>
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:orientation="horizontal"
-				android:id="@+id/main_reports_buttons">
-
-				<Button
-					android:id="@+id/CopyDReport"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Detailed Report" />
-
-				<Button
-					android:id="@+id/CopyReport"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Copy Report" />
-
-			</LinearLayout>
-			
-			<TextView
-				android:id="@+id/main_current_report"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:visibility="gone" />
-
-			<View
-				android:id="@+id/divider"
-				android:layout_width="match_parent"
-				android:layout_height="3dp"
-				android:background="?android:attr/listDivider" />
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal">
-
-				<EditText
-					android:id="@+id/mainPlayerName"
-					android:layout_width="wrap_content"
-					android:layout_height="48dp"
-					android:layout_weight="14"
-					android:hint="Player Name"
-					android:inputType="text"
-					android:singleLine="true" />
-
-				<Button
-					android:id="@+id/mainSaveName"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="Save" />
-
-			</LinearLayout>
-
-			<Switch
-				android:id="@+id/mainAutoDismiss"
-				android:layout_width="match_parent"
-				android:layout_height="48dp"
-				android:text="Auto Dismiss Notifications" />
-
-			<View
-				android:id="@+id/divider2"
-				android:layout_width="match_parent"
-				android:layout_height="3dp"
-				android:background="?android:attr/listDivider" />
-
-			<TextView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="Send Fake Notification" />
-
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:orientation="horizontal">
-
-				<EditText
-					android:id="@+id/fake_player"
-					android:layout_width="wrap_content"
-					android:layout_height="48dp"
-					android:layout_weight="4"
-					android:hint="Player"
-					android:inputType="text" />
-
-				<EditText
-					android:id="@+id/fake_coop"
-					android:layout_width="wrap_content"
-					android:layout_height="48dp"
-					android:layout_weight="4"
-					android:hint="Coop"
-					android:inputType="text" />
-
-				<Button
-					android:id="@+id/fake_send"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Send" />
-
-			</LinearLayout>
-
-			<Switch
-				android:id="@+id/fakeType"
-				android:layout_width="match_parent"
-				android:layout_height="48dp"
-				android:text="Send CR?" />
-
-		</LinearLayout>
-
-	</ScrollView>
-
-	<com.google.android.material.floatingactionbutton.FloatingActionButton
-		android:id="@+id/mainSend"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="16dp"
-		android:layout_marginBottom="16dp"
-		android:clickable="true"
-		android:contentDescription="Add Event"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:srcCompat="@android:drawable/ic_menu_add" />
+		app:layout_constraintHorizontal_bias="1.0"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/appbar"
+		app:layout_constraintVertical_bias="1.0">
+
+		<TextView
+			android:id="@+id/no_coop_selected"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/no_coop_selected"
+			android:visibility="gone"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+		<androidx.fragment.app.FragmentContainerView
+			android:id="@+id/fragmentContainerView"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/no_coop_selected" />
+
+		<View
+			android:id="@+id/divider"
+			android:layout_width="match_parent"
+			android:layout_height="3dp"
+			android:layout_marginTop="4dp"
+			android:background="?android:attr/listDivider"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/mainAutoDismiss"
+			tools:layout_conversion_absoluteHeight="3dp"
+			tools:layout_conversion_absoluteWidth="360dp" />
+
+		<EditText
+			android:id="@+id/mainPlayerName"
+			android:layout_width="0dp"
+			android:layout_height="48dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:ems="12"
+			android:hint="Player Name"
+			android:inputType="text"
+			android:singleLine="true"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/divider2"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="261dp" />
+
+		<Button
+			android:id="@+id/mainSaveName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Save"
+			app:layout_constraintStart_toEndOf="@+id/mainPlayerName"
+			app:layout_constraintTop_toTopOf="@+id/mainPlayerName"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="99dp" />
+
+		<androidx.appcompat.widget.SwitchCompat
+			android:id="@+id/mainAutoDismiss"
+			android:layout_width="0dp"
+			android:layout_height="48dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="Auto Dismiss Notifications"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/mainPlayerName"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="360dp" />
+
+		<View
+			android:id="@+id/divider2"
+			android:layout_width="match_parent"
+			android:layout_height="3dp"
+			android:layout_marginTop="4dp"
+			android:background="?android:attr/listDivider"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView"
+			tools:layout_conversion_absoluteHeight="3dp"
+			tools:layout_conversion_absoluteWidth="360dp" />
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="Send Fake Notification"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/divider"
+			tools:layout_conversion_absoluteHeight="19dp"
+			tools:layout_conversion_absoluteWidth="360dp" />
+
+		<EditText
+			android:id="@+id/fake_player"
+			android:layout_width="wrap_content"
+			android:layout_height="48dp"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:ems="6"
+			android:hint="Player"
+			android:inputType="text"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/textView2"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="140dp" />
+
+		<EditText
+			android:id="@+id/fake_coop"
+			android:layout_width="wrap_content"
+			android:layout_height="48dp"
+			android:ems="6"
+			android:hint="Coop"
+			android:inputType="text"
+			app:layout_constraintStart_toEndOf="@+id/fake_player"
+			app:layout_constraintTop_toTopOf="@+id/fake_player"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="133dp" />
+
+		<Button
+			android:id="@+id/fake_send"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Send"
+			app:layout_constraintStart_toEndOf="@+id/fake_coop"
+			app:layout_constraintTop_toTopOf="@+id/fake_coop"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="88dp" />
+
+		<androidx.appcompat.widget.SwitchCompat
+			android:id="@+id/fakeType"
+			android:layout_width="wrap_content"
+			android:layout_height="48dp"
+			android:layout_marginTop="4dp"
+			android:text="Send CR?"
+			app:layout_constraintStart_toStartOf="@+id/fake_player"
+			app:layout_constraintTop_toBottomOf="@+id/fake_player"
+			tools:layout_conversion_absoluteHeight="48dp"
+			tools:layout_conversion_absoluteWidth="360dp" />
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -67,7 +67,7 @@ public class NotificationHelper {
 		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
 		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE);
 
-		Intent editCoop = new Intent(ctx, EditCoopActivity.class);
+		Intent editCoop = new Intent(ctx, MainActivity.class);
 		//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		PendingIntent editCoopPending = PendingIntent.getActivity(ctx, 3, editCoop, PendingIntent.FLAG_IMMUTABLE);
 
@@ -85,22 +85,22 @@ public class NotificationHelper {
 				.setAutoCancel(false)
 				.setContentIntent(openMenuPending)
 				.addAction(
-						android.R.drawable.arrow_up_float,
+						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
 						"Send Tokens",
 						sendPending
 				).addAction(
-						android.R.drawable.edit_text,
+						androidx.appcompat.R.drawable.abc_btn_colored_material,
 						"Edit Coop",
 						editCoopPending
 				).addAction(
-						android.R.drawable.edit_text,
+						androidx.appcompat.R.drawable.abc_ic_ab_back_material,
 						"Copy Report",
 						quickRefreshPending
 				).build();
-		
+
 		sendNotification(ACTIONS_ID, note);
 	}
-	
+
 	public void sendNormalActions(String report) {
 		Intent openMenu = new Intent(ctx, MainActivity.class);
 		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
@@ -134,20 +134,28 @@ public class NotificationHelper {
 				.setAutoCancel(false)
 				.setContentIntent(openMenuPending)
 				.addAction(
-						android.R.drawable.arrow_up_float,
+						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
 						"Sink 1 Token",
 						send1Pending
 				).addAction(
-						android.R.drawable.edit_text,
+						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
 						"Sink Tokens",
 						sendPending
 				).addAction(
-						android.R.drawable.edit_text,
+						android.R.drawable.ic_menu_rotate,
 						"Refresh",
 						quickRefreshPending
 				).build();
-		
+
 		sendNotification(ACTIONS_ID, note);
+	}
+
+	public void sendActions(Coop coop) {
+		Intent openMenu = new Intent(ctx, MainActivity.class);
+		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
+		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 11, openMenu, PendingIntent.FLAG_IMMUTABLE);
+
+		
 	}
 
 	public void sendFake(String player, String coop, boolean isCR) {
@@ -169,7 +177,7 @@ public class NotificationHelper {
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //				.setGroup("fake-coop-2001")
 				.build();
-		
+
 		int id = new Random().nextInt();
 		sendNotification(id, note);
 	}
@@ -202,7 +210,7 @@ public class NotificationHelper {
 
 		NotificationManagerCompat.from(ctx).notify(id, note);
 	}
-	
+
 	public void ensurePermissions() {
 		if (ActivityCompat.checkSelfPermission(
 				ctx,

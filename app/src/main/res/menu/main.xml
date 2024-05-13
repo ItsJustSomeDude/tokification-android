@@ -5,17 +5,17 @@
 	tools:context="net.itsjustsomedude.tokens.ListCoopsActivity">
 
 	<item
-		android:id="@+id/mainSettings"
-		android:icon="@android:drawable/ic_menu_preferences"
-		android:orderInCategory="100"
-		android:title="Settings"
-		app:showAsAction="ifRoom" />
-
-	<item
 		android:id="@+id/mainRefresh"
 		android:icon="@android:drawable/ic_menu_rotate"
 		android:orderInCategory="100"
 		android:title="Refresh"
+		app:showAsAction="ifRoom" />
+
+	<item
+		android:id="@+id/mainSettings"
+		android:orderInCategory="200"
+		android:icon="@android:drawable/ic_menu_more"
+		android:title="Settings"
 		app:showAsAction="ifRoom" />
 
 </menu>

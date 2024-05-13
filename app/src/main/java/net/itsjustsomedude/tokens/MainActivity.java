@@ -5,27 +5,24 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 	private static final String TAG = "Main";
-
 	private ActivityMainBinding binding;
-
 	public static final String PREFERENCES = "Prefs";
-
-	Coop coop;
+	private ActivityResultLauncher<Intent> activityCallback;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
 		notifications.createChannels();
 		notifications.ensurePermissions();
-		
+
 		if (!NotificationReader.verifyServiceRunning(this)) {
 			this.finish();
 			return;
@@ -44,111 +41,20 @@ public class MainActivity extends AppCompatActivity {
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
-		
-		//TODO: remove after adding these options.
-		binding.CopyDReport.setEnabled(false);
-		binding.mainEditEvents.setEnabled(false);
 
-		Database db = new Database(this);
-		coop = db.fetchSelectedCoop();
-		db.close();
-
-		if (coop != null) {
-			binding.selectedCoop.setText("Selected Coop: " + coop.name);
-			
-			if (coop.sinkMode) {
-				notifications.sendSinkActions();
-				binding.mainCurrentReport.setVisibility(View.GONE);
-				binding.mainReportsButtons.setVisibility(View.VISIBLE);
-			} else {
-			    binding.mainCurrentReport.setVisibility(View.VISIBLE);
-				binding.mainReportsButtons.setVisibility(View.GONE);
-						
-			    String report = new ReportBuilder(coop, "You").normalReport();
-			    binding.mainCurrentReport.setText(report);
-			    notifications.sendNormalActions(report);
-            }
-		} else {
-			binding.selectedCoop.setText("No Coop Selected!");
-			
-			binding.mainSend.setEnabled(false);
-			binding.CopyReport.setEnabled(false);
-			binding.CopyDReport.setEnabled(false);
-
-			//binding.mainEdit.setText("Create Coop");
-		}
-
-		binding.mainSend.setOnClickListener(view -> {
-			if (coop.sinkMode)
-				SendTokensActivity.sendTokens(this);
-			else
-				SendTokensActivity.sinkTokens(this, 2);
+		activityCallback = SimpleDialogs.registerActivityCallback(this, result -> {
+			renderCoop();
 		});
 
-		binding.CopyReport.setOnClickListener(view -> {
-			SendTokensActivity.copyReport(this, true);
-		});
+		renderCoop();
 
-		// detailed report...
-
-		ActivityResultLauncher<Intent> returnHandler = registerForActivityResult(
-				new ActivityResultContracts.StartActivityForResult(),
-				result -> {
-					//if (result.getResultCode() != Activity.RESULT_OK) return;
-
-					Database db2 = new Database(this);
-					coop = db2.fetchSelectedCoop();
-				    db2.close();
-					if (coop != null) {
-						binding.selectedCoop.setText("Selected Coop: " + coop.name);
-					    
-					    if (coop.sinkMode) {
-							notifications.sendSinkActions();
-							binding.mainCurrentReport.setVisibility(View.GONE);
-						    binding.mainReportsButtons.setVisibility(View.VISIBLE);
-						} else {
-						    binding.mainCurrentReport.setVisibility(View.VISIBLE);
-						    binding.mainReportsButtons.setVisibility(View.GONE);
-						
-						    String report = new ReportBuilder(coop, "You").normalReport();
-						    binding.mainCurrentReport.setText(report);
-						    notifications.sendNormalActions(report);
-					    }
-					} else {
-						binding.selectedCoop.setText("No Coop Selected!");
-
-						binding.mainSend.setEnabled(false);
-						binding.CopyReport.setEnabled(false);
-						binding.CopyDReport.setEnabled(false);
-
-						binding.mainEdit.setEnabled(false);
-					}
-				}
-		);
-
-		binding.mainEdit.setOnClickListener(view -> {
-			Intent edit = new Intent(this, EditCoopActivity.class);
-			if (coop != null)
-				edit.putExtra(EditCoopActivity.EDIT_ID, Long.toString(coop.id));
-			returnHandler.launch(edit);
-		});
-
-		// Edit Events...
-
-		binding.mainSwitchCoop.setOnClickListener(view -> {
-			returnHandler.launch(new Intent(this, ListCoopsActivity.class));
-		});
-
-		SharedPreferences sharedPref = getSharedPreferences(
-				PREFERENCES,
-				Context.MODE_PRIVATE
-		);
+		SharedPreferences sharedPref = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
 		String savedName = sharedPref.getString("PlayerName", "");
 		binding.mainPlayerName.setText(savedName);
 		binding.mainSaveName.setOnClickListener(view -> {
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putString("PlayerName", binding.mainPlayerName.getText().toString());
-			editor.apply();
+			sharedPref.edit()
+					.putString("PlayerName", binding.mainPlayerName.getText().toString())
+					.apply();
 
 			Toast.makeText(this, "Player Name Saved.", Toast.LENGTH_SHORT).show();
 		});
@@ -167,6 +73,17 @@ public class MainActivity extends AppCompatActivity {
 		});
 	}
 
+	private void renderCoop() {
+		SharedPreferences sharedPref = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+		long selectedCoop = sharedPref.getLong("SelectedCoop", 0);
+
+		CoopInfoFragment fragment = CoopInfoFragment.newInstance(selectedCoop);
+		FragmentManager manager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = manager.beginTransaction();
+		fragmentTransaction.add(R.id.fragmentContainerView, fragment);
+		fragmentTransaction.commit();
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -178,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.mainRefresh) {
 			SendTokensActivity.refreshNotes(this);
+		} else if (id == R.id.mainSettings) {
+			startActivity(new Intent(this, ListCoopsActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
 	}

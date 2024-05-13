@@ -14,10 +14,7 @@ public class Coop {
 	public Calendar startTime;
 	public Calendar endTime;
 	public ArrayList<Event> events;
-
 	public boolean sinkMode;
-
-	public boolean modified = false;
 
 	public Coop(long i, String n, Calendar s, Calendar e, boolean sinkMode, ArrayList<Event> ev) {
 		this.id = i;
@@ -31,7 +28,7 @@ public class Coop {
 	public void addEvent(Event toAdd) {
 		this.events.add(toAdd);
 	}
-	
+
 	public String[] getPeople(String sinkName) {
 		ArrayList<String> out = new ArrayList<>();
 
@@ -49,8 +46,14 @@ public class Coop {
 				MainActivity.PREFERENCES,
 				Context.MODE_PRIVATE
 		);
-		SharedPreferences.Editor edit = sharedPref.edit();
-		edit.putLong("SelectedCoop", id);
-		edit.apply();
+		sharedPref.edit().putLong("SelectedCoop", id).apply();
+	}
+
+	public static long getSelectedCoop(Context ctx) {
+		SharedPreferences sharedPref = ctx.getSharedPreferences(
+				MainActivity.PREFERENCES,
+				Context.MODE_PRIVATE
+		);
+		return sharedPref.getLong("SelectedCoop", 0);
 	}
 }
