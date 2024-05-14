@@ -43,7 +43,7 @@
 			app:layout_constraintBottom_toBottomOf="@+id/coop_name"
 			app:layout_constraintStart_toEndOf="@+id/coop_name"
 			app:layout_constraintTop_toTopOf="@+id/coop_name"
-			app:srcCompat="@android:drawable/ic_menu_edit" />
+			app:srcCompat="@drawable/edit" />
 
 		<Button
 			android:id="@+id/events_edit"
@@ -63,7 +63,7 @@
 			app:layout_constraintBottom_toBottomOf="@+id/events_edit"
 			app:layout_constraintStart_toEndOf="@+id/events_edit"
 			app:layout_constraintTop_toTopOf="@+id/events_edit"
-			app:srcCompat="@android:drawable/ic_menu_add" />
+			app:srcCompat="@drawable/send" />
 
 		<TextView
 			android:id="@+id/start_date_title"
@@ -137,16 +137,16 @@
 			android:text="@string/unset_button"
 			app:layout_constraintStart_toStartOf="@+id/end_time_title"
 			app:layout_constraintTop_toBottomOf="@+id/end_time_title" />
-		
+
 		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/mode_switch"
 			android:layout_width="wrap_content"
 			android:layout_height="48dp"
-			android:layout_marginStart="4dp"
+			android:layout_marginStart="8dp"
 			android:layout_marginTop="4dp"
 			android:text="Sink Mode"
-			android:textOn="Sink Mode"
 			android:textOff="Normal Mode"
+			android:textOn="Sink Mode"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/end_time_button" />
 

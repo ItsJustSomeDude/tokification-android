@@ -57,7 +57,7 @@ public class EditEventActivity extends AppCompatActivity {
 		boolean autoSend = b.getBooleanExtra(PARAM_AUTO_SEND, false);
 		long coopId = b.getLongExtra(PARAM_COOP_ID, 0);
 		int defaultCount = b.getIntExtra(PARAM_COUNT, 6);
-		
+
 		if (refresh) {
 			try {
 				NotificationReader.processNotifications();
@@ -67,30 +67,30 @@ public class EditEventActivity extends AppCompatActivity {
 				Toast.makeText(this, "Failed to refresh!", Toast.LENGTH_SHORT).show();
 			}
 		}
-		
+
 		coop = database.fetchCoop(coopId);
 
 		if (autoSend) {
 			if (coop.sinkMode) {
 				Toast.makeText(this, "Auto send doesn't work in Sink Mode.", Toast.LENGTH_LONG).show();
 			} else {
-			    if (defaultCount == 0) {
-				    Toast.makeText(this, "Tell Dude that not all defaults were set!", Toast.LENGTH_LONG).show();
-				    return;
-			    }
+				if (defaultCount == 0) {
+					Toast.makeText(this, "Tell Dude that not all defaults were set!", Toast.LENGTH_LONG).show();
+					return;
+				}
 
-			    Event newEvent = database.createEvent(coop.name, "", openedAt, defaultCount, "received", "Sink");
-			    coop.addEvent(newEvent);
+				Event newEvent = database.createEvent(coop.name, "", openedAt, defaultCount, "received", "Sink");
+				coop.addEvent(newEvent);
 
-			    Toast.makeText(
-					    this,
-					    "Recorded: Sink received " + defaultCount,
-					    Toast.LENGTH_SHORT
-			    ).show();
+				Toast.makeText(
+						this,
+						"Recorded: Sink received " + defaultCount,
+						Toast.LENGTH_SHORT
+				).show();
 
 				updateNote();
-			    this.finish();
-			    return;
+				this.finish();
+				return;
 			}
 		}
 
@@ -152,17 +152,11 @@ public class EditEventActivity extends AppCompatActivity {
 			this.finish();
 		});
 	}
-	
+
 	private void updateNote() {
-		NotificationHelper nh = new NotificationHelper(this);
-	    if (coop.sinkMode)
-			nh.sendSinkActions();
-		else {
-			String report = new ReportBuilder(coop, "You").normalReport();
-			nh.sendNormalActions(report);
-		}
+		new NotificationHelper(this).sendActions(coop);
 	}
-	
+
 	public static void sendTokens(Context ctx, long coopId) {
 		Intent intent = new Intent(ctx, EditEventActivity.class);
 		intent.putExtra(PARAM_COOP_ID, coopId);

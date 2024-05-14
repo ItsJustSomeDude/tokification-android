@@ -5,10 +5,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+
 import net.itsjustsomedude.tokens.databinding.SettingsActivityBinding;
 
 public class SettingsActivity extends AppCompatActivity {
-	
+
 	private SettingsActivityBinding binding;
 
 	@Override
@@ -16,10 +17,11 @@ public class SettingsActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		binding = SettingsActivityBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
-		//setSupportActionBar(binding.toolbar);
-		// binding.appbar.setDisplayHomeAsUpEnabled(true);
+		setSupportActionBar(binding.toolbar);
+		ActionBar bar = getSupportActionBar();
+		if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 		setTitle("Options");
-		
+
 		if (savedInstanceState == null) {
 			getSupportFragmentManager()
 					.beginTransaction()

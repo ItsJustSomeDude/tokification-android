@@ -1,176 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:fillViewport="true"
 	tools:context=".MainActivity">
 
-	<com.google.android.material.appbar.AppBarLayout
-		android:id="@+id/appbar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
-
-		<com.google.android.material.appbar.MaterialToolbar
-			android:id="@+id/toolbar"
-			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize"
-			android:background="@color/colorPrimary"
-			app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
-
-	</com.google.android.material.appbar.AppBarLayout>
-
 	<androidx.constraintlayout.widget.ConstraintLayout
-		android:id="@+id/scrollView"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="1.0"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/appbar"
-		app:layout_constraintVertical_bias="1.0">
+		android:layout_height="match_parent">
 
-		<TextView
-			android:id="@+id/no_coop_selected"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="4dp"
-			android:layout_marginTop="4dp"
-			android:text="@string/no_coop_selected"
-			android:visibility="gone"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
-
-		<androidx.fragment.app.FragmentContainerView
-			android:id="@+id/fragmentContainerView"
+		<com.google.android.material.appbar.AppBarLayout
+			android:id="@+id/appbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/no_coop_selected" />
+			app:layout_constraintTop_toTopOf="parent">
 
-		<View
-			android:id="@+id/divider"
+			<com.google.android.material.appbar.MaterialToolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:background="@color/colorPrimary"
+				app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+
+		</com.google.android.material.appbar.AppBarLayout>
+
+		<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
-			android:layout_height="3dp"
-			android:layout_marginTop="4dp"
-			android:background="?android:attr/listDivider"
+			android:layout_height="0dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="1.0"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/mainAutoDismiss"
-			tools:layout_conversion_absoluteHeight="3dp"
-			tools:layout_conversion_absoluteWidth="360dp" />
+			app:layout_constraintTop_toBottomOf="@+id/appbar">
 
-		<EditText
-			android:id="@+id/mainPlayerName"
-			android:layout_width="0dp"
-			android:layout_height="48dp"
-			android:layout_marginStart="4dp"
-			android:layout_marginTop="4dp"
-			android:ems="12"
-			android:hint="Player Name"
-			android:inputType="text"
-			android:singleLine="true"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/divider2"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="261dp" />
+			<TextView
+				android:id="@+id/no_coop_selected"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:text="@string/no_coop_selected"
+				android:visibility="gone"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-		<Button
-			android:id="@+id/mainSaveName"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Save"
-			app:layout_constraintStart_toEndOf="@+id/mainPlayerName"
-			app:layout_constraintTop_toTopOf="@+id/mainPlayerName"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="99dp" />
+			<androidx.fragment.app.FragmentContainerView
+				android:id="@+id/fragmentContainerView"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/no_coop_selected" />
 
-		<androidx.appcompat.widget.SwitchCompat
-			android:id="@+id/mainAutoDismiss"
-			android:layout_width="0dp"
-			android:layout_height="48dp"
-			android:layout_marginStart="4dp"
-			android:layout_marginTop="4dp"
-			android:text="Auto Dismiss Notifications"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/mainPlayerName"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="360dp" />
+			<View
+				android:id="@+id/divider"
+				android:layout_width="match_parent"
+				android:layout_height="3dp"
+				android:layout_marginTop="4dp"
+				android:background="?android:attr/listDivider"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/mainAutoDismiss"
+				tools:layout_conversion_absoluteHeight="3dp"
+				tools:layout_conversion_absoluteWidth="360dp" />
 
-		<View
-			android:id="@+id/divider2"
-			android:layout_width="match_parent"
-			android:layout_height="3dp"
-			android:layout_marginTop="4dp"
-			android:background="?android:attr/listDivider"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView"
-			tools:layout_conversion_absoluteHeight="3dp"
-			tools:layout_conversion_absoluteWidth="360dp" />
+			<EditText
+				android:id="@+id/mainPlayerName"
+				android:layout_width="0dp"
+				android:layout_height="48dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:ems="12"
+				android:hint="Player Name"
+				android:inputType="text"
+				android:singleLine="true"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/divider2"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="261dp" />
 
-		<TextView
-			android:id="@+id/textView2"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="4dp"
-			android:layout_marginTop="4dp"
-			android:text="Send Fake Notification"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/divider"
-			tools:layout_conversion_absoluteHeight="19dp"
-			tools:layout_conversion_absoluteWidth="360dp" />
+			<Button
+				android:id="@+id/mainSaveName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Save"
+				app:layout_constraintStart_toEndOf="@+id/mainPlayerName"
+				app:layout_constraintTop_toTopOf="@+id/mainPlayerName"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="99dp" />
 
-		<EditText
-			android:id="@+id/fake_player"
-			android:layout_width="wrap_content"
-			android:layout_height="48dp"
-			android:layout_marginStart="4dp"
-			android:layout_marginTop="4dp"
-			android:ems="6"
-			android:hint="Player"
-			android:inputType="text"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/textView2"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="140dp" />
+			<androidx.appcompat.widget.SwitchCompat
+				android:id="@+id/mainAutoDismiss"
+				android:layout_width="0dp"
+				android:layout_height="48dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:text="Auto Dismiss Notifications"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/mainPlayerName"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="360dp" />
 
-		<EditText
-			android:id="@+id/fake_coop"
-			android:layout_width="wrap_content"
-			android:layout_height="48dp"
-			android:ems="6"
-			android:hint="Coop"
-			android:inputType="text"
-			app:layout_constraintStart_toEndOf="@+id/fake_player"
-			app:layout_constraintTop_toTopOf="@+id/fake_player"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="133dp" />
+			<View
+				android:id="@+id/divider2"
+				android:layout_width="match_parent"
+				android:layout_height="3dp"
+				android:layout_marginTop="4dp"
+				android:background="?android:attr/listDivider"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView"
+				tools:layout_conversion_absoluteHeight="3dp"
+				tools:layout_conversion_absoluteWidth="360dp" />
 
-		<Button
-			android:id="@+id/fake_send"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Send"
-			app:layout_constraintStart_toEndOf="@+id/fake_coop"
-			app:layout_constraintTop_toTopOf="@+id/fake_coop"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="88dp" />
+			<TextView
+				android:id="@+id/textView2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:text="Send Fake Notification"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/divider"
+				tools:layout_conversion_absoluteHeight="19dp"
+				tools:layout_conversion_absoluteWidth="360dp" />
 
-		<androidx.appcompat.widget.SwitchCompat
-			android:id="@+id/fakeType"
-			android:layout_width="wrap_content"
-			android:layout_height="48dp"
-			android:layout_marginTop="4dp"
-			android:text="Send CR?"
-			app:layout_constraintStart_toStartOf="@+id/fake_player"
-			app:layout_constraintTop_toBottomOf="@+id/fake_player"
-			tools:layout_conversion_absoluteHeight="48dp"
-			tools:layout_conversion_absoluteWidth="360dp" />
+			<EditText
+				android:id="@+id/fake_player"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:ems="6"
+				android:hint="Player"
+				android:inputType="text"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/textView2"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="140dp"
+				android:autofillHints="" />
 
+			<EditText
+				android:id="@+id/fake_coop"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:ems="6"
+				android:hint="Coop"
+				android:inputType="text"
+				app:layout_constraintStart_toEndOf="@+id/fake_player"
+				app:layout_constraintTop_toTopOf="@+id/fake_player"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="133dp" />
+
+			<Button
+				android:id="@+id/fake_send"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Send"
+				app:layout_constraintStart_toEndOf="@+id/fake_coop"
+				app:layout_constraintTop_toTopOf="@+id/fake_coop"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="88dp" />
+
+			<androidx.appcompat.widget.SwitchCompat
+				android:id="@+id/fakeType"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:layout_marginTop="4dp"
+				android:text="Send CR?"
+				app:layout_constraintStart_toStartOf="@+id/fake_player"
+				app:layout_constraintTop_toBottomOf="@+id/fake_player"
+				tools:layout_conversion_absoluteHeight="48dp"
+				tools:layout_conversion_absoluteWidth="360dp" />
+
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -6,7 +6,7 @@
 
 	<item
 		android:id="@+id/main_refresh"
-		android:icon="@android:drawable/ic_menu_rotate"
+		android:icon="@drawable/refresh"
 		android:orderInCategory="100"
 		android:title="Refresh"
 		app:showAsAction="ifRoom" />
@@ -14,7 +14,7 @@
 	<item
 		android:id="@+id/main_settings"
 		android:orderInCategory="200"
-		android:icon="@android:drawable/ic_menu_preferences"
+		android:icon="@drawable/settings"
 		android:title="Settings"
 		app:showAsAction="ifRoom" />
 

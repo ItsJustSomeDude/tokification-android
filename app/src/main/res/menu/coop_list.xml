@@ -6,7 +6,7 @@
 
 	<item
 		android:id="@+id/add_coop"
-		android:icon="@android:drawable/ic_menu_add"
+		android:icon="@drawable/add"
 		android:orderInCategory="100"
 		android:title="Create Coop"
 		app:showAsAction="always" />
