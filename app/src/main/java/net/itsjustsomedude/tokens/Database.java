@@ -19,6 +19,17 @@ public class Database {
 	private final DatabaseHelper dbHelper;
 	private final Context context;
 	private final SQLiteDatabase database;
+	
+	final String[] eventCols = new String[]{
+		DatabaseHelper._ID,
+		DatabaseHelper.EVENT_COOP,
+		DatabaseHelper.EVENT_GROUP,
+		DatabaseHelper.EVENT_TIME,
+		DatabaseHelper.EVENT_COUNT,
+		DatabaseHelper.EVENT_PERSON,
+		DatabaseHelper.EVENT_DIR,
+		DatabaseHelper.EVENT_NOTE_ID
+	};
 
 	public Database(Context c) {
 		context = c;
@@ -70,6 +81,7 @@ public class Database {
 	public Coop createCoop() {
 		ContentValues cv = new ContentValues();
 		cv.put(DatabaseHelper.COOP_NAME, "New Coop");
+		cv.put(DatabaseHelper.COOP_GROUP, "KevID");
 		cv.put(DatabaseHelper.START_TIME, 0);
 		cv.put(DatabaseHelper.END_TIME, 0);
 		cv.put(DatabaseHelper.COOP_SINK_MODE, false);
@@ -79,8 +91,10 @@ public class Database {
 				null,
 				cv
 		);
+		
+		// TODO: Read default SinkMode from SP and set here.
 
-		return new Coop(newId, "New Coop", null, null, false, new ArrayList<>());
+		return new Coop(newId, "New Coop", "KevID", null, null, false, new ArrayList<>());
 	}
 
 	public void saveEvent(Event event) {
@@ -111,6 +125,7 @@ public class Database {
 
 		ContentValues cv = new ContentValues();
 		cv.put(DatabaseHelper.COOP_NAME, coop.name);
+		cv.put(DatabaseHelper.COOP_GROUP, coop.contract);
 		cv.put(DatabaseHelper.START_TIME, s);
 		cv.put(DatabaseHelper.END_TIME, e);
 		cv.put(DatabaseHelper.COOP_SINK_MODE, coop.sinkMode);
@@ -133,19 +148,10 @@ public class Database {
 		final String[] coopCols = new String[]{
 				DatabaseHelper._ID,
 				DatabaseHelper.COOP_NAME,
+			    DatabaseHelper.COOP_GROUP,
 				DatabaseHelper.START_TIME,
 				DatabaseHelper.END_TIME,
 				DatabaseHelper.COOP_SINK_MODE
-		};
-		final String[] eventCols = new String[]{
-				DatabaseHelper._ID,
-				DatabaseHelper.EVENT_COOP,
-				DatabaseHelper.EVENT_GROUP,
-				DatabaseHelper.EVENT_TIME,
-				DatabaseHelper.EVENT_COUNT,
-				DatabaseHelper.EVENT_PERSON,
-				DatabaseHelper.EVENT_DIR,
-				DatabaseHelper.EVENT_NOTE_ID
 		};
 
 		Cursor coop = database.query(
@@ -158,10 +164,8 @@ public class Database {
 		}
 		coop.moveToFirst();
 
-		ArrayList<Event> evs = new ArrayList<>();
-
 		Calendar start;
-		if (coop.getLong(2) == 0)
+		if (coop.getLong(3) == 0)
 			start = null;
 		else {
 			start = Calendar.getInstance();
@@ -169,85 +173,26 @@ public class Database {
 		}
 
 		Calendar end;
-		if (coop.getLong(3) == 0)
+		if (coop.getLong(4) == 0)
 			end = null;
 		else {
 			end = Calendar.getInstance();
 			end.setTimeInMillis(coop.getLong(3) * 1000L);
 		}
-
-		// If start time is unset, get everything from the past 2 days.
-		long effectiveStart;
-		if (coop.getLong(2) == 0) {
-			// Get beginning of yesterday
-			Calendar altStart = Calendar.getInstance();
-			altStart.add(Calendar.DAY_OF_MONTH, -1);
-			altStart.set(Calendar.HOUR_OF_DAY, 0);
-			altStart.set(Calendar.MINUTE, 0);
-			altStart.set(Calendar.SECOND, 0);
-			altStart.set(Calendar.MILLISECOND, 0);
-
-			effectiveStart = altStart.getTimeInMillis() / 1000L;
-		} else {
-			effectiveStart = coop.getLong(2);
-		}
-
-		long effectiveEnd;
-		if (coop.getLong(3) == 0) {
-			// Get 72 hours past the start time
-			effectiveEnd = effectiveStart + 60 * 60 * 72;
-		} else {
-			effectiveEnd = coop.getLong(3);
-		}
-
-		Cursor events = database.query(
-				DatabaseHelper.EVENTS_TABLE,
-				eventCols,
-				DatabaseHelper.EVENT_COOP + " = '" + coop.getString(1) + "' AND " +
-						DatabaseHelper.EVENT_TIME + " BETWEEN " + effectiveStart + " AND " + effectiveEnd,
-				null, null, null, null);
-		if (events != null && events.moveToFirst()) {
-
-			// TODO: A bandaid fix for duplicated events!
-			long prevTime = 0;
-			String prevPlayer = "";
-
-			do {
-				Calendar t = Calendar.getInstance();
-				t.setTimeInMillis(events.getLong(3) * 1000L);
-
-				if (t.getTimeInMillis() == prevTime && prevPlayer.equals(events.getString(5))) {
-					continue;
-				} else {
-					prevTime = t.getTimeInMillis();
-					prevPlayer = events.getString(5);
-				}
-
-				if (start == null || t.before(start)) {
-					start = t;
-				}
-
-				evs.add(new Event(
-						events.getLong(0),
-						events.getString(1),
-						events.getString(2),
-						t,
-						events.getInt(4),
-						events.getString(5),
-						events.getString(6),
-						events.getInt(7)
-				));
-			} while (events.moveToNext());
-
-			events.close();
-		}
+		
+		ArrayList<Event> evs = fetchEventList(coop.getString(1), coop.getString(2));
+		
+		Event firstEvent = evs.size() > 0 ? evs.get(0) : null;
+		if (firstEvent != null && firstEvent.time.before(start))
+		    start = firstEvent.time;
 
 		Coop newCoop = new Coop(
 				coop.getLong(0),
 				coop.getString(1),
+			    coop.getString(2),
 				start,
 				end,
-				coop.getInt(4) == 1,
+				coop.getInt(5) == 1,
 				evs
 		);
 		coop.close();
@@ -266,42 +211,78 @@ public class Database {
 		}
 		return cursor;
 	}
-
-	public Coop fetchSelectedCoop() {
-		SharedPreferences sharedPref = context.getSharedPreferences(
-				MainActivity.PREFERENCES,
-				Context.MODE_PRIVATE
-		);
-		long selectedCoop = sharedPref.getLong("SelectedCoop", -1);
-
-		if (selectedCoop == -1) {
-			return null;
+	
+	public Cursor fetchEvents(String coop, String contract) {
+		// TODO: Sort by date...
+		Cursor events = database.query(
+				DatabaseHelper.EVENTS_TABLE,
+				eventCols,
+				DatabaseHelper.EVENT_COOP + " = '" + coop + "' AND " +
+					DatabaseHelper.EVENT_GROUP + " = '" + contract + "'",
+				null, null, null, null);
+		if (events != null) events.moveToFirst();
+		return events;
+	}
+	
+	public ArrayList<Event> fetchEventList(String coop, String contract) {
+        ArrayList<Event> out = new ArrayList<>();
+		
+		Cursor event = fetchEvents(coop, contract);
+		
+		if (event == null || event.getCount() < 1 || !event.moveToFirst()) {
+			if (event != null) event.close();
+			return out;
 		}
+		
+		// TODO: A bandaid fix for duplicated events!
+		long prevTime = 0;
+		String prevPlayer = "";
 
-		return fetchCoop(selectedCoop);
+		do  {
+            Calendar t = Calendar.getInstance();
+		    t.setTimeInMillis(event.getLong(3) * 1000L);
+
+			// Moar bandaid!
+            if (t.getTimeInMillis() == prevTime && prevPlayer.equals(event.getString(5))) {
+			    continue;
+		    } else {
+				prevTime = t.getTimeInMillis();
+			    prevPlayer = event.getString(5);
+		    }
+
+		    out.add(new Event(
+			    event.getLong(0),
+			    event.getString(1),
+			    event.getString(2),
+			    t,
+			    event.getInt(4),
+			    event.getString(5),
+			    event.getString(6),
+			    event.getInt(7)
+		    ));
+	    } while (event.moveToNext());
+
+		event.close();
+		
+		return out;
 	}
 
-//	public Coop fetchCoopByName(String name) {
-//		Cursor coop = database.query(
-//				DatabaseHelper.COOPS_TABLE,
-//				new String[]{DatabaseHelper._ID},
-//				DatabaseHelper.COOP_NAME + " = '" + name + "'",
-//				null,
-//				null,
-//				null,
-//				DatabaseHelper._ID + " DESC",
-//				"1"
-//		);
-//		if (coop == null || coop.getCount() < 1 || coop.getColumnCount() < 1) return null;
-//		coop.moveToFirst();
-//		long id = coop.getLong(0);
-//		coop.close();
-//		return fetchCoop(id);
-//	}
-
 	public void deleteCoop(long _id, boolean deleteEvents) {
+		Coop toDelete = fetchCoop(_id);
+		
+		if (toDelete == null) return;
+		
+		String coop = toDelete.name;
+		String contract = toDelete.contract;
+		
+		if (deleteEvents)
+		    database.delete(
+				DatabaseHelper.EVENTS_TABLE,
+			    DatabaseHelper.EVENT_COOP + " = '" + coop + "' AND " +
+					DatabaseHelper.EVENT_GROUP + " = '" + contract + "'",
+			    null
+			);
+		
 		database.delete(DatabaseHelper.COOPS_TABLE, DatabaseHelper._ID + " = " + _id, null);
-
-		// TODO: Clean up left-over Events.
 	}
 }

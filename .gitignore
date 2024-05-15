@@ -1,3 +1,5 @@
+
+
 <<<<<<< HEAD
 # Gradle files
 .gradle/
@@ -116,3 +118,6 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 >>>>>>> master
+
+# AndroidIDE Open Files
+.androidide

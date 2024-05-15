@@ -44,17 +44,9 @@ public class ListCoopsActivity extends AppCompatActivity {
 			startActivity(new Intent(this, MainActivity.class));
 		});
 
-		adapter = new SimpleCursorAdapter(
-				this,
-				android.R.layout.simple_list_item_2,
-				coops,
-				new String[]{DatabaseHelper._ID, DatabaseHelper.COOP_NAME},
-				new int[]{android.R.id.text1, android.R.id.text2},
-				0);
-		adapter.notifyDataSetChanged();
-
 		binding.listView.setEmptyView(binding.empty);
-		binding.listView.setAdapter(adapter);
+		
+		render();
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
 			SharedPreferences sharedPref = getSharedPreferences(MainActivity.PREFERENCES, Context.MODE_PRIVATE);
@@ -75,7 +67,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 						database.deleteCoop(viewId, true);
 						coops = database.fetchCoops();
 
-						adapter.notifyDataSetChanged();
+						render();
 					},
 					"No",
 					v -> {
@@ -85,13 +77,26 @@ public class ListCoopsActivity extends AppCompatActivity {
 						database.deleteCoop(viewId, false);
 						coops = database.fetchCoops();
 
-						adapter.notifyDataSetChanged();
+						render();
 					}
 			);
 
 			// Consume the event.
 			return true;
 		});
+	}
+	
+	private void render() {
+		adapter = new SimpleCursorAdapter(
+				this,
+				android.R.layout.simple_list_item_2,
+				coops,
+				new String[]{DatabaseHelper._ID, DatabaseHelper.COOP_NAME},
+				new int[]{android.R.id.text1, android.R.id.text2},
+				0);
+		adapter.notifyDataSetChanged();
+
+		binding.listView.setAdapter(adapter);
 	}
 
 	@Override

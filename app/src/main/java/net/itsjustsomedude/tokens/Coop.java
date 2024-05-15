@@ -11,14 +11,16 @@ public class Coop {
 
 	public long id;
 	public String name;
+	public String contract;
 	public Calendar startTime;
 	public Calendar endTime;
 	public ArrayList<Event> events;
 	public boolean sinkMode;
 
-	public Coop(long i, String n, Calendar s, Calendar e, boolean sinkMode, ArrayList<Event> ev) {
+	public Coop(long i, String n, String c, Calendar s, Calendar e, boolean sinkMode, ArrayList<Event> ev) {
 		this.id = i;
 		this.name = n;
+		this.contract = c;
 		this.startTime = s;
 		this.endTime = e;
 		this.sinkMode = sinkMode;
@@ -37,6 +39,8 @@ public class Coop {
 		}
 
 		if (sinkName != null) out.add(sinkName);
+		
+		// TODO: Sort this list by the order of the first Received token.
 
 		return out.toArray(new String[0]);
 	}

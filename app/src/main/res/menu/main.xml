@@ -21,7 +21,7 @@
 	<item
 		android:id="@+id/main_select_coop"
 		android:orderInCategory="300"
-		android:icon="@android:drawable/ic_menu_more"
+		android:icon="@drawable/list"
 		android:title="Select Coop"
 		app:showAsAction="ifRoom" />
 

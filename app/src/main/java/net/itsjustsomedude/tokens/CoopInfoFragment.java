@@ -73,8 +73,7 @@ public class CoopInfoFragment extends Fragment {
 		}
 
 		activityCallback = registerActivityCallback(requireActivity(), result -> {
-			Database db = new Database(requireContext());
-			coop = db.fetchCoop(coopId);
+			coop = database.fetchCoop(coopId);
 			render();
 		});
 
@@ -108,8 +107,11 @@ public class CoopInfoFragment extends Fragment {
 			binding.innerLayout.setVisibility(View.GONE);
 			return;
 		}
-
-		//TODO: If non-sink mode, populate the report and hide Generate buttons.
+		
+		//TODO: This is not ideal, but wotks for now.
+		//Eventually, there should be a service to handle notifications,
+		//and that will make this less ugly.
+		new NotificationHelper(requireContext()).sendActions(coop);
 
 		binding.coopName.setText(coop.name);
 		binding.nameEdit.setOnClickListener(view ->
@@ -129,8 +131,13 @@ public class CoopInfoFragment extends Fragment {
 		);
 
 		String eventsButtonText = getString(R.string.edit_events, coop.events.size());
-		Log.i(TAG, eventsButtonText + coop.events.size());
 		binding.eventsEdit.setText(eventsButtonText);
+		binding.eventsEdit.setOnClickListener(view ->
+			activityCallback.launch(
+				new Intent(requireContext(), EventListActivity.class)
+				    .putExtra(EventListActivity.PARAM_COOP_ID, coop.id)
+			)
+		);
 		binding.eventsAdd.setOnClickListener(view ->
 				activityCallback.launch(
 						new Intent(requireContext(), EditEventActivity.class)

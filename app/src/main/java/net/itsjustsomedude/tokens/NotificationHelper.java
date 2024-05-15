@@ -72,12 +72,12 @@ public class NotificationHelper {
 		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE);
 
 		NotificationCompat.Builder note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
-				.setSmallIcon(android.R.drawable.ic_menu_compass)
+				.setSmallIcon(R.drawable.offline_bolt)
 				.setContentTitle(coop.name)
 				.setAutoCancel(false)
 				.setContentIntent(openMenuPending)
 				.addAction(
-						androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
+						R.drawable.send,
 						"Send Tokens",
 						sendPending
 				)
@@ -93,12 +93,13 @@ public class NotificationHelper {
 
 			note.setContentText("Click to open the menu.")
 					.addAction(
-							androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
+							R.drawable.copy,
 							"Copy Report",
 							copyPending
 					);
 		} else {
 			Intent sink1 = new Intent(ctx, EditEventActivity.class);
+			sink1.putExtra(EditEventActivity.PARAM_AUTO_SEND, true);
 			//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 3, sink1, PendingIntent.FLAG_IMMUTABLE);
 
@@ -111,11 +112,11 @@ public class NotificationHelper {
 			note.setContentText(report)
 					.setStyle(new NotificationCompat.BigTextStyle().bigText(report))
 					.addAction(
-							androidx.appcompat.R.drawable.abc_ic_menu_share_mtrl_alpha,
+							R.drawable.send,
 							"Send 1 Token",
 							sink1Pending
 					).addAction(
-							android.R.drawable.ic_menu_rotate,
+							R.drawable.refresh,
 							"Refresh",
 							refreshPending
 					);
@@ -124,7 +125,7 @@ public class NotificationHelper {
 		sendNotification(ACTIONS_ID, note.build());
 	}
 
-	public void sendFake(String player, String coop, boolean isCR) {
+	public void sendFake(String player, String coop, String kevId, boolean isCR) {
 		int rand = new Random().nextInt((20) + 1);
 		String textContent;
 		if (isCR) {
@@ -141,11 +142,13 @@ public class NotificationHelper {
 				.setContentTitle(isCR ? "\uD83D\uDC23 Gift Received" : "\uD83D\uDCE6 Gift Received")
 				.setContentText(textContent)
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//				.setGroup("fake-coop-2001")
+				.setGroup(kevId)
 				.build();
 
 		int id = new Random().nextInt();
 		sendNotification(id, note);
+		
+		// TODO: Send Group Notification... Ugh.
 	}
 
 	private void sendNotification(int id, Notification note) {

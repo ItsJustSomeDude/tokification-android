@@ -24,19 +24,15 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".SendTokensActivity"
+			android:name=".EditEventActivity"
 			android:exported="true"
 			android:noHistory="true"
 			android:theme="@style/DialogTheme.Dark" />
 		<activity
-			android:name=".WorkActivity"
-			android:exported="true"
-			android:theme="@style/TransparentTheme" />
-		<activity
-			android:name=".EditCoopActivity"
-			android:exported="false" />
-		<activity
 			android:name=".ListCoopsActivity"
+			android:exported="true" />
+		<activity
+			android:name=".EventListActivity"
 			android:exported="true" />
 
 		<service

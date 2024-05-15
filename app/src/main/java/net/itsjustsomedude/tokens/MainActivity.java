@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 			notifications.sendFake(
 					binding.fakePlayer.getText().toString(),
 					binding.fakeCoop.getText().toString(),
+					binding.fakeContract.getText().toString(),
 					binding.fakeType.isChecked());
 		});
 	}

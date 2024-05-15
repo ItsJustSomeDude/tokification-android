@@ -148,31 +148,34 @@
 				android:hint="Coop"
 				android:inputType="text"
 				app:layout_constraintStart_toEndOf="@+id/fake_player"
-				app:layout_constraintTop_toTopOf="@+id/fake_player"
-				tools:layout_conversion_absoluteHeight="48dp"
-				tools:layout_conversion_absoluteWidth="133dp" />
+				app:layout_constraintTop_toTopOf="@+id/fake_player" />
+			
+			<EditText
+				android:id="@+id/fake_contract"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:ems="6"
+				android:hint="Kev ID"
+				android:inputType="text"
+				app:layout_constraintStart_toEndOf="@+id/fake_coop"
+				app:layout_constraintTop_toTopOf="@+id/fake_coop" />
 
 			<Button
 				android:id="@+id/fake_send"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Send"
-				app:layout_constraintStart_toEndOf="@+id/fake_coop"
-				app:layout_constraintTop_toTopOf="@+id/fake_coop"
-				tools:layout_conversion_absoluteHeight="48dp"
-				tools:layout_conversion_absoluteWidth="88dp" />
+				app:layout_constraintStart_toEndOf="@+id/fake_contract"
+				app:layout_constraintTop_toTopOf="@+id/fake_contract" />
 
 			<androidx.appcompat.widget.SwitchCompat
-				android:id="@+id/fakeType"
+				android:id="@+id/fake_type"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_marginTop="4dp"
 				android:text="Send CR?"
 				app:layout_constraintStart_toStartOf="@+id/fake_player"
-				app:layout_constraintTop_toBottomOf="@+id/fake_player"
-				tools:layout_conversion_absoluteHeight="48dp"
-				tools:layout_conversion_absoluteWidth="360dp" />
-
+				app:layout_constraintTop_toBottomOf="@+id/fake_player" />
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 

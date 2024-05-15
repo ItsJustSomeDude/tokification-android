@@ -13,6 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String _ID = "_id";
 	public static final String COOP_NAME = "CoopName";
+	public static final String COOP_GROUP = "Contract";
 	public static final String START_TIME = "StartTime";
 	public static final String END_TIME = "EndTime";
 	public static final String COOP_SINK_MODE = "SinkMode";
@@ -27,12 +28,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	static final String DB_NAME = "Coops.db";
 
-	static final int VERSION = 9;
+	static final int VERSION = 10;
 
 	private static final String CREATE_COOPS_TABLE = "CREATE TABLE IF NOT EXISTS " +
 			COOPS_TABLE + "(" +
 			_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 			COOP_NAME + " TEXT NOT NULL, " +
+			COOP_GROUP + " TEXT, " +
 			START_TIME + " INTEGER, " +
 			END_TIME + " INTEGER, " +
 			COOP_SINK_MODE + " INTEGER DEFAULT 0);";

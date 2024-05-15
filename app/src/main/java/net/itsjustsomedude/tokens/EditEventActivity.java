@@ -56,6 +56,7 @@ public class EditEventActivity extends AppCompatActivity {
 		boolean refresh = b.getBooleanExtra(PARAM_REFRESH, false);
 		boolean autoSend = b.getBooleanExtra(PARAM_AUTO_SEND, false);
 		long coopId = b.getLongExtra(PARAM_COOP_ID, 0);
+		long eventId = b.getLongExtra(PARAM_EVENT_ID, 0);
 		int defaultCount = b.getIntExtra(PARAM_COUNT, 6);
 
 		if (refresh) {
@@ -69,7 +70,11 @@ public class EditEventActivity extends AppCompatActivity {
 		}
 
 		coop = database.fetchCoop(coopId);
-
+		
+		if (eventId == 0) {
+			// Hide all irrelevant things.
+		}
+		
 		if (autoSend) {
 			if (coop.sinkMode) {
 				Toast.makeText(this, "Auto send doesn't work in Sink Mode.", Toast.LENGTH_LONG).show();
@@ -79,7 +84,7 @@ public class EditEventActivity extends AppCompatActivity {
 					return;
 				}
 
-				Event newEvent = database.createEvent(coop.name, "", openedAt, defaultCount, "received", "Sink");
+				Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, defaultCount, "received", "Sink");
 				coop.addEvent(newEvent);
 
 				Toast.makeText(
