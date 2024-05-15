@@ -8,6 +8,7 @@
 	<string name="fake_channel_name">Debug</string>
 	<string name="fake_channel_desc">Channel for fake Egg Inc notifications</string>
 
+	<string name="all_coop_info">Coop: %1$s, Contract: %1$s</string>
 	<string name="no_coop_selected">No Coop Selected!</string>
 	<string name="no_coops">No Coops! Add one by clicking (+)</string>
 	<string name="generate_report">Generate</string>

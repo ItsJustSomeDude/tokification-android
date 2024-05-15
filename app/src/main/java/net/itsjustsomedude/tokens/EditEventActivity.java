@@ -26,7 +26,6 @@ public class EditEventActivity extends AppCompatActivity {
 	public static final String PARAM_COUNT = "Count";
 	public static final String PARAM_REFRESH = "Refresh";
 	public static final String PARAM_AUTO_SEND = "AutoSend";
-	public static final String PARAM_UPDATE_NOTIFICATION = "RefreshNote";
 
 	private ActivityEditEventBinding binding;
 
@@ -70,11 +69,11 @@ public class EditEventActivity extends AppCompatActivity {
 		}
 
 		coop = database.fetchCoop(coopId);
-		
+
 		if (eventId == 0) {
 			// Hide all irrelevant things.
 		}
-		
+
 		if (autoSend) {
 			if (coop.sinkMode) {
 				Toast.makeText(this, "Auto send doesn't work in Sink Mode.", Toast.LENGTH_LONG).show();
@@ -118,21 +117,8 @@ public class EditEventActivity extends AppCompatActivity {
 		personAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		binding.personSpinner.setAdapter(personAdapter);
 
-		String[] numberOptions = new String[10];
-		for (int i = 0; i < 10; i++)
-			numberOptions[i] = i + 1 + "";
-		ArrayAdapter<String> numAdapter = new ArrayAdapter<>(
-				this,
-				android.R.layout.simple_spinner_item,
-				numberOptions);
-		// Supposed to fix a radio button quirk or something, idk.
-		numAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-		binding.sendCountDropdown.setAdapter(numAdapter);
-		binding.sendCountDropdown.setSelection(defaultCount - 1);
-
-		binding.sendButton.setOnClickListener(v -> {
-			int count = binding.sendCountDropdown.getSelectedItemPosition() + 1;
+		binding.buttonSave.setOnClickListener(v -> {
+			int count = Integer.parseInt(binding.count.getText().toString());
 			String person = (String) binding.personSpinner.getSelectedItem();
 
 			if (person.equals("+Other")) {
