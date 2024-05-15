@@ -9,13 +9,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 
+import java.util.Locale;
 import net.itsjustsomedude.tokens.databinding.ActivityEditEventBinding;
 
 public class EditEventActivity extends AppCompatActivity {
@@ -30,8 +34,12 @@ public class EditEventActivity extends AppCompatActivity {
 	private ActivityEditEventBinding binding;
 
 	private Coop coop;
+    private Event event;
 	private Database database;
 	private final Calendar openedAt = Calendar.getInstance();
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
+	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +54,11 @@ public class EditEventActivity extends AppCompatActivity {
 		database = new Database(this);
 
 		Intent b = getIntent();
-//		if (b == null) {
-//			Log.e(TAG, "No idea how this happened.");
-//			Toast.makeText(this, "Tell Dude: The Send Activity Launched wrongly.", Toast.LENGTH_LONG).show();
-//			return;
-//		}
+		if (b == null) {
+			Log.e(TAG, "No idea how this happened.");
+			Toast.makeText(this, "Tell Dude: The Send Activity Launched wrongly.", Toast.LENGTH_LONG).show();
+			return;
+		}
 
 		boolean refresh = b.getBooleanExtra(PARAM_REFRESH, false);
 		boolean autoSend = b.getBooleanExtra(PARAM_AUTO_SEND, false);
@@ -69,11 +77,7 @@ public class EditEventActivity extends AppCompatActivity {
 		}
 
 		coop = database.fetchCoop(coopId);
-
-		if (eventId == 0) {
-			// Hide all irrelevant things.
-		}
-
+		
 		if (autoSend) {
 			if (coop.sinkMode) {
 				Toast.makeText(this, "Auto send doesn't work in Sink Mode.", Toast.LENGTH_LONG).show();
@@ -97,9 +101,7 @@ public class EditEventActivity extends AppCompatActivity {
 				return;
 			}
 		}
-
-		binding.coopInfo.setText(coop.name + ", " + coop.id);
-
+		
 		String[] people;
 		if (coop.sinkMode) {
 			people = coop.getPeople("+Other");
@@ -116,9 +118,119 @@ public class EditEventActivity extends AppCompatActivity {
 		// Supposed to fix a radio button quirk or something, idk.
 		personAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		binding.personSpinner.setAdapter(personAdapter);
+		
+		String info = getString(R.string.all_coop_info, coop.name, coop.contract);
+		binding.coopInfo.setText(info);
+		
+		binding.dateButton.setOnClickListener(view ->
+				SimpleDialogs.datePicker(this, event.time, cal -> {
+					event.time = cal;
+					//render();
+					binding.dateButton.setText(
+					    dateFormat.format(event.time.getTime())
+					);
+					binding.timeButton.setText(
+					    timeFormat.format(event.time.getTime())
+					);
+				})
+		);
+
+		binding.timeButton.setOnClickListener(view ->
+				SimpleDialogs.timePicker(this, event.time, cal -> {
+					event.time = cal;
+					//render();
+					
+					binding.dateButton.setText(
+					    dateFormat.format(event.time.getTime())
+					);
+					binding.timeButton.setText(
+					    timeFormat.format(event.time.getTime())
+					);
+				})
+		);
+		
+		binding.personSpinner.setOnItemSelectedListener(
+			new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+					if (arg0.getItemAtPosition(position).equals("+Other"))
+					    binding.nameEntrySection.setVisibility(View.VISIBLE);
+					else
+					    binding.nameEntrySection.setVisibility(View.GONE);
+				}
+				
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					binding.nameEntrySection.setVisibility(View.GONE);
+				}
+			}
+		);
+		
+		binding.countPlus.setOnClickListener(view -> {
+			try {
+				int count = Integer.parseInt(binding.count.getText().toString());
+				binding.count.setText("" + (count + 1));
+			} catch (NumberFormatException e) {
+				Toast.makeText(this, "Enter a valid number!", Toast.LENGTH_SHORT).show();
+				return;
+			}
+		});
+
+		binding.countMinus.setOnClickListener(view -> {
+			try {
+				int count = Integer.parseInt(binding.count.getText().toString());
+				binding.count.setText("" + (count - 1));
+			} catch (NumberFormatException e) {
+				Toast.makeText(this, "Enter a valid number!", Toast.LENGTH_SHORT).show();
+				return;
+			}
+		});
+
+		if (eventId == 0) {
+			// Creating a new event.
+			// Hide all irrelevant things.
+			binding.directionToggle.setVisibility(View.GONE);
+			binding.sectionTime.setVisibility(View.GONE);
+			
+			binding.count.setText("" + defaultCount);
+		} else {
+		    for (Event ev : coop.events) {
+				if (ev.id == eventId) {
+					event = ev;
+				    break;
+				}
+			}
+		    if(event == null) {
+				Log.e(TAG, "Passed Event ID was not part of the passed Coop!");
+			    Toast.makeText(this, "Passed Event ID was not part of the passed Coop!", Toast.LENGTH_LONG).show();
+			    return;
+			}
+		
+			binding.directionToggle.setVisibility(View.VISIBLE);
+			binding.sectionTime.setVisibility(View.VISIBLE);
+			
+			binding.personSpinner.setSelection(Arrays.asList(people).indexOf(event.person));
+			binding.count.setText("" + event.count);
+			
+			binding.dateButton.setText(
+					dateFormat.format(event.time.getTime())
+			);
+			binding.timeButton.setText(
+					timeFormat.format(event.time.getTime())
+			);
+			
+			binding.directionToggle.setChecked(event.direction.equals("received"));
+		}
 
 		binding.buttonSave.setOnClickListener(v -> {
-			int count = Integer.parseInt(binding.count.getText().toString());
+				int count;
+				try {
+				    count = Integer.parseInt(binding.count.getText().toString());
+				} catch (NumberFormatException e) {
+					Toast.makeText(this, "Enter a valid number!", Toast.LENGTH_SHORT).show();
+					return;
+				}
+			
 			String person = (String) binding.personSpinner.getSelectedItem();
 
 			if (person.equals("+Other")) {
@@ -129,15 +241,28 @@ public class EditEventActivity extends AppCompatActivity {
 				Toast.makeText(this, "Select or enter a person!", Toast.LENGTH_SHORT).show();
 				return;
 			}
+				
+			if (eventId == 0) {
+				Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, count, "received", person);
+			    coop.addEvent(newEvent);
 
-			Event newEvent = database.createEvent(coop.name, "", openedAt, count, "received", person);
-			coop.addEvent(newEvent);
-
-			Toast.makeText(
-					this,
-					"Recorded: " + person + " received " + count,
-					Toast.LENGTH_SHORT
-			).show();
+			    Toast.makeText(
+					    this,
+					    "Recorded: " + person + " received " + count,
+					    Toast.LENGTH_SHORT
+			    ).show();
+			} else {
+				event.count = count;
+				event.person = person;
+				event.direction = binding.directionToggle.isChecked() ? "received" : "sent";
+					
+				database.saveEvent(event);
+				Toast.makeText(
+					    this,
+					    "Event Saved!",
+					    Toast.LENGTH_SHORT
+			    ).show();
+			}
 
 			if (!coop.sinkMode) updateNote();
 			this.finish();

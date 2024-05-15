@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import net.itsjustsomedude.tokens.databinding.ActivityEventListBinding;
 
@@ -18,7 +19,10 @@ public class EventListActivity extends AppCompatActivity {
 	Cursor events;
 	SimpleCursorAdapter adapter;
 	Database database;
+	long coopId;
 	Coop coop;
+	
+	ActivityResultLauncher<Intent> callbackHandler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +31,35 @@ public class EventListActivity extends AppCompatActivity {
 		binding = ActivityEventListBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
-		setTitle("Select Co-op");
+		setTitle("Select Event");
+		
+		callbackHandler = SimpleDialogs.registerActivityCallback(this, result -> {
+			coop = database.fetchCoop(coopId);
+		    events = database.fetchEvents(coop.name, coop.contract);
+				
+			adapter = new SimpleCursorAdapter(
+				this,
+				android.R.layout.simple_list_item_2,
+				events,
+			    new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
+				new int[]{android.R.id.text1, android.R.id.text2},
+				0
+		    );
+
+		    binding.listView.setAdapter(adapter);
+		});
 		
 		Intent b = getIntent();
+		coopId = b.getLongExtra(PARAM_COOP_ID, 0);
 
 		database = new Database(this);
-		coop = database.fetchCoop(b.getLongExtra(PARAM_COOP_ID, 0));
+		coop = database.fetchCoop(coopId);
 		events = database.fetchEvents(coop.name, coop.contract);
 
 		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
 		binding.toolbar.setNavigationOnClickListener(v -> {
 			startActivity(new Intent(this, MainActivity.class));
 		});
-		
-//		
 
 		adapter = new SimpleCursorAdapter(
 				this,
@@ -55,7 +74,10 @@ public class EventListActivity extends AppCompatActivity {
 		binding.listView.setAdapter(adapter);
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
-			startActivity(new Intent(this, MainActivity.class));
+			callbackHandler.launch(new Intent(this, EditEventActivity.class)
+					.putExtra(EditEventActivity.PARAM_EVENT_ID, viewId)
+					.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id)
+			);
 		});
 
 		binding.listView.setOnItemLongClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
@@ -73,12 +95,8 @@ public class EventListActivity extends AppCompatActivity {
 					"No",
 					v -> {
 					},
-					"Delete Keeping Events",
+					"",
 					v -> {
-//						database.deleteCoop(viewId, false);
-//						coops = database.fetchCoops();
-//
-//						adapter.notifyDataSetChanged();
 					}
 			);
 

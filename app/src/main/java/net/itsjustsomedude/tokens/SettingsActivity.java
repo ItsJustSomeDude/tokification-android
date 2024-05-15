@@ -6,16 +6,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
-import net.itsjustsomedude.tokens.databinding.SettingsActivityBinding;
+import net.itsjustsomedude.tokens.databinding.ActivitySettingsBinding;
 
 public class SettingsActivity extends AppCompatActivity {
 
-	private SettingsActivityBinding binding;
+	private ActivitySettingsBinding binding;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		binding = SettingsActivityBinding.inflate(getLayoutInflater());
+		binding = ActivitySettingsBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 		ActionBar bar = getSupportActionBar();
