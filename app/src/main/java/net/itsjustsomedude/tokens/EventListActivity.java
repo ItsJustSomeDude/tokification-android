@@ -5,23 +5,24 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
+
 import net.itsjustsomedude.tokens.databinding.ActivityEventListBinding;
 
 public class EventListActivity extends AppCompatActivity {
-	
+
 	public static final String PARAM_COOP_ID = "CoopId";
-	
-    ActivityEventListBinding binding;
+
+	ActivityEventListBinding binding;
 	Cursor events;
 	SimpleCursorAdapter adapter;
 	Database database;
 	long coopId;
 	Coop coop;
-	
+
 	ActivityResultLauncher<Intent> callbackHandler;
 
 	@Override
@@ -32,23 +33,23 @@ public class EventListActivity extends AppCompatActivity {
 		setContentView(binding.getRoot());
 		setSupportActionBar(binding.toolbar);
 		setTitle("Select Event");
-		
+
 		callbackHandler = SimpleDialogs.registerActivityCallback(this, result -> {
 			coop = database.fetchCoop(coopId);
-		    events = database.fetchEvents(coop.name, coop.contract);
-				
-			adapter = new SimpleCursorAdapter(
-				this,
-				android.R.layout.simple_list_item_2,
-				events,
-			    new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
-				new int[]{android.R.id.text1, android.R.id.text2},
-				0
-		    );
+			events = database.fetchEvents(coop.name, coop.contract);
 
-		    binding.listView.setAdapter(adapter);
+			adapter = new SimpleCursorAdapter(
+					this,
+					android.R.layout.simple_list_item_2,
+					events,
+					new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
+					new int[]{android.R.id.text1, android.R.id.text2},
+					0
+			);
+
+			binding.listView.setAdapter(adapter);
 		});
-		
+
 		Intent b = getIntent();
 		coopId = b.getLongExtra(PARAM_COOP_ID, 0);
 
@@ -65,7 +66,7 @@ public class EventListActivity extends AppCompatActivity {
 				this,
 				android.R.layout.simple_list_item_2,
 				events,
-			    new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
+				new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
 				new int[]{android.R.id.text1, android.R.id.text2},
 				0
 		);

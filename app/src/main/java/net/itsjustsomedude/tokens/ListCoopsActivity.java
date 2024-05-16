@@ -5,16 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -45,7 +41,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 		});
 
 		binding.listView.setEmptyView(binding.empty);
-		
+
 		render();
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
@@ -85,7 +81,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 			return true;
 		});
 	}
-	
+
 	private void render() {
 		adapter = new SimpleCursorAdapter(
 				this,

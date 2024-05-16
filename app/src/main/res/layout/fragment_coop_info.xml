@@ -21,28 +21,29 @@
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/innerLayout"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
 
 		<TextView
 			android:id="@+id/coop_name"
 			android:layout_width="wrap_content"
-			android:layout_height="48dp"
+			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
-			android:layout_marginTop="8dp"
-			android:text=""
 			android:textAppearance="@style/TextAppearance.AppCompat.Large"
+			app:layout_constraintBottom_toBottomOf="@+id/name_edit"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
+			app:layout_constraintTop_toTopOf="@+id/name_edit" />
 
 		<ImageButton
 			android:id="@+id/name_edit"
 			android:layout_width="wrap_content"
-			android:layout_height="0dp"
+			android:layout_height="48dp"
+			android:layout_marginTop="4dp"
 			android:adjustViewBounds="false"
 			android:contentDescription="Edit Coop Name"
-			app:layout_constraintBottom_toBottomOf="@+id/coop_name"
 			app:layout_constraintStart_toEndOf="@+id/coop_name"
-			app:layout_constraintTop_toTopOf="@+id/coop_name"
+			app:layout_constraintTop_toTopOf="parent"
 			app:srcCompat="@drawable/edit" />
 
 		<Button
@@ -53,7 +54,7 @@
 			android:layout_marginTop="4dp"
 			android:text="@string/edit_events"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/coop_name" />
+			app:layout_constraintTop_toBottomOf="@+id/contract_edit" />
 
 		<ImageButton
 			android:id="@+id/events_add"
@@ -184,6 +185,24 @@
 			android:layout_marginStart="8dp"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/mode_switch" />
+
+		<TextView
+			android:id="@+id/contract_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			app:layout_constraintBottom_toBottomOf="@+id/contract_edit"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/contract_edit" />
+
+		<ImageButton
+			android:id="@+id/contract_edit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="4dp"
+			android:src="@drawable/edit"
+			app:layout_constraintStart_toEndOf="@+id/contract_name"
+			app:layout_constraintTop_toBottomOf="@+id/name_edit" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -24,7 +23,7 @@ public class NotificationReader {
 	private static final List<String> ALLOWED_PACKAGES = Arrays.asList(
 			"com.auxbrain.egginc",
 			"net.itsjustsomedude.tokens",
-		    "net.itsjustsomedude.tokens.debug"
+			"net.itsjustsomedude.tokens.debug"
 	);
 
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");
@@ -183,7 +182,7 @@ public class NotificationReader {
 			// Quick early return before trying to open a DB connection if it will be un-necessary.
 			if (sbn.getPackageName() == null || !ALLOWED_PACKAGES.contains(sbn.getPackageName()))
 				return;
-			
+
 			Context ctx = _this.getApplicationContext();
 			boolean shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
 			Database db = new Database(ctx);

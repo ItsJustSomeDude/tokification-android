@@ -7,17 +7,16 @@ import static net.itsjustsomedude.tokens.SimpleDialogs.timePicker;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import net.itsjustsomedude.tokens.databinding.FragmentCoopInfoBinding;
 
@@ -107,8 +106,9 @@ public class CoopInfoFragment extends Fragment {
 			binding.innerLayout.setVisibility(View.GONE);
 			return;
 		}
-		
-		//TODO: This is not ideal, but wotks for now.
+
+		Log.i(TAG, "Test: " + coop.id);
+		//TODO: This is not ideal, but works for now.
 		//Eventually, there should be a service to handle notifications,
 		//and that will make this less ugly.
 		new NotificationHelper(requireContext()).sendActions(coop);
@@ -130,13 +130,30 @@ public class CoopInfoFragment extends Fragment {
 				)
 		);
 
+		binding.contractName.setText(coop.contract);
+		binding.contractEdit.setOnClickListener(view ->
+				textPicker(
+						requireContext(),
+						"Change Contract",
+						coop.contract,
+						str -> {
+							coop.contract = str;
+							database.saveCoop(coop);
+							// We need to re-fetch the coop because when the name is changed
+							// all the events need to be re-fetched.
+							coop = database.fetchCoop(coopId);
+							render();
+						}
+				)
+		);
+
 		String eventsButtonText = getString(R.string.edit_events, coop.events.size());
 		binding.eventsEdit.setText(eventsButtonText);
 		binding.eventsEdit.setOnClickListener(view ->
-			activityCallback.launch(
-				new Intent(requireContext(), EventListActivity.class)
-				    .putExtra(EventListActivity.PARAM_COOP_ID, coop.id)
-			)
+				activityCallback.launch(
+						new Intent(requireContext(), EventListActivity.class)
+								.putExtra(EventListActivity.PARAM_COOP_ID, coop.id)
+				)
 		);
 		binding.eventsAdd.setOnClickListener(view ->
 				activityCallback.launch(
@@ -198,14 +215,14 @@ public class CoopInfoFragment extends Fragment {
 					render();
 				})
 		);
-		
+
 		binding.modeSwitch.setChecked(coop.sinkMode);
 		binding.modeSwitch.setOnCheckedChangeListener((view, newState) -> {
 			coop.sinkMode = newState;
 			database.saveCoop(coop);
 			render();
 		});
-		
+
 		if (coop.sinkMode) {
 			binding.report.setVisibility(View.GONE);
 			binding.sinkReportSection.setVisibility(View.VISIBLE);
@@ -221,8 +238,7 @@ public class CoopInfoFragment extends Fragment {
 			if (binding.reportSelect.getSelectedItemPosition() == 0) {
 				String report = new ReportBuilder(coop, "Temp").sinkReport();
 				ReportBuilder.copyText(requireContext(), report);
-			}
-			else
+			} else
 				Toast.makeText(requireContext(), "Not implemented yet...", Toast.LENGTH_SHORT).show();
 		});
 	}

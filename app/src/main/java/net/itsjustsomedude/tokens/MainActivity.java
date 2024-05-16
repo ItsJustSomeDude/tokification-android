@@ -1,13 +1,11 @@
 package net.itsjustsomedude.tokens;
 
-import android.content.Intent;
-
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -96,10 +94,11 @@ public class MainActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.main_refresh) {
 			NotificationReader.processNotifications();
+			renderCoop();
 		} else if (id == R.id.main_settings) {
 			startActivity(new Intent(this, SettingsActivity.class));
-		} else if (id ==  R.id.main_select_coop) {
-			startActivity(new Intent(this, ListCoopsActivity.class));
+		} else if (id == R.id.main_select_coop) {
+			activityCallback.launch(new Intent(this, ListCoopsActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
 	}

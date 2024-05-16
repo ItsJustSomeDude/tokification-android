@@ -64,12 +64,14 @@ public class NotificationHelper {
 		// Third is Refresh if Normal mode.
 
 		Intent openMenu = new Intent(ctx, MainActivity.class);
-		//openMenu.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 11, openMenu, PendingIntent.FLAG_IMMUTABLE);
+		openMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 1, openMenu, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
+		Log.i(TAG, "Test inside: " + coop.id);
 		Intent send = new Intent(ctx, EditEventActivity.class);
-		//send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK /* | Intent.FLAG_ACTIVITY_CLEAR_TASK */);
-		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE);
+		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		send.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id);
+		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 		NotificationCompat.Builder note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
 				.setSmallIcon(R.drawable.offline_bolt)
@@ -88,8 +90,8 @@ public class NotificationHelper {
 
 		if (coop.sinkMode) {
 			Intent copy = new Intent(ctx, MainActivity.class);
-			//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent copyPending = PendingIntent.getActivity(ctx, 3, copy, PendingIntent.FLAG_IMMUTABLE);
+			copy.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			PendingIntent copyPending = PendingIntent.getActivity(ctx, 3, copy, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			note.setContentText("Click to open the menu.")
 					.addAction(
@@ -100,12 +102,15 @@ public class NotificationHelper {
 		} else {
 			Intent sink1 = new Intent(ctx, EditEventActivity.class);
 			sink1.putExtra(EditEventActivity.PARAM_AUTO_SEND, true);
-			//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 3, sink1, PendingIntent.FLAG_IMMUTABLE);
+			sink1.putExtra(EditEventActivity.PARAM_COUNT, 1);
+			sink1.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id);
+			sink1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 4, sink1, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			Intent refresh = new Intent(ctx, EditEventActivity.class);
-			//editCoop.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			PendingIntent refreshPending = PendingIntent.getActivity(ctx, 3, refresh, PendingIntent.FLAG_IMMUTABLE);
+			refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			refresh.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id);
+			PendingIntent refreshPending = PendingIntent.getActivity(ctx, 5, refresh, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			String report = new ReportBuilder(coop, "You").normalReport();
 
@@ -147,7 +152,7 @@ public class NotificationHelper {
 
 		int id = new Random().nextInt();
 		sendNotification(id, note);
-		
+
 		// TODO: Send Group Notification... Ugh.
 	}
 

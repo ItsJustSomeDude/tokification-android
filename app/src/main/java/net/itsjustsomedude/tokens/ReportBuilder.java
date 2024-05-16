@@ -3,7 +3,6 @@ package net.itsjustsomedude.tokens;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,8 +15,8 @@ public class ReportBuilder {
 
 	private final Coop coop;
 	private final String sinkName;
-	
-    boolean startEstimate;
+
+	boolean startEstimate;
 	boolean endEstimate;
 	boolean ended;
 	long nowEpoch;
@@ -31,7 +30,7 @@ public class ReportBuilder {
 	String endLine;
 	String tvalTable;
 	String futureTable;
-	
+
 	HashMap<String, Integer> tokensSent;
 	HashMap<String, Integer> tokensRec;
 	HashMap<String, Double> tvalSent;
@@ -40,7 +39,7 @@ public class ReportBuilder {
 	public ReportBuilder(Coop coop, String sinkName) {
 		this.coop = coop;
 		this.sinkName = sinkName;
-		
+
 		refreshValues();
 	}
 
@@ -78,7 +77,7 @@ public class ReportBuilder {
 		tokensSent = new HashMap<>();
 		tokensRec = new HashMap<>();
 		tvalSent = new HashMap<>();
-	    tvalRec = new HashMap<>();
+		tvalRec = new HashMap<>();
 
 		for (String person : coop.getPeople(sinkName)) {
 			tokensSent.put(person, 0);
@@ -170,27 +169,27 @@ public class ReportBuilder {
 
 		return String.join("\n", out);
 	}
-	
+
 	public String normalReport() {
 		String est = "";
 		if (startEstimate)
 			est += "(Unknown Start)";
 		if (endEstimate)
-		    est += "(Assuming 12 hour duration)";
-		
+			est += "(Assuming 12 hour duration)";
+
 		double tvSent = tvalSent.getOrDefault(sinkName, 0d);
 		double tvRec = tvalRec.getOrDefault(sinkName, 0d);
 		int tSent = tokensSent.getOrDefault(sinkName, 0);
 		int tRec = tokensRec.getOrDefault(sinkName, 0);
-		
-		String[] out = new String[] {
-            String.format("Your ΔTVal: %s %s", round(tvSent - tvRec, 5), est),
-            String.format("TVal Now: %s %s", ended ? "Contract Complete!" : round(tvalNow, 5), est),
-            String.format("Sent TVal: %s (%s tokens)", round(tvSent, 5), tSent),
-            String.format("Received TVal: -%s (%s tokens)", round(tvRec, 4), tRec)
-        };
-		
-        return String.join("\n", out);
+
+		String[] out = new String[]{
+				String.format("Your ΔTVal: %s %s", round(tvSent - tvRec, 5), est),
+				String.format("TVal Now: %s %s", ended ? "Contract Complete!" : round(tvalNow, 5), est),
+				String.format("Sent TVal: %s (%s tokens)", round(tvSent, 5), tSent),
+				String.format("Received TVal: -%s (%s tokens)", round(tvRec, 4), tRec)
+		};
+
+		return String.join("\n", out);
 	}
 
 	private static double round(double input, int roundTo) {
@@ -217,10 +216,10 @@ public class ReportBuilder {
 
 		return tval(startTime, endTime, tokenTime, count);
 	}
-	
+
 	public static void copyText(Context ctx, String toCopy) {
-        ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("SinkReport", toCopy);
-        clipboard.setPrimaryClip(clip);
+		ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+		ClipData clip = ClipData.newPlainText("SinkReport", toCopy);
+		clipboard.setPrimaryClip(clip);
 	}
 }

@@ -39,7 +39,7 @@ public class Coop {
 		}
 
 		if (sinkName != null) out.add(sinkName);
-		
+
 		// TODO: Sort this list by the order of the first Received token.
 
 		return out.toArray(new String[0]);

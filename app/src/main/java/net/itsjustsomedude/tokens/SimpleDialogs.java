@@ -7,11 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.InputType;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResult;
@@ -21,7 +19,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Consumer;
 
 import java.util.Calendar;
-import java.util.function.BiConsumer;
 
 public class SimpleDialogs {
 	public static void datePicker(Context ctx, Calendar initialDate, Consumer<Calendar> callback) {
