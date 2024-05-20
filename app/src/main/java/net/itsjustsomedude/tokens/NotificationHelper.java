@@ -13,9 +13,11 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
@@ -107,9 +109,9 @@ public class NotificationHelper {
 			sink1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 4, sink1, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-			Intent refresh = new Intent(ctx, EditEventActivity.class);
+			Intent refresh = new Intent(ctx, RefreshActionsService.class);
 			refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			refresh.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id);
+			refresh.putExtra(RefreshActionsService.PARAM_COOP_ID, coop.id);
 			PendingIntent refreshPending = PendingIntent.getActivity(ctx, 5, refresh, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			String report = new ReportBuilder(coop, "You").normalReport();
@@ -153,7 +155,26 @@ public class NotificationHelper {
 		int id = new Random().nextInt();
 		sendNotification(id, note);
 
-		// TODO: Send Group Notification... Ugh.
+		Notification summaryNotification =
+				new NotificationCompat.Builder(ctx, FAKE_CHANNEL)
+						.setContentTitle("New messages")
+						// Set content text to support devices running API level < 24.
+						.setContentText("This holds all the fake Egg Inc Notifications.")
+						.setStyle(new NotificationCompat.BigTextStyle().bigText(
+								"If you summoned a Debug Notification and then dismissed it, this will stick around. It's safe to dismiss."
+						))
+						.setAutoCancel(true)
+						.setColor(ContextCompat.getColor(ctx, R.color.note_icon))
+						.setSmallIcon(android.R.drawable.star_off)
+						// Specify which group this notification belongs to.
+						.setGroup(kevId)
+						// Set this notification as the summary for the group.
+						.setGroupSummary(true)
+
+
+						.build();
+
+		sendNotification(128390, summaryNotification);
 	}
 
 	private void sendNotification(int id, Notification note) {

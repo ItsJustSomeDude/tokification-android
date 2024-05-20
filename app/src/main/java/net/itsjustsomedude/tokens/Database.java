@@ -214,7 +214,7 @@ public class Database {
 				eventCols,
 				DatabaseHelper.EVENT_COOP + " = '" + coop + "' AND " +
 						DatabaseHelper.EVENT_GROUP + " = '" + contract + "'",
-				null, null, null, DatabaseHelper.EVENT_TIME + " ASC");
+				null, null, null, DatabaseHelper.EVENT_TIME + " DESC");
 		if (events != null) events.moveToFirst();
 		return events;
 	}
@@ -279,5 +279,9 @@ public class Database {
 			);
 
 		database.delete(DatabaseHelper.COOPS_TABLE, DatabaseHelper._ID + " = " + _id, null);
+	}
+
+	public void deleteEvent(long _id) {
+		database.delete(DatabaseHelper.EVENTS_TABLE, DatabaseHelper._ID + " = " + _id, null);
 	}
 }

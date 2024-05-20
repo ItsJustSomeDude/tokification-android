@@ -72,8 +72,7 @@ public class CoopInfoFragment extends Fragment {
 		}
 
 		activityCallback = registerActivityCallback(requireActivity(), result -> {
-			coop = database.fetchCoop(coopId);
-			render();
+			refresh();
 		});
 
 	}
@@ -98,6 +97,12 @@ public class CoopInfoFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		binding = null;
+	}
+
+	public void refresh() {
+		// This refreshes the coop, then repaints.
+		coop = database.fetchCoop(coopId);
+		render();
 	}
 
 	private void render() {

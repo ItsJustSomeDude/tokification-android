@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -85,7 +86,7 @@ public class NotificationReader {
 
 		if (db.eventExists(id)) {
 			Log.i(TAG, "Skipping notification that has already been processed.");
-			if (shouldDismiss) removeNotification(n);
+			if (shouldDismiss) removeNotification(key);
 			return;
 		}
 
@@ -93,7 +94,7 @@ public class NotificationReader {
 			Log.i(TAG, "Processing CR");
 			// Count of 0 indicates a CR.
 			db.createEvent(coopName, group, when, 0, "sent", person, id);
-			if (shouldDismiss) removeNotification(n);
+			if (shouldDismiss) removeNotification(key);
 			return;
 		}
 
@@ -120,17 +121,19 @@ public class NotificationReader {
 		Log.i(TAG, "Added event from note:");
 		Log.i(TAG, text);
 
-		if (shouldDismiss) removeNotification(n);
+		if (shouldDismiss) removeNotification(key);
 	}
 
-	private static void removeNotification(StatusBarNotification n) {
-		// TODO: Comment this out in Prod.
-		// if (n.getPackageName().equals("com.auxbrain.egginc")) return;
-
+	private static void removeNotification(String key) {
 		NotificationService service = NotificationService.get();
 		if (service == null) return;
 
-		service.cancelNotification(n.getKey());
+		Handler dh = NotificationService.dismissHandler;
+		if (dh == null) return;
+
+		dh.postDelayed(() -> {
+			service.cancelNotification(key);
+		}, 10 * 1000);
 	}
 
 	private static void askToEnable(Context ctx, String message) {
@@ -150,6 +153,8 @@ public class NotificationReader {
 			return false;
 		} else {
 			if (NotificationService.get() == null) {
+//				ctx.startService(new Intent(ctx, net.itsjustsomedude.tokens.NotificationReader.NotificationService.class));
+
 				askToEnable(ctx, "The listener is not running! Make sure Tokification access is granted.");
 				return false;
 			}
@@ -160,6 +165,7 @@ public class NotificationReader {
 	// Listener service.
 	public static class NotificationService extends NotificationListenerService {
 		static NotificationService _this;
+		static Handler dismissHandler;
 
 		public static NotificationService get() {
 			return _this;
@@ -168,11 +174,13 @@ public class NotificationReader {
 		@Override
 		public void onListenerConnected() {
 			_this = this;
+			dismissHandler = new Handler();
 		}
 
 		@Override
 		public void onListenerDisconnected() {
 			_this = null;
+			dismissHandler = null;
 		}
 
 		@Override

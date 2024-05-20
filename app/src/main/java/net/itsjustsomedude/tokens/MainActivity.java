@@ -83,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
 		fragmentTransaction.commit();
 	}
 
+	private void refreshCoop() {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		CoopInfoFragment fragment = (CoopInfoFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
+		if (fragment != null) {
+			fragment.refresh();
+		}
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -94,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 		int id = item.getItemId();
 		if (id == R.id.main_refresh) {
 			NotificationReader.processNotifications();
-			renderCoop();
+			refreshCoop();
 		} else if (id == R.id.main_settings) {
 			startActivity(new Intent(this, SettingsActivity.class));
 		} else if (id == R.id.main_select_coop) {

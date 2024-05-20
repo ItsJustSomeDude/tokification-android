@@ -88,10 +88,10 @@ public class EventListActivity extends AppCompatActivity {
 					"Are you sure you want to delete this event?",
 					"Yes",
 					v -> {
-//						database.deleteCoop(viewId, true);
-//						coops = database.fetchCoops();
-//
-//						adapter.notifyDataSetChanged();
+						database.deleteEvent(viewId);
+						events = database.fetchEvents(coop.name, coop.contract);
+
+						adapter.notifyDataSetChanged();
 					},
 					"No",
 					v -> {

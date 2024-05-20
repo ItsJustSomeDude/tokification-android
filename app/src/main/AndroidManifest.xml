@@ -10,6 +10,11 @@
 		android:roundIcon="@mipmap/ic_launcher"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
+		<service
+			android:name=".RefreshActionsService"
+			android:enabled="true"
+			android:exported="true"></service>
+
 		<activity
 			android:name=".SettingsActivity"
 			android:exported="false"
