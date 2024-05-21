@@ -92,6 +92,10 @@ public class ListCoopsActivity extends AppCompatActivity {
 		binding.listView.setAdapter(adapter);
 	}
 
+	private void refresh() {
+
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.coop_list, menu);

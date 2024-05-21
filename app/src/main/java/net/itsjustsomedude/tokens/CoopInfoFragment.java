@@ -73,6 +73,7 @@ public class CoopInfoFragment extends Fragment {
 
 		activityCallback = registerActivityCallback(requireActivity(), result -> {
 			refresh();
+			render();
 		});
 
 	}
@@ -100,9 +101,8 @@ public class CoopInfoFragment extends Fragment {
 	}
 
 	public void refresh() {
-		// This refreshes the coop, then repaints.
+		// This refreshes the coop.
 		coop = database.fetchCoop(coopId);
-		render();
 	}
 
 	private void render() {
