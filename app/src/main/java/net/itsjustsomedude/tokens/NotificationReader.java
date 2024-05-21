@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
@@ -12,6 +13,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -36,7 +38,9 @@ public class NotificationReader {
 
 		Context ctx = notificationService.getApplicationContext();
 		Database db = new Database(ctx);
-		boolean shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
+		
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+		boolean shouldDismiss = sharedPreferences.getBoolean("auto_dismiss", false);
 
 		for (StatusBarNotification n : notifications) {
 			processNotification(db, n, shouldDismiss);
@@ -192,8 +196,11 @@ public class NotificationReader {
 				return;
 
 			Context ctx = _this.getApplicationContext();
-			boolean shouldDismiss = ctx.getSharedPreferences(MainActivity.PREFERENCES, Activity.MODE_PRIVATE).getBoolean("AutoDismiss", false);
 			Database db = new Database(ctx);
+			
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+		    boolean shouldDismiss = sharedPreferences.getBoolean("auto_dismiss", false);
+			
 			processNotification(db, sbn, shouldDismiss);
 			db.close();
 		}

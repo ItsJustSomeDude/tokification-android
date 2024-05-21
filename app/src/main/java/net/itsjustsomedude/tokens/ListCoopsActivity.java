@@ -45,10 +45,7 @@ public class ListCoopsActivity extends AppCompatActivity {
 		render();
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
-			SharedPreferences sharedPref = getSharedPreferences(MainActivity.PREFERENCES, Context.MODE_PRIVATE);
-			sharedPref.edit()
-					.putLong("SelectedCoop", viewId)
-					.apply();
+			Coop.setSelectedCoop(this, viewId);
 
 			startActivity(new Intent(this, MainActivity.class));
 		});

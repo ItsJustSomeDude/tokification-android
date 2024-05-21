@@ -22,6 +22,8 @@ public class RefreshActionsService extends Service {
 			String report = new ReportBuilder(coop, "Temp").sinkReport();
 			ReportBuilder.copyText(this, report);
 		}
+		
+		stopSelf();
 
 		return super.onStartCommand(intent, flags, startId);
 	}

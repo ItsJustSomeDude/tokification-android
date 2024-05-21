@@ -233,7 +233,7 @@ public class CoopInfoFragment extends Fragment {
 			binding.sinkReportSection.setVisibility(View.VISIBLE);
 			//TODO: Don't hard-code reports, set the ddl list here.
 		} else {
-			String report = new ReportBuilder(coop, "You").normalReport();
+			String report = new ReportBuilder(coop).normalReport();
 			binding.report.setText(report);
 			binding.report.setVisibility(View.VISIBLE);
 			binding.sinkReportSection.setVisibility(View.GONE);
@@ -241,7 +241,7 @@ public class CoopInfoFragment extends Fragment {
 
 		binding.reportGenerate.setOnClickListener(view -> {
 			if (binding.reportSelect.getSelectedItemPosition() == 0) {
-				String report = new ReportBuilder(coop, "Temp").sinkReport();
+				String report = ReportBuilder.makeBuilder(requireActivity(), coop).sinkReport();
 				ReportBuilder.copyText(requireContext(), report);
 			} else
 				Toast.makeText(requireContext(), "Not implemented yet...", Toast.LENGTH_SHORT).show();

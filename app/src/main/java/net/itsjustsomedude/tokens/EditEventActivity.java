@@ -31,7 +31,7 @@ public class EditEventActivity extends AppCompatActivity {
 	private ActivityEditEventBinding binding;
 
 	private Coop coop;
-	private Event event;
+	private Coop.Event event;
 	private Database database;
 	private final Calendar openedAt = Calendar.getInstance();
 
@@ -86,7 +86,7 @@ public class EditEventActivity extends AppCompatActivity {
 					return;
 				}
 
-				Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, defaultCount, "received", "Sink");
+				Coop.Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, defaultCount, "received", "Sink");
 				coop.addEvent(newEvent);
 
 				Toast.makeText(
@@ -190,7 +190,7 @@ public class EditEventActivity extends AppCompatActivity {
 
 			binding.count.setText(String.valueOf(defaultCount));
 		} else {
-			for (Event ev : coop.events) {
+			for (Coop.Event ev : coop.events) {
 				if (ev.id == eventId) {
 					event = ev;
 					break;
@@ -238,7 +238,7 @@ public class EditEventActivity extends AppCompatActivity {
 			}
 
 			if (eventId == 0) {
-				Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, count, "received", person);
+				Coop.Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, count, "received", person);
 				coop.addEvent(newEvent);
 
 				Toast.makeText(

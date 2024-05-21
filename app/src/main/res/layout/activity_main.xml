@@ -61,54 +61,6 @@
 				android:layout_marginTop="4dp"
 				android:background="?android:attr/listDivider"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/mainAutoDismiss"
-				tools:layout_conversion_absoluteHeight="3dp"
-				tools:layout_conversion_absoluteWidth="360dp" />
-
-			<EditText
-				android:id="@+id/mainPlayerName"
-				android:layout_width="0dp"
-				android:layout_height="48dp"
-				android:layout_marginStart="4dp"
-				android:layout_marginTop="4dp"
-				android:ems="12"
-				android:hint="Player Name"
-				android:inputType="text"
-				android:singleLine="true"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/divider2"
-				tools:layout_conversion_absoluteHeight="48dp"
-				tools:layout_conversion_absoluteWidth="261dp" />
-
-			<Button
-				android:id="@+id/mainSaveName"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="Save"
-				app:layout_constraintStart_toEndOf="@+id/mainPlayerName"
-				app:layout_constraintTop_toTopOf="@+id/mainPlayerName"
-				tools:layout_conversion_absoluteHeight="48dp"
-				tools:layout_conversion_absoluteWidth="99dp" />
-
-			<androidx.appcompat.widget.SwitchCompat
-				android:id="@+id/mainAutoDismiss"
-				android:layout_width="0dp"
-				android:layout_height="48dp"
-				android:layout_marginStart="4dp"
-				android:layout_marginTop="4dp"
-				android:text="Auto Dismiss Notifications"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/mainPlayerName"
-				tools:layout_conversion_absoluteHeight="48dp"
-				tools:layout_conversion_absoluteWidth="360dp" />
-
-			<View
-				android:id="@+id/divider2"
-				android:layout_width="match_parent"
-				android:layout_height="3dp"
-				android:layout_marginTop="4dp"
-				android:background="?android:attr/listDivider"
-				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView"
 				tools:layout_conversion_absoluteHeight="3dp"
 				tools:layout_conversion_absoluteWidth="360dp" />
@@ -160,14 +112,6 @@
 				app:layout_constraintStart_toEndOf="@+id/fake_coop"
 				app:layout_constraintTop_toTopOf="@+id/fake_coop" />
 
-			<Button
-				android:id="@+id/fake_send"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="Send"
-				app:layout_constraintStart_toEndOf="@+id/fake_contract"
-				app:layout_constraintTop_toTopOf="@+id/fake_contract" />
-
 			<androidx.appcompat.widget.SwitchCompat
 				android:id="@+id/fake_type"
 				android:layout_width="wrap_content"
@@ -176,6 +120,15 @@
 				android:text="Send CR?"
 				app:layout_constraintStart_toStartOf="@+id/fake_player"
 				app:layout_constraintTop_toBottomOf="@+id/fake_player" />
+			
+			<Button
+				android:id="@+id/fake_send"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Send"
+				android:layout_marginTop="4dp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/fake_type" />
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 

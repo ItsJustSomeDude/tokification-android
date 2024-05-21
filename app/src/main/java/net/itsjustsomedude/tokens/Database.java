@@ -48,11 +48,11 @@ public class Database {
 		return exists;
 	}
 
-	public Event createEvent(String coop, String group, Calendar time, int count, String direction, String person) {
+	public Coop.Event createEvent(String coop, String group, Calendar time, int count, String direction, String person) {
 		return createEvent(coop, group, time, count, direction, person, 0);
 	}
 
-	public Event createEvent(String coop, String group, Calendar time, int count, String direction, String person, int notification) {
+	public Coop.Event createEvent(String coop, String group, Calendar time, int count, String direction, String person, int notification) {
 		long t = time.getTimeInMillis() / 1000L;
 
 		ContentValues cv = new ContentValues();
@@ -70,7 +70,7 @@ public class Database {
 				cv
 		);
 
-		return new Event(newId, coop, group, time, count, person, direction, notification);
+		return new Coop.Event(newId, coop, group, time, count, person, direction, notification);
 	}
 
 	public Coop createCoop() {
@@ -92,7 +92,7 @@ public class Database {
 		return new Coop(newId, "New Coop", "KevID", null, null, false, new ArrayList<>());
 	}
 
-	public void saveEvent(Event event) {
+	public void saveEvent(Coop.Event event) {
 		long t = event.time.getTimeInMillis() / 1000L;
 
 		ContentValues cv = new ContentValues();
@@ -132,11 +132,11 @@ public class Database {
 				null
 		);
 
-		for (Event ev : coop.events) {
-			if (!ev.modified) continue;
-
-			saveEvent(ev);
-		}
+//		for (Coop.Event ev : coop.events) {
+//			if (!ev.modified) continue;
+//
+//			saveEvent(ev);
+//		}
 	}
 
 	public Coop fetchCoop(long _id) {
@@ -175,9 +175,9 @@ public class Database {
 			end.setTimeInMillis(coop.getLong(4) * 1000L);
 		}
 
-		ArrayList<Event> evs = fetchEventList(coop.getString(1), coop.getString(2));
+		ArrayList<Coop.Event> evs = fetchEventList(coop.getString(1), coop.getString(2));
 
-		Event firstEvent = !evs.isEmpty() ? evs.get(0) : null;
+		Coop.Event firstEvent = !evs.isEmpty() ? evs.get(0) : null;
 		if (firstEvent != null && firstEvent.time.before(start))
 			start = firstEvent.time;
 
@@ -219,8 +219,8 @@ public class Database {
 		return events;
 	}
 
-	public ArrayList<Event> fetchEventList(String coop, String contract) {
-		ArrayList<Event> out = new ArrayList<>();
+	public ArrayList<Coop.Event> fetchEventList(String coop, String contract) {
+		ArrayList<Coop.Event> out = new ArrayList<>();
 
 		Cursor event = fetchEvents(coop, contract);
 
@@ -245,7 +245,7 @@ public class Database {
 				prevPlayer = event.getString(5);
 			}
 
-			out.add(new Event(
+			out.add(new Coop.Event(
 					event.getLong(0),
 					event.getString(1),
 					event.getString(2),

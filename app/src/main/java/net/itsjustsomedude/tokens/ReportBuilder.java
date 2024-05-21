@@ -3,8 +3,10 @@ package net.itsjustsomedude.tokens;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,7 +37,24 @@ public class ReportBuilder {
 	HashMap<String, Integer> tokensRec;
 	HashMap<String, Double> tvalSent;
 	HashMap<String, Double> tvalRec;
+	
+	public static ReportBuilder makeBuilder(Context ctx, Coop coop) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String stringValue = sharedPreferences.getString("player_name", "You");
+		
+		return new ReportBuilder(coop, stringValue);
+	}
 
+	public ReportBuilder(Coop coop) {
+		this.coop = coop;
+		if (coop.sinkMode)
+		    this.sinkName = "Sink";
+		else
+		    this.sinkName = "You";
+
+		refreshValues();
+	}
+	
 	public ReportBuilder(Coop coop, String sinkName) {
 		this.coop = coop;
 		this.sinkName = sinkName;
@@ -88,7 +107,7 @@ public class ReportBuilder {
 
 		Log.i(TAG, "Number of events: " + coop.events.size());
 
-		for (Event ev : coop.events) {
+		for (Coop.Event ev : coop.events) {
 			long time = ev.time.getTimeInMillis() / 1000L;
 
 			double tv = tval(startEpoch, endEpoch, time, ev.count);

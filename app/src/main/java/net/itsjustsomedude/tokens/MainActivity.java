@@ -41,27 +41,10 @@ public class MainActivity extends AppCompatActivity {
 		setSupportActionBar(binding.toolbar);
 
 		activityCallback = SimpleDialogs.registerActivityCallback(this, result -> {
-			renderCoop();
+			refreshCoop();
 		});
 
 		renderCoop();
-
-		SharedPreferences sharedPref = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
-		String savedName = sharedPref.getString("PlayerName", "");
-		binding.mainPlayerName.setText(savedName);
-		binding.mainSaveName.setOnClickListener(view -> {
-			sharedPref.edit()
-					.putString("PlayerName", binding.mainPlayerName.getText().toString())
-					.apply();
-
-			Toast.makeText(this, "Player Name Saved.", Toast.LENGTH_SHORT).show();
-		});
-
-		boolean savedAutoDismiss = sharedPref.getBoolean("AutoDismiss", false);
-		binding.mainAutoDismiss.setChecked(savedAutoDismiss);
-		binding.mainAutoDismiss.setOnCheckedChangeListener((view, status) -> {
-			sharedPref.edit().putBoolean("AutoDismiss", status).apply();
-		});
 
 		binding.fakeSend.setOnClickListener(view -> {
 			notifications.sendFake(
@@ -73,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void renderCoop() {
-		SharedPreferences sharedPref = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
-		long selectedCoop = sharedPref.getLong("SelectedCoop", 0);
+		long selectedCoop = Coop.getSelectedCoop(this);
 
 		CoopInfoFragment fragment = CoopInfoFragment.newInstance(selectedCoop);
 		FragmentManager manager = getSupportFragmentManager();

@@ -46,6 +46,7 @@ public class Coop {
 	}
 
 	public static void setSelectedCoop(Context ctx, long id) {
+		// TODO: Replace with AndroidX preference.
 		SharedPreferences sharedPref = ctx.getSharedPreferences(
 				MainActivity.PREFERENCES,
 				Context.MODE_PRIVATE
@@ -54,10 +55,33 @@ public class Coop {
 	}
 
 	public static long getSelectedCoop(Context ctx) {
+		// TODO: ^^^^^^^^^
 		SharedPreferences sharedPref = ctx.getSharedPreferences(
 				MainActivity.PREFERENCES,
 				Context.MODE_PRIVATE
 		);
 		return sharedPref.getLong("SelectedCoop", 0);
+	}
+	
+	public static class Event {
+	    public long id;
+	    public Calendar time;
+	    public int count;
+	    public String coop;
+	    public String group;
+	    public String person;
+	    public String direction;
+	    public int notification;
+
+	    public Event(long _id, String coop, String group, Calendar time, int count, String person, String direction, int note) {
+		    this.id = _id;
+		    this.coop = coop;
+		    this.group = group;
+		    this.time = time;
+		    this.count = count;
+		    this.person = person;
+		    this.direction = direction;
+		    this.notification = note;
+	    }
 	}
 }
