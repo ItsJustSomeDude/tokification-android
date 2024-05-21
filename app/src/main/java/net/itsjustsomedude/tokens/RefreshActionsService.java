@@ -3,7 +3,6 @@ package net.itsjustsomedude.tokens;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 public class RefreshActionsService extends Service {
 	public static final String PARAM_COOP_ID = "CoopId";
@@ -22,7 +21,7 @@ public class RefreshActionsService extends Service {
 			String report = new ReportBuilder(coop, "Temp").sinkReport();
 			ReportBuilder.copyText(this, report);
 		}
-		
+
 		stopSelf();
 
 		return super.onStartCommand(intent, flags, startId);

@@ -1,6 +1,5 @@
 package net.itsjustsomedude.tokens;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -38,7 +38,7 @@ public class NotificationReader {
 
 		Context ctx = notificationService.getApplicationContext();
 		Database db = new Database(ctx);
-		
+
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 		boolean shouldDismiss = sharedPreferences.getBoolean("auto_dismiss", false);
 
@@ -55,13 +55,16 @@ public class NotificationReader {
 		String title = n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE) != null ?
 				Objects.requireNonNull(n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE)).toString()
 				: "";
-		String text = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT) != null ?
-				n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString() :
-				n.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT) != null ?
-						n.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT).toString() :
+
+		CharSequence bigText = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
+		CharSequence extraText = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
+
+		String text = bigText != null ?
+				bigText.toString() :
+				extraText != null ?
+						extraText.toString() :
 						"";
 
-//		String tag = "";
 		String group = n.getNotification().getGroup() != null ? n.getNotification().getGroup() : "";
 		Calendar when = Calendar.getInstance();
 		when.setTimeInMillis(n.getNotification().when);
@@ -197,10 +200,10 @@ public class NotificationReader {
 
 			Context ctx = _this.getApplicationContext();
 			Database db = new Database(ctx);
-			
+
 			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-		    boolean shouldDismiss = sharedPreferences.getBoolean("auto_dismiss", false);
-			
+			boolean shouldDismiss = sharedPreferences.getBoolean("auto_dismiss", false);
+
 			processNotification(db, sbn, shouldDismiss);
 			db.close();
 		}

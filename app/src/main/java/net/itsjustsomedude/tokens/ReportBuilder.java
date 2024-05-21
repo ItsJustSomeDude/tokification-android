@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,24 +38,24 @@ public class ReportBuilder {
 	HashMap<String, Integer> tokensRec;
 	HashMap<String, Double> tvalSent;
 	HashMap<String, Double> tvalRec;
-	
+
 	public static ReportBuilder makeBuilder(Context ctx, Coop coop) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String stringValue = sharedPreferences.getString("player_name", "You");
-		
+		String stringValue = sharedPreferences.getString("player_name", "You");
+
 		return new ReportBuilder(coop, stringValue);
 	}
 
 	public ReportBuilder(Coop coop) {
 		this.coop = coop;
 		if (coop.sinkMode)
-		    this.sinkName = "Sink";
+			this.sinkName = "Sink";
 		else
-		    this.sinkName = "You";
+			this.sinkName = "You";
 
 		refreshValues();
 	}
-	
+
 	public ReportBuilder(Coop coop, String sinkName) {
 		this.coop = coop;
 		this.sinkName = sinkName;
@@ -98,13 +99,6 @@ public class ReportBuilder {
 		tvalSent = new HashMap<>();
 		tvalRec = new HashMap<>();
 
-		for (String person : coop.getPeople(sinkName)) {
-			tokensSent.put(person, 0);
-			tokensRec.put(person, 0);
-			tvalSent.put(person, 0d);
-			tvalRec.put(person, 0d);
-		}
-
 		Log.i(TAG, "Number of events: " + coop.events.size());
 
 		for (Coop.Event ev : coop.events) {
@@ -112,20 +106,36 @@ public class ReportBuilder {
 
 			double tv = tval(startEpoch, endEpoch, time, ev.count);
 			if (ev.direction.equals("sent")) {
-				tokensSent.merge(ev.person, ev.count, Integer::sum);
-				tvalSent.merge(ev.person, tv, Double::sum);
-				tokensRec.merge(sinkName, ev.count, Integer::sum);
-				tvalRec.merge(sinkName, tv, Double::sum);
+				Integer i = tokensSent.get(ev.person);
+				tokensSent.put(ev.person, i == null ? ev.count : i + ev.count);
+
+				Double j = tvalSent.get(ev.person);
+				tvalSent.put(ev.person, j == null ? tv : j + tv);
+
+				Integer k = tokensRec.get(sinkName);
+				tokensRec.put(sinkName, k == null ? ev.count : k + ev.count);
+
+				Double l = tvalRec.get(ev.person);
+				tvalRec.put(sinkName, l == null ? tv : l + tv);
 			} else {
-				tokensRec.merge(ev.person, ev.count, Integer::sum);
-				tvalRec.merge(ev.person, tv, Double::sum);
-				tokensSent.merge(sinkName, ev.count, Integer::sum);
-				tvalSent.merge(sinkName, tv, Double::sum);
+				Integer k = tokensRec.get(ev.person);
+				tokensRec.put(ev.person, k == null ? ev.count : k + ev.count);
+
+				Double l = tvalRec.get(ev.person);
+				tvalRec.put(sinkName, l == null ? tv : l + tv);
+
+				Integer i = tokensSent.get(sinkName);
+				tokensSent.put(sinkName, i == null ? ev.count : i + ev.count);
+
+				Double j = tvalSent.get(ev.person);
+				tvalSent.put(ev.person, j == null ? tv : j + tv);
 			}
 		}
 
 		for (String person : coop.getPeople(sinkName)) {
-			double delta = tvalSent.get(person) - tvalRec.get(person);
+			Double sent = tvalSent.get(person);
+			Double rec = tvalRec.get(person);
+			double delta = (sent == null ? 0 : sent) - (rec == null ? 0 : rec);
 
 			Log.i(TAG, delta + " Delta");
 
@@ -134,9 +144,9 @@ public class ReportBuilder {
 					person,
 					delta,
 					tokensSent.get(person),
-					tvalSent.get(person),
+					sent,
 					tokensRec.get(person),
-					tvalRec.get(person) * -1
+					rec == null ? 0 : (rec * -1)
 			);
 			table.put(person, output);
 		}
@@ -196,16 +206,20 @@ public class ReportBuilder {
 		if (endEstimate)
 			est += "(Assuming 12 hour duration)";
 
-		double tvSent = tvalSent.getOrDefault(sinkName, 0d);
-		double tvRec = tvalRec.getOrDefault(sinkName, 0d);
-		int tSent = tokensSent.getOrDefault(sinkName, 0);
-		int tRec = tokensRec.getOrDefault(sinkName, 0);
+
+		Double tvSent = tvalSent.get(sinkName);
+		Double tvRec = tvalRec.get(sinkName);
+		Integer tSent = tokensSent.get(sinkName);
+		Integer tRec = tokensRec.get(sinkName);
+
+		double sent = (tvSent == null ? 0 : tvSent);
+		double rec = (tvRec == null ? 0 : tvRec);
 
 		String[] out = new String[]{
-				String.format("Your ΔTVal: %s %s", round(tvSent - tvRec, 5), est),
+				String.format("Your ΔTVal: %s %s", round(sent - rec, 5), est),
 				String.format("TVal Now: %s %s", ended ? "Contract Complete!" : round(tvalNow, 5), est),
-				String.format("Sent TVal: %s (%s tokens)", round(tvSent, 5), tSent),
-				String.format("Received TVal: -%s (%s tokens)", round(tvRec, 4), tRec)
+				String.format("Sent TVal: %s (%s tokens)", round(sent, 5), tSent),
+				String.format("Received TVal: -%s (%s tokens)", round(rec, 4), tRec)
 		};
 
 		return String.join("\n", out);
@@ -228,13 +242,13 @@ public class ReportBuilder {
 		return singleValue * count;
 	}
 
-	public static double tval(Calendar coopStart, Calendar coopEnd, Calendar token, int count) {
-		long tokenTime = token.getTimeInMillis() / 1000L;
-		long startTime = coopStart.getTimeInMillis() / 1000L;
-		long endTime = coopEnd.getTimeInMillis() / 1000L;
-
-		return tval(startTime, endTime, tokenTime, count);
-	}
+//	public static double tval(Calendar coopStart, Calendar coopEnd, Calendar token, int count) {
+//		long tokenTime = token.getTimeInMillis() / 1000L;
+//		long startTime = coopStart.getTimeInMillis() / 1000L;
+//		long endTime = coopEnd.getTimeInMillis() / 1000L;
+//
+//		return tval(startTime, endTime, tokenTime, count);
+//	}
 
 	public static void copyText(Context ctx, String toCopy) {
 		ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
