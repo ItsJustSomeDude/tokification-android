@@ -15,11 +15,11 @@ public class RefreshActionsService extends Service {
 		long coopId = intent.getLongExtra(PARAM_COOP_ID, 0);
 		Coop coop = db.fetchCoop(coopId);
 
-		new NotificationHelper(this).sendActions(coop);
-
 		if (coop.sinkMode) {
-			String report = new ReportBuilder(coop, "Temp").sinkReport();
+			String report = ReportBuilder.makeBuilder(this, coop).sinkReport();
 			ReportBuilder.copyText(this, report);
+		} else {
+			new NotificationHelper(this).sendActions(coop);
 		}
 
 		stopSelf();

@@ -30,9 +30,24 @@
 		</activity>
 		<activity
 			android:name=".EditEventActivity"
-			android:exported="true"
-			android:noHistory="true"
-			android:theme="@style/DialogTheme.Dark" />
+			android:theme="@style/DialogTheme.Dark"
+			android:taskAffinity=""
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+		
+		<activity
+			android:name=".SinkTokensActivity"
+			android:taskAffinity=""
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true" />
+		
+		<activity
+			android:name=".ReportCopyActivity"
+			android:taskAffinity=""
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true" />
+		
 		<activity
 			android:name=".ListCoopsActivity"
 			android:exported="true" />

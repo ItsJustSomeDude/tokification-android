@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -57,7 +58,7 @@ public class NotificationReader {
 				: "";
 
 		CharSequence bigText = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
-		CharSequence extraText = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
+		CharSequence extraText = n.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT);
 
 		String text = bigText != null ?
 				bigText.toString() :
@@ -79,7 +80,7 @@ public class NotificationReader {
 			return;
 		}
 
-		Log.i(TAG, "Processing note " + id + title + text);
+		Log.i(TAG, "Processing note " + group + id + title + text);
 
 		Matcher matches = personCoopRegex.matcher(text);
 		if (!matches.lookingAt() || matches.groupCount() < 2) {
@@ -181,7 +182,7 @@ public class NotificationReader {
 		@Override
 		public void onListenerConnected() {
 			_this = this;
-			dismissHandler = new Handler();
+			dismissHandler = new Handler(Looper.getMainLooper());
 		}
 
 		@Override

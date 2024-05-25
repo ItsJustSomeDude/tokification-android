@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<PreferenceCategory app:title="@string/settings_header">
 
@@ -8,7 +9,7 @@
 			app:useSimpleSummaryProvider="true" />
 
 		<ListPreference
-			app:defaultValue="nornmal"
+			app:defaultValue="normal"
 			app:entries="@array/default_mode_entries"
 			app:entryValues="@array/default_mode_values"
 			app:key="default_mode"
@@ -18,6 +19,15 @@
 		<SwitchPreferenceCompat
 			app:key="auto_dismiss"
 			app:title="@string/auto_dismiss_title" />
+		
+		<SwitchPreferenceCompat
+			android:enabled="false"
+			app:key="num_coops"
+			app:title="@string/num_coops_title" />
+		
+		<SwitchPreferenceCompat
+			app:key="enable_notification_debugger"
+			app:title="@string/notification_debugger_title" />
 		
 		<!-- <SwitchPreferenceCompat
 			app:dependency="sync"

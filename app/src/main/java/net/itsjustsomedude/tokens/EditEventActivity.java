@@ -3,6 +3,7 @@ package net.itsjustsomedude.tokens;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -20,14 +21,16 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class EditEventActivity extends AppCompatActivity {
-	private static final String TAG = "Event";
+	private static final String TAG = "EditEvent";
 
 	public static final String PARAM_COOP_ID = "CoopId";
 	public static final String PARAM_EVENT_ID = "EventId";
-	public static final String PARAM_COUNT = "Count";
-	public static final String PARAM_REFRESH = "Refresh";
-	public static final String PARAM_AUTO_SEND = "AutoSend";
 
+	// TODO: Replace Strings with android.util.DateFormat...
+	// will not be able to be Static after this change.
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
+	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+	
 	private ActivityEditEventBinding binding;
 
 	private Coop coop;
@@ -35,8 +38,16 @@ public class EditEventActivity extends AppCompatActivity {
 	private Database database;
 	private final Calendar openedAt = Calendar.getInstance();
 
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
-	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+	public static Intent makeCreateIntent(Context ctx, long coopId) {
+		return new Intent(ctx, EditEventActivity.class)
+		    .putExtra(PARAM_COOP_ID, coopId);
+	}
+	
+	public static Intent makeEditIntent(Context ctx, long coopId, long eventId) {
+		return new Intent(ctx, EditEventActivity.class)
+		    .putExtra(PARAM_COOP_ID, coopId)
+		    .putExtra(PARAM_EVENT_ID, eventId);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,49 +68,24 @@ public class EditEventActivity extends AppCompatActivity {
 			return;
 		}
 
-		boolean refresh = b.getBooleanExtra(PARAM_REFRESH, false);
-		boolean autoSend = b.getBooleanExtra(PARAM_AUTO_SEND, false);
+		// boolean refresh = b.getBooleanExtra(PARAM_REFRESH, false);
 		long coopId = b.getLongExtra(PARAM_COOP_ID, 0);
 		long eventId = b.getLongExtra(PARAM_EVENT_ID, 0);
-		int defaultCount = b.getIntExtra(PARAM_COUNT, 6);
 
-		if (refresh) {
-			try {
-				NotificationReader.processNotifications();
-				Toast.makeText(this, "Refreshed Notifications.", Toast.LENGTH_SHORT).show();
-			} catch (Exception err) {
-				Log.e(TAG, "Failed to get notifications.", err);
-				Toast.makeText(this, "Failed to refresh!", Toast.LENGTH_SHORT).show();
-			}
-		}
+		// TODO: Remove this I guess.
+//		if (refresh) {
+//			try {
+//				NotificationReader.processNotifications();
+//				Toast.makeText(this, "Refreshed Notifications.", Toast.LENGTH_SHORT).show();
+//			} catch (Exception err) {
+//				Log.e(TAG, "Failed to get notifications.", err);
+//				Toast.makeText(this, "Failed to refresh!", Toast.LENGTH_SHORT).show();
+//			}
+//		}
 
 		Log.i(TAG, "Getting Coop: " + coopId);
 		coop = database.fetchCoop(coopId);
 		Log.i(TAG, "Got Coop: " + coop);
-
-		if (autoSend) {
-			if (coop.sinkMode) {
-				Toast.makeText(this, "Auto send doesn't work in Sink Mode.", Toast.LENGTH_LONG).show();
-			} else {
-				if (defaultCount == 0) {
-					Toast.makeText(this, "Tell Dude that not all defaults were set!", Toast.LENGTH_LONG).show();
-					return;
-				}
-
-				Coop.Event newEvent = database.createEvent(coop.name, coop.contract, openedAt, defaultCount, "received", "Sink");
-				coop.addEvent(newEvent);
-
-				Toast.makeText(
-						this,
-						"Recorded: Sink received " + defaultCount,
-						Toast.LENGTH_SHORT
-				).show();
-
-				updateNote();
-				this.finish();
-				return;
-			}
-		}
 
 		String[] people;
 		if (coop.sinkMode) {
@@ -188,7 +174,7 @@ public class EditEventActivity extends AppCompatActivity {
 			binding.directionToggle.setVisibility(View.GONE);
 			binding.sectionTime.setVisibility(View.GONE);
 
-			binding.count.setText(String.valueOf(defaultCount));
+			binding.count.setText(String.valueOf(coop.sinkMode ? 6 : 2));
 		} else {
 			for (Coop.Event ev : coop.events) {
 				if (ev.id == eventId) {
@@ -259,25 +245,9 @@ public class EditEventActivity extends AppCompatActivity {
 				).show();
 			}
 
-			if (!coop.sinkMode) updateNote();
+			if (!coop.sinkMode)
+				new NotificationHelper(this).sendActions(coop);
 			this.finish();
 		});
-	}
-
-	private void updateNote() {
-		new NotificationHelper(this).sendActions(coop);
-	}
-
-	public static void sendTokens(Context ctx, long coopId) {
-		Intent intent = new Intent(ctx, EditEventActivity.class);
-		intent.putExtra(PARAM_COOP_ID, coopId);
-		ctx.startActivity(intent);
-	}
-
-	public static void sendTokens(Context ctx, long coopId, int count) {
-		Intent intent = new Intent(ctx, EditEventActivity.class);
-		intent.putExtra(PARAM_COOP_ID, coopId);
-		intent.putExtra(PARAM_COUNT, count);
-		ctx.startActivity(intent);
 	}
 }

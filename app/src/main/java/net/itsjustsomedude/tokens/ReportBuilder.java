@@ -115,27 +115,27 @@ public class ReportBuilder {
 				Integer k = tokensRec.get(sinkName);
 				tokensRec.put(sinkName, k == null ? ev.count : k + ev.count);
 
-				Double l = tvalRec.get(ev.person);
+				Double l = tvalRec.get(sinkName);
 				tvalRec.put(sinkName, l == null ? tv : l + tv);
 			} else {
 				Integer k = tokensRec.get(ev.person);
 				tokensRec.put(ev.person, k == null ? ev.count : k + ev.count);
 
 				Double l = tvalRec.get(ev.person);
-				tvalRec.put(sinkName, l == null ? tv : l + tv);
+				tvalRec.put(ev.person, l == null ? tv : l + tv);
 
 				Integer i = tokensSent.get(sinkName);
 				tokensSent.put(sinkName, i == null ? ev.count : i + ev.count);
 
-				Double j = tvalSent.get(ev.person);
-				tvalSent.put(ev.person, j == null ? tv : j + tv);
+				Double j = tvalSent.get(sinkName);
+				tvalSent.put(sinkName, j == null ? tv : j + tv);
 			}
 		}
 
 		for (String person : coop.getPeople(sinkName)) {
-			Double sent = tvalSent.get(person);
-			Double rec = tvalRec.get(person);
-			double delta = (sent == null ? 0 : sent) - (rec == null ? 0 : rec);
+			double sent = zeroIfNull(tvalSent.get(person));
+			double rec = zeroIfNull(tvalRec.get(person));
+			double delta = sent - rec;
 
 			Log.i(TAG, delta + " Delta");
 
@@ -143,10 +143,11 @@ public class ReportBuilder {
 					rowFormat,
 					person,
 					delta,
-					tokensSent.get(person),
+					zeroIfNull(tokensSent.get(person)),
 					sent,
-					tokensRec.get(person),
-					rec == null ? 0 : (rec * -1)
+					zeroIfNull(tokensRec.get(person)),
+				    // This looks odd, but it's to prevent -0.0 from showing up.
+					rec == 0 ? 0 : (rec * -1)
 			);
 			table.put(person, output);
 		}
@@ -198,6 +199,87 @@ public class ReportBuilder {
 
 		return String.join("\n", out);
 	}
+	
+	public String detailedReport() {
+        String header = "Elapse|# |D|Befor|Chang";
+        String rowFormat = "`{:6d}|{:2d}|{:1s}|{:5.2f}|{:s}{:4.2f}|`<t:{:s}:f>";
+
+        if (startEstimate || endEstimate)
+            return "Start and End times are required to generate detailed report!";
+
+        HashMap<String, ArrayList<String>> rows = new HashMap<>();
+        HashMap<String, Double> cums = new HashMap<>();
+
+        for (String person : coop.getPeople(sinkName)) {
+		    rows.put(person, new ArrayList<>());
+			cums.put(person, 0.0);
+	    }
+
+        for (Coop.Event ev : coop.events) {
+			long t = ev.time.getTimeInMillis() / 1000L;
+			long elapsedSeconds = t - startEpoch;
+			double tv = tval(startEpoch, endEpoch, t, ev.count);
+			
+			String direction = ev.direction.equals("sent")
+			    ? "→" : "←";
+			
+			String sign = ev.direction.equals("sent")
+			    ? "+" : "-";
+			
+			String row = String.format(Locale.US, rowFormat,
+				elapsedSeconds,
+				ev.count,
+				direction,
+				cums.get(ev.person),
+				sign,
+				tv,
+				t
+			);
+			
+			// add to row list
+			// add tv to cums
+		}
+		
+		
+		
+		return "";
+		
+//        t = ts(ev['time'])
+//        d = ev['direction']
+//        c = int(ev['count'])
+//        p = ev['player']
+//
+//        ela = t - start
+//        tv = tval(start, end, t, c)
+//
+//        sign = ""
+//        direction = "←"
+//        if ev['direction'] == 'sent':
+//            direction = "→"
+//            sign = "+"
+//        else:
+//            tv = tv * -1
+//
+//        # row = f"<t:{t}:f>`\t|{ela}|{c}|{direction}|{round(cums[p], 2)}|{sign}{round(tv, 2)}`"
+//        row = rowFormat.format(ela, c, direction, cums[p], sign, tv, f"<t:{t}:f>")
+//        rows[p].append(row)
+//
+//        cums[p] += tv
+//
+//    table = ["# __Tokification Detailed Report__",
+//        "Key:",
+//        "`Time (timeElapsed): count ↔ direction: runningDelta ±change`\n",
+//    ]
+//    for person in people:
+//        table.append(f"__{person}__")
+//        table.append(f"`{header}`")
+//        table.append("\n".join(rows[person]))
+//        table.append(f"Final TVal: `{round(cums[person], 2)}`")
+//        table.append("")
+//
+//    print(table)
+//    return "\n".join(table)
+	}
 
 	public String normalReport() {
 		String est = "";
@@ -207,19 +289,17 @@ public class ReportBuilder {
 			est += "(Assuming 12 hour duration)";
 
 
-		Double tvSent = tvalSent.get(sinkName);
-		Double tvRec = tvalRec.get(sinkName);
-		Integer tSent = tokensSent.get(sinkName);
-		Integer tRec = tokensRec.get(sinkName);
+		double tvSent = zeroIfNull(tvalSent.get(sinkName));
+		double tvRec = zeroIfNull(tvalRec.get(sinkName));
+		int tSent = zeroIfNull(tokensSent.get(sinkName));
+		int tRec = zeroIfNull(tokensRec.get(sinkName));
 
-		double sent = (tvSent == null ? 0 : tvSent);
-		double rec = (tvRec == null ? 0 : tvRec);
 
 		String[] out = new String[]{
-				String.format("Your ΔTVal: %s %s", round(sent - rec, 5), est),
+				String.format("Your ΔTVal: %s %s", round(tvSent - tvRec, 5), est),
 				String.format("TVal Now: %s %s", ended ? "Contract Complete!" : round(tvalNow, 5), est),
-				String.format("Sent TVal: %s (%s tokens)", round(sent, 5), tSent),
-				String.format("Received TVal: -%s (%s tokens)", round(rec, 4), tRec)
+				String.format("Sent TVal: %s (%s tokens)", round(tvSent, 5), tSent),
+				String.format("Received TVal: -%s (%s tokens)", round(tvRec, 4), tRec)
 		};
 
 		return String.join("\n", out);
@@ -249,7 +329,15 @@ public class ReportBuilder {
 //
 //		return tval(startTime, endTime, tokenTime, count);
 //	}
-
+	
+	private static Double zeroIfNull(Double input) {
+		return input == null ? 0 : input;
+	}
+	
+	private static Integer zeroIfNull(Integer input) {
+		return input == null ? 0 : input;
+	}
+	
 	public static void copyText(Context ctx, String toCopy) {
 		ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
 		ClipData clip = ClipData.newPlainText("SinkReport", toCopy);

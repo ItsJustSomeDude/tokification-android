@@ -22,7 +22,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="4dp"
 		android:layout_marginTop="4dp"
-		android:text="Select player"
+		android:text="@string/player_name_dropdown_title"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/coop_info" />
 
@@ -46,24 +46,24 @@
 		android:visibility="gone"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/person_spinner">
-
+		
+		<TextView
+			android:id="@+id/player_entry_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/player_name_entry_title"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+		
 		<EditText
 			android:id="@+id/person_name"
 			android:layout_width="wrap_content"
 			android:layout_height="48dp"
 			android:layout_marginTop="4dp"
 			android:ems="10"
-			android:hint="Enter Name"
+			android:hint="@string/player_name_entry_hint"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/player_entry_title" />
-
-		<TextView
-			android:id="@+id/player_entry_title"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Player Name (if not in dropdown)"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -73,7 +73,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="4dp"
 		android:layout_marginTop="4dp"
-		android:text="Count"
+		android:text="@string/token_count_title"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/name_entry_section" />
 
@@ -83,31 +83,31 @@
 		android:layout_height="48dp"
 		android:layout_marginStart="4dp"
 		android:layout_marginTop="4dp"
-		android:contentDescription="Add 1"
+		android:contentDescription="@string/add_1_description"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/count_title"
 		app:srcCompat="@drawable/remove" />
-
-	<ImageButton
-		android:id="@+id/count_plus"
-		android:layout_width="wrap_content"
-		android:layout_height="0dp"
-		android:contentDescription="Subtract 1"
-		app:layout_constraintBottom_toBottomOf="@+id/count"
-		app:layout_constraintStart_toEndOf="@+id/count"
-		app:layout_constraintTop_toTopOf="@+id/count"
-		app:srcCompat="@drawable/add" />
 
 	<EditText
 		android:id="@+id/count"
 		android:layout_width="wrap_content"
 		android:layout_height="0dp"
 		android:ems="3"
-		android:hint="#"
+		android:hint="@string/token_entry_hint"
 		android:inputType="number"
 		app:layout_constraintBottom_toBottomOf="@+id/count_minus"
 		app:layout_constraintStart_toEndOf="@+id/count_minus"
 		app:layout_constraintTop_toTopOf="@+id/count_minus" />
+	
+	<ImageButton
+		android:id="@+id/count_plus"
+		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:contentDescription="subtract_1_description"
+		app:layout_constraintBottom_toBottomOf="@+id/count"
+		app:layout_constraintStart_toEndOf="@+id/count"
+		app:layout_constraintTop_toTopOf="@+id/count"
+		app:srcCompat="@drawable/add" />
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/section_time"
@@ -122,7 +122,7 @@
 			android:id="@+id/date_title"
 			android:layout_width="wrap_content"
 			android:layout_height="16dp"
-			android:text="@string/start_date_label"
+			android:text="@string/event_date_label"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent" />
 
@@ -140,7 +140,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="16dp"
 			android:layout_marginStart="4dp"
-			android:text="@string/start_time_label"
+			android:text="@string/event_time_label"
 			app:layout_constraintStart_toEndOf="@+id/date_button"
 			app:layout_constraintTop_toTopOf="parent" />
 
@@ -162,8 +162,8 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="4dp"
 		android:layout_marginTop="4dp"
-		android:textOff="Player Sent Tokens"
-		android:textOn="Player Received Tokens"
+		android:textOff="@string/toggle_player_sent_tokens"
+		android:textOn="@string/toggle_player_received_tokens"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/section_time" />
 
@@ -182,7 +182,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="4dp"
-		android:text="Save"
+		android:text="@string/button_save"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/direction_toggle" />
 

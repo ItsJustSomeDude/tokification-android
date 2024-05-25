@@ -4,11 +4,10 @@
 
 	<string name="action_channel_name">Actions</string>
 	<string name="action_channel_desc">Channel for the clickable "action" notification</string>
-
 	<string name="fake_channel_name">Debug</string>
 	<string name="fake_channel_desc">Channel for fake Egg Inc notifications</string>
 
-	<string name="all_coop_info">Coop: %1$s, Contract: %2$s</string>
+	<string name="all_coop_info" formatted="true">Coop: %1$s, Contract: %2$s</string>
 	<string name="no_coop_selected">No Coop Selected!</string>
 	<string name="no_coops">No Coops! Add one by clicking (+)</string>
 	<string name="generate_report">Generate</string>
@@ -19,12 +18,27 @@
 	<string name="start_time_label">Start Time</string>
 	<string name="end_date_label">End Date</string>
 	<string name="end_time_label">End Time</string>
-	<string name="title_activity_settings">SettingsActivity</string>
+	<string name="event_date_label">Date</string>
+	<string name="event_time_label">Time</string>
 
 	<!-- Preference Titles -->
+	<string name="title_activity_settings">Settings</string>
 	<string name="settings_header">Options</string>
 	<string name="settings_name_title">Your In-Game Name</string>
 	<string name="default_mode_title">Default Coop Mode</string>
 	<string name="auto_dismiss_title">Auto-dismiss Notifications</string>
+	<string name="num_coops_title">Max number of Co-ops to track</string>
+	<string name="notification_debugger_title">Enable Notification Debugger</string>
+	
+	<string name="player_name_dropdown_title">Select Player</string>
+	<string name="player_name_entry_title">Enter Player Name</string>
+	<string name="player_name_entry_hint">Name</string>
+	<string name="token_count_title">Tokens</string>
+	<string name="add_1_description">Add 1</string>
+	<string name="token_entry_hint">#</string>
+	<string name="subtract_1_description">Subtract 1</string>
+	<string name="toggle_player_sent_tokens">Player Sent Tokens</string>
+	<string name="toggle_player_received_tokens">Player Received Tokens</string>
+	<string name="button_save">Save</string>
 
 </resources>

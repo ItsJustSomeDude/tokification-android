@@ -75,9 +75,8 @@ public class EventListActivity extends AppCompatActivity {
 		binding.listView.setAdapter(adapter);
 
 		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
-			callbackHandler.launch(new Intent(this, EditEventActivity.class)
-					.putExtra(EditEventActivity.PARAM_EVENT_ID, viewId)
-					.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id)
+			callbackHandler.launch(
+					EditEventActivity.makeEditIntent(this, coopId, viewId)
 			);
 		});
 
@@ -88,6 +87,7 @@ public class EventListActivity extends AppCompatActivity {
 					"Are you sure you want to delete this event?",
 					"Yes",
 					v -> {
+						// TODO: make refresh + render methods.
 						database.deleteEvent(viewId);
 						events = database.fetchEvents(coop.name, coop.contract);
 

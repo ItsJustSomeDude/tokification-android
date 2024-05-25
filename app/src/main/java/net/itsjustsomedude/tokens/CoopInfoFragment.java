@@ -105,7 +105,7 @@ public class CoopInfoFragment extends Fragment {
 		coop = database.fetchCoop(coopId);
 	}
 
-	private void render() {
+	public void render() {
 		if (coop == null) {
 			binding.noCoopSelected.setVisibility(View.VISIBLE);
 			binding.innerLayout.setVisibility(View.GONE);
@@ -162,8 +162,7 @@ public class CoopInfoFragment extends Fragment {
 		);
 		binding.eventsAdd.setOnClickListener(view ->
 				activityCallback.launch(
-						new Intent(requireContext(), EditEventActivity.class)
-								.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id)
+				    EditEventActivity.makeCreateIntent(requireContext(), coopId)
 				)
 		);
 

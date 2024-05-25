@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import androidx.preference.PreferenceManager;
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,11 +41,22 @@ public class MainActivity extends AppCompatActivity {
 		setSupportActionBar(binding.toolbar);
 
 		activityCallback = SimpleDialogs.registerActivityCallback(this, result -> {
-			refreshCoop();
+			render();
 		});
 
-		renderCoop();
-
+		long selectedCoop = Coop.getSelectedCoop(this);
+		CoopInfoFragment fragment = CoopInfoFragment.newInstance(selectedCoop);
+		FragmentManager manager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = manager.beginTransaction();
+		fragmentTransaction.add(R.id.fragmentContainerView, fragment);
+		fragmentTransaction.commit();
+		
+	    if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("enable_notification_debugger", false)) {
+			binding.notificationDebuggerSection.setVisibility(View.VISIBLE);
+		} else {
+			binding.notificationDebuggerSection.setVisibility(View.GONE);
+		}
+		
 		binding.fakeSend.setOnClickListener(view -> {
 			notifications.sendFake(
 					binding.fakePlayer.getText().toString(),
@@ -53,21 +66,18 @@ public class MainActivity extends AppCompatActivity {
 		});
 	}
 
-	private void renderCoop() {
-		long selectedCoop = Coop.getSelectedCoop(this);
-
-		CoopInfoFragment fragment = CoopInfoFragment.newInstance(selectedCoop);
-		FragmentManager manager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = manager.beginTransaction();
-		fragmentTransaction.add(R.id.fragmentContainerView, fragment);
-		fragmentTransaction.commit();
-	}
-
-	private void refreshCoop() {
+	private void render() {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		CoopInfoFragment fragment = (CoopInfoFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
 		if (fragment != null) {
 			fragment.refresh();
+			fragment.render();
+		}
+		
+		if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("enable_notification_debugger", false)) {
+			binding.notificationDebuggerSection.setVisibility(View.VISIBLE);
+		} else {
+			binding.notificationDebuggerSection.setVisibility(View.GONE);
 		}
 	}
 
@@ -76,15 +86,22 @@ public class MainActivity extends AppCompatActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		render();
+	}
+	
 
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.main_refresh) {
 			NotificationReader.processNotifications();
-			refreshCoop();
+			render();
 		} else if (id == R.id.main_settings) {
-			startActivity(new Intent(this, SettingsActivity.class));
+			activityCallback.launch(new Intent(this, SettingsActivity.class));
 		} else if (id == R.id.main_select_coop) {
 			activityCallback.launch(new Intent(this, ListCoopsActivity.class));
 		}

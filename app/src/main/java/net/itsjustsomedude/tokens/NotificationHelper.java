@@ -68,10 +68,8 @@ public class NotificationHelper {
 		openMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 1, openMenu, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-		Log.i(TAG, "Test inside: " + coop.id);
-		Intent send = new Intent(ctx, EditEventActivity.class);
-		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		send.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id);
+		Intent send = EditEventActivity.makeCreateIntent(ctx, coop.id);
+		send.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		PendingIntent sendPending = PendingIntent.getActivity(ctx, 2, send, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 		NotificationCompat.Builder note = new NotificationCompat.Builder(ctx, ACTION_CHANNEL)
@@ -90,10 +88,11 @@ public class NotificationHelper {
 				.setSound(null);
 
 		if (coop.sinkMode) {
-			Intent copy = new Intent(ctx, MainActivity.class);
-			copy.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Intent copy = new Intent(ctx, ReportCopyActivity.class);
+			copy.putExtra(ReportCopyActivity.PARAM_COOP_ID, coop.id);
+			copy.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 			PendingIntent copyPending = PendingIntent.getActivity(ctx, 3, copy, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
+			
 			note.setContentText("Click to open the menu.")
 					.addAction(
 							R.drawable.copy,
@@ -101,17 +100,14 @@ public class NotificationHelper {
 							copyPending
 					);
 		} else {
-			Intent sink1 = new Intent(ctx, EditEventActivity.class);
-			sink1.putExtra(EditEventActivity.PARAM_AUTO_SEND, true);
-			sink1.putExtra(EditEventActivity.PARAM_COUNT, 1);
-			sink1.putExtra(EditEventActivity.PARAM_COOP_ID, coop.id);
-			sink1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Intent sink1 = SinkTokensActivity.makeIntent(ctx, coop.id, 1);
+			sink1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 4, sink1, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			Intent refresh = new Intent(ctx, RefreshActionsService.class);
-			refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			//refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			refresh.putExtra(RefreshActionsService.PARAM_COOP_ID, coop.id);
-			PendingIntent refreshPending = PendingIntent.getActivity(ctx, 5, refresh, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+			PendingIntent refreshPending = PendingIntent.getService(ctx, 5, refresh, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			String report = new ReportBuilder(coop, "You").normalReport();
 
