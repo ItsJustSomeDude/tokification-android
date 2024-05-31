@@ -112,7 +112,7 @@ public class CoopInfoFragment extends Fragment {
 			return;
 		}
 
-		Log.i(TAG, "Test: " + coop.id);
+		//Log.i(TAG, "Test: " + coop.id);
 		//TODO: This is not ideal, but works for now.
 		//Eventually, there should be a service to handle notifications,
 		//and that will make this less ugly.
@@ -162,7 +162,7 @@ public class CoopInfoFragment extends Fragment {
 		);
 		binding.eventsAdd.setOnClickListener(view ->
 				activityCallback.launch(
-				    EditEventActivity.makeCreateIntent(requireContext(), coopId)
+						EditEventActivity.makeCreateIntent(requireContext(), coopId)
 				)
 		);
 

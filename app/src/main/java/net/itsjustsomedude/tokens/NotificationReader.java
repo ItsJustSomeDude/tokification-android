@@ -34,6 +34,8 @@ public class NotificationReader {
 	private static final Pattern tokenCountRegex = Pattern.compile("(?<=has sent you a gift of )([0-9]+)");
 
 	static void processNotifications() {
+		Log.i(TAG, "Starting manual processing of notifications!");
+
 		NotificationService notificationService = NotificationService.get();
 		StatusBarNotification[] notifications = notificationService.getActiveNotifications();
 
@@ -48,17 +50,24 @@ public class NotificationReader {
 		}
 
 		db.close();
+		Log.i(TAG, "Manual processing complete.");
 	}
 
 	public static void processNotification(Database db, StatusBarNotification n, boolean shouldDismiss) {
 		int id = n.getId();
+		Notification innerNote = n.getNotification();
+		if (innerNote == null) {
+			Log.i(TAG, "Hit notification with no inner content.");
+			return;
+		}
+
 		String key = n.getKey() != null ? n.getKey() : "";
-		String title = n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE) != null ?
-				Objects.requireNonNull(n.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE)).toString()
+		String title = innerNote.extras.getCharSequence(Notification.EXTRA_TITLE) != null ?
+				Objects.requireNonNull(innerNote.extras.getCharSequence(Notification.EXTRA_TITLE)).toString()
 				: "";
 
-		CharSequence bigText = n.getNotification().extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
-		CharSequence extraText = n.getNotification().extras.getCharSequence(Notification.EXTRA_TEXT);
+		CharSequence bigText = innerNote.extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
+		CharSequence extraText = innerNote.extras.getCharSequence(Notification.EXTRA_TEXT);
 
 		String text = bigText != null ?
 				bigText.toString() :
@@ -66,12 +75,17 @@ public class NotificationReader {
 						extraText.toString() :
 						"";
 
-		String group = n.getNotification().getGroup() != null ? n.getNotification().getGroup() : "";
+		String group = innerNote.getGroup() != null ? innerNote.getGroup() : "";
 		Calendar when = Calendar.getInstance();
 		when.setTimeInMillis(n.getNotification().when);
 
 		if (n.getPackageName() == null || !ALLOWED_PACKAGES.contains(n.getPackageName())) {
-			Log.i(TAG, "Skipping because Package Name.");
+			// Log.i(TAG, "Skipping because Package Name.");
+			return;
+		}
+
+		if ((innerNote.flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
+			Log.i(TAG, "Skipping group summary notification");
 			return;
 		}
 
@@ -198,6 +212,8 @@ public class NotificationReader {
 			// Quick early return before trying to open a DB connection if it will be un-necessary.
 			if (sbn.getPackageName() == null || !ALLOWED_PACKAGES.contains(sbn.getPackageName()))
 				return;
+
+			Log.i(TAG, "Automatically processing incoming notification.");
 
 			Context ctx = _this.getApplicationContext();
 			Database db = new Database(ctx);

@@ -1,7 +1,10 @@
 package net.itsjustsomedude.tokens;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
@@ -28,6 +31,17 @@ public class SettingsActivity extends AppCompatActivity {
 					.replace(R.id.settings, new SettingsFragment())
 					.commit();
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+		int id = item.getItemId();
+		if (id == android.R.id.home) {
+			startActivity(new Intent(this, MainActivity.class));
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	public static class SettingsFragment extends PreferenceFragmentCompat {
