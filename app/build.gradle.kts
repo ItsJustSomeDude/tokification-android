@@ -17,6 +17,8 @@ android {
         versionName = "1.0"
 
         resValue("string", "app_name", "Tokification")
+        
+        setProperty("archivesBaseName", "Tokification-v$versionCode($versionName)")
 
         vectorDrawables {
             useSupportLibrary = true
@@ -27,9 +29,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-	
-	
-	val localProps = gradleLocalProperties(rootDir)
+
+
+    val localProps = gradleLocalProperties(rootDir)
     signingConfigs {
         create("release") {
             storeFile = file(localProps.getProperty("storeFilePath"))
@@ -38,7 +40,7 @@ android {
             keyAlias = "key1"
         }
     }
-	println("Loaded local.properties signing keys.")
+    println("Loaded local.properties signing keys.")
 
     buildTypes {
         release {
@@ -49,6 +51,19 @@ android {
             )
             resValue("string", "app_name", "Tokification")
             signingConfig = signingConfigs.getByName("release")
+//            applicationVariants.all { variant ->
+//                variant.outputs.all { output ->
+//                    val date = Date()
+//                    val formattedDate = date.format(Locale.US, "yyyyMMddHHmmss")
+//                    output.outputFile = File(
+//                        output.outputFile.parent,
+//                        output.outputFile.name.replace("-release", "-" + formattedDate)
+//                        //for Debug use output.outputFile = new File(output.outputFile.parent,
+//                        //output.outputFile.name.replace("-debug", "-" + formattedDate)
+//                    )
+//                }
+//            }
+
         }
         debug {
             applicationIdSuffix = ".debug"
