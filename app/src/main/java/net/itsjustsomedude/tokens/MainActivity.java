@@ -1,6 +1,7 @@
 package net.itsjustsomedude.tokens;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import androidx.preference.PreferenceManager;
+
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 	private ActivityMainBinding binding;
 	public static final String PREFERENCES = "Prefs";
 	private ActivityResultLauncher<Intent> activityCallback;
+
+	private boolean isServiceRunning = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +36,11 @@ public class MainActivity extends AppCompatActivity {
 		notifications.ensurePermissions();
 
 		if (!NotificationReader.verifyServiceRunning(this)) {
-			this.finish();
-			return;
+			Toast.makeText(this, "Service not Running! Start it to process notifications.", Toast.LENGTH_SHORT).show();
+			isServiceRunning = false;
 		}
+
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
@@ -50,13 +56,19 @@ public class MainActivity extends AppCompatActivity {
 		FragmentTransaction fragmentTransaction = manager.beginTransaction();
 		fragmentTransaction.add(R.id.fragmentContainerView, fragment);
 		fragmentTransaction.commit();
-		
-	    if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("enable_notification_debugger", false)) {
+
+		if (preferences.getBoolean("enable_notification_debugger", false)) {
 			binding.notificationDebuggerSection.setVisibility(View.VISIBLE);
 		} else {
 			binding.notificationDebuggerSection.setVisibility(View.GONE);
 		}
-		
+
+		if (preferences.getBoolean("allow_service_stopping", false)) {
+			binding.stopServiceButton.setVisibility(View.VISIBLE);
+		} else {
+			binding.stopServiceButton.setVisibility(View.GONE);
+		}
+
 		binding.fakeSend.setOnClickListener(view -> {
 			notifications.sendFake(
 					binding.fakePlayer.getText().toString(),
@@ -64,20 +76,38 @@ public class MainActivity extends AppCompatActivity {
 					binding.fakeContract.getText().toString(),
 					binding.fakeType.isChecked());
 		});
+
+		binding.stopServiceButton.setOnClickListener(view -> {
+			NotificationReader.stopService();
+			isServiceRunning = false;
+		});
 	}
 
 	private void render() {
+		if (this.binding == null) {
+			// Probably never actually fully started.
+			return;
+		}
+
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		CoopInfoFragment fragment = (CoopInfoFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
 		if (fragment != null) {
 			fragment.refresh();
 			fragment.render();
 		}
-		
-		if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("enable_notification_debugger", false)) {
+
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+		if (preferences.getBoolean("enable_notification_debugger", false)) {
 			binding.notificationDebuggerSection.setVisibility(View.VISIBLE);
 		} else {
 			binding.notificationDebuggerSection.setVisibility(View.GONE);
+		}
+
+		if (preferences.getBoolean("allow_service_stopping", false)) {
+			binding.stopServiceButton.setVisibility(View.VISIBLE);
+		} else {
+			binding.stopServiceButton.setVisibility(View.GONE);
 		}
 	}
 
@@ -86,20 +116,23 @@ public class MainActivity extends AppCompatActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		render();
 	}
-	
 
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.main_refresh) {
-			NotificationReader.processNotifications();
-			render();
+			if (isServiceRunning && false) {
+				NotificationReader.processNotifications();
+				render();
+			} else {
+				Toast.makeText(this, "Service is not running!", Toast.LENGTH_SHORT).show();
+			}
 		} else if (id == R.id.main_settings) {
 			activityCallback.launch(new Intent(this, SettingsActivity.class));
 		} else if (id == R.id.main_select_coop) {

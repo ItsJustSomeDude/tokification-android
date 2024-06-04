@@ -33,10 +33,20 @@ public class NotificationReader {
 	private static final Pattern personCoopRegex = Pattern.compile("^(.+) \\((.+)\\) has (?:sent you|hatched).+?$");
 	private static final Pattern tokenCountRegex = Pattern.compile("(?<=has sent you a gift of )([0-9]+)");
 
+	public static void stopService() {
+		NotificationService service = NotificationService.get();
+		if (service != null)
+			service.stopSelf();
+	}
+
 	static void processNotifications() {
 		Log.i(TAG, "Starting manual processing of notifications!");
 
 		NotificationService notificationService = NotificationService.get();
+		if (notificationService == null) {
+			throw new NullPointerException("BLAH");
+		}
+
 		StatusBarNotification[] notifications = notificationService.getActiveNotifications();
 
 		Context ctx = notificationService.getApplicationContext();
@@ -166,6 +176,11 @@ public class NotificationReader {
 		);
 	}
 
+	private static void askToStart(Context ctx) {
+		ctx.startService(new Intent(ctx, net.itsjustsomedude.tokens.NotificationReader.NotificationService.class));
+		Toast.makeText(ctx, "Notification Service Started.", Toast.LENGTH_SHORT).show();
+	}
+
 	public static boolean verifyServiceRunning(Context ctx) {
 		ComponentName cn = new ComponentName(ctx, NotificationService.class);
 		String flat = Settings.Secure.getString(ctx.getContentResolver(), "enabled_notification_listeners");
@@ -175,9 +190,7 @@ public class NotificationReader {
 			return false;
 		} else {
 			if (NotificationService.get() == null) {
-//				ctx.startService(new Intent(ctx, net.itsjustsomedude.tokens.NotificationReader.NotificationService.class));
-
-				askToEnable(ctx, "The listener is not running! Make sure Tokification access is granted.");
+//				askToEnable(ctx, "The listener is not running! Make sure Tokification access is granted.");
 				return false;
 			}
 			return true;

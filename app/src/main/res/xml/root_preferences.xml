@@ -10,6 +10,7 @@
 
 		<ListPreference
 			app:defaultValue="normal"
+			app:enabled="false"
 			app:entries="@array/default_mode_entries"
 			app:entryValues="@array/default_mode_values"
 			app:key="default_mode"
@@ -28,7 +29,11 @@
 		<SwitchPreferenceCompat
 			app:key="enable_notification_debugger"
 			app:title="@string/notification_debugger_title" />
-		
+
+		<SwitchPreferenceCompat
+			android:key="allow_service_stopping"
+			android:title="@string/allow_service_stopping" />
+
 		<!-- <SwitchPreferenceCompat
 			app:dependency="sync"
 			app:key="attachment"

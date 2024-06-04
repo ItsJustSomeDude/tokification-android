@@ -27,9 +27,10 @@
 	<string name="settings_name_title">Your In-Game Name</string>
 	<string name="default_mode_title">Default Coop Mode</string>
 	<string name="auto_dismiss_title">Auto-dismiss Notifications</string>
-	<string name="num_coops_title">Max number of Co-ops to track</string>
+	<string name="num_coops_title">Track Multiple Coops</string>
 	<string name="notification_debugger_title">Enable Notification Debugger</string>
-	
+	<string name="allow_service_stopping">Allow Service Stopping</string>
+
 	<string name="player_name_dropdown_title">Select Player</string>
 	<string name="player_name_entry_title">Enter Player Name</string>
 	<string name="player_name_entry_hint">Name</string>
@@ -40,5 +41,6 @@
 	<string name="toggle_player_sent_tokens">Player Sent Tokens</string>
 	<string name="toggle_player_received_tokens">Player Received Tokens</string>
 	<string name="button_save">Save</string>
+	<string name="button_stop_service">Stop Notification Service</string>
 
 </resources>

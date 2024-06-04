@@ -29,6 +29,7 @@
 		</com.google.android.material.appbar.AppBarLayout>
 
 		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/constraintLayout"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			app:layout_constraintEnd_toEndOf="parent"
@@ -53,88 +54,100 @@
 				android:layout_height="wrap_content"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/no_coop_selected" />
-			
+
 			<androidx.constraintlayout.widget.ConstraintLayout
 				android:id="@+id/notification_debugger_section"
-			    android:layout_width="match_parent"
-			    android:layout_height="0dp"
-				android:visibility="gone"
-			    app:layout_constraintStart_toStartOf="parent"
-			    app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView">
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:visibility="visible"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView">
 
-			    <View
-				    android:id="@+id/notification_debugger_divider"
-				    android:layout_width="match_parent"
-				    android:layout_height="3dp"
-				    android:layout_marginTop="4dp"
-				    android:background="?android:attr/listDivider"
-				    app:layout_constraintStart_toStartOf="parent"
-				    app:layout_constraintTop_toTopOf="parent" />
-    
-			    <TextView
-				    android:id="@+id/notification_debugger_title"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_marginStart="4dp"
-				    android:layout_marginTop="4dp"
-				    android:text="Send Fake Notification"
-				    app:layout_constraintStart_toStartOf="parent"
-				    app:layout_constraintTop_toBottomOf="@+id/notification_debugger_divider" />
-    
-			    <EditText
-				    android:id="@+id/fake_player"
-				    android:layout_width="wrap_content"
-				    android:layout_height="48dp"
-				    android:layout_marginStart="4dp"
-				    android:layout_marginTop="4dp"
-				    android:ems="6"
-				    android:hint="Player"
-				    android:inputType="text"
-				    app:layout_constraintStart_toStartOf="parent"
-				    app:layout_constraintTop_toBottomOf="@+id/notification_debugger_title"
-				    android:autofillHints="" />
-    
-			    <EditText
-				    android:id="@+id/fake_coop"
-				    android:layout_width="wrap_content"
-				    android:layout_height="48dp"
-				    android:ems="6"
-				    android:hint="Coop"
-				    android:inputType="text"
-				    app:layout_constraintStart_toEndOf="@+id/fake_player"
-				    app:layout_constraintTop_toTopOf="@+id/fake_player" />
-			    
-			    <EditText
-				    android:id="@+id/fake_contract"
-				    android:layout_width="wrap_content"
-				    android:layout_height="48dp"
-				    android:ems="6"
-				    android:hint="Kev ID"
-				    android:inputType="text"
-				    app:layout_constraintStart_toEndOf="@+id/fake_coop"
-				    app:layout_constraintTop_toTopOf="@+id/fake_coop" />
-    
-			    <androidx.appcompat.widget.SwitchCompat
-				    android:id="@+id/fake_type"
-				    android:layout_width="wrap_content"
-				    android:layout_height="48dp"
-				    android:layout_marginTop="4dp"
-				    android:text="Send CR?"
-				    app:layout_constraintStart_toStartOf="@+id/fake_player"
-				    app:layout_constraintTop_toBottomOf="@+id/fake_player" />
-			    
-			    <Button
-				    android:id="@+id/fake_send"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:text="Send"
-				    android:layout_marginTop="4dp"
-				    app:layout_constraintStart_toStartOf="parent"
-				    app:layout_constraintTop_toBottomOf="@+id/fake_type" />
-			
+				<View
+					android:id="@+id/notification_debugger_divider"
+					android:layout_width="match_parent"
+					android:layout_height="3dp"
+					android:layout_marginTop="4dp"
+					android:background="?android:attr/listDivider"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent" />
+
+				<TextView
+					android:id="@+id/notification_debugger_title"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="4dp"
+					android:layout_marginTop="4dp"
+					android:text="Send Fake Notification"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/notification_debugger_divider" />
+
+				<EditText
+					android:id="@+id/fake_player"
+					android:layout_width="wrap_content"
+					android:layout_height="48dp"
+					android:layout_marginStart="4dp"
+					android:layout_marginTop="4dp"
+					android:autofillHints=""
+					android:ems="6"
+					android:hint="Player"
+					android:inputType="text"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/notification_debugger_title" />
+
+				<EditText
+					android:id="@+id/fake_coop"
+					android:layout_width="wrap_content"
+					android:layout_height="48dp"
+					android:ems="6"
+					android:hint="Coop"
+					android:inputType="text"
+					app:layout_constraintStart_toEndOf="@+id/fake_player"
+					app:layout_constraintTop_toTopOf="@+id/fake_player" />
+
+				<EditText
+					android:id="@+id/fake_contract"
+					android:layout_width="wrap_content"
+					android:layout_height="48dp"
+					android:ems="6"
+					android:hint="Kev ID"
+					android:inputType="text"
+					app:layout_constraintStart_toEndOf="@+id/fake_coop"
+					app:layout_constraintTop_toTopOf="@+id/fake_coop" />
+
+				<androidx.appcompat.widget.SwitchCompat
+					android:id="@+id/fake_type"
+					android:layout_width="wrap_content"
+					android:layout_height="48dp"
+					android:layout_marginTop="4dp"
+					android:text="Send CR?"
+					app:layout_constraintStart_toStartOf="@+id/fake_player"
+					app:layout_constraintTop_toBottomOf="@+id/fake_player" />
+
+				<Button
+					android:id="@+id/fake_send"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="4dp"
+					android:layout_marginTop="4dp"
+					android:text="Send"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/fake_type" />
+
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
+
 		</androidx.constraintlayout.widget.ConstraintLayout>
+
+		<Button
+			android:id="@+id/stop_service_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:text="@string/button_stop_service"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
