@@ -31,8 +31,8 @@
 			app:title="@string/notification_debugger_title" />
 
 		<SwitchPreferenceCompat
-			android:key="allow_service_stopping"
-			android:title="@string/allow_service_stopping" />
+			android:key="manual_service_control"
+			android:title="@string/manual_service_control" />
 
 		<!-- <SwitchPreferenceCompat
 			app:dependency="sync"

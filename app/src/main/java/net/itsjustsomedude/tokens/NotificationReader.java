@@ -72,8 +72,9 @@ public class NotificationReader {
 		}
 
 		String key = n.getKey() != null ? n.getKey() : "";
-		String title = innerNote.extras.getCharSequence(Notification.EXTRA_TITLE) != null ?
-				Objects.requireNonNull(innerNote.extras.getCharSequence(Notification.EXTRA_TITLE)).toString()
+		CharSequence t = innerNote.extras.getCharSequence(Notification.EXTRA_TITLE);
+		String title = t != null ?
+				t.toString()
 				: "";
 
 		CharSequence bigText = innerNote.extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
@@ -130,7 +131,7 @@ public class NotificationReader {
 			return;
 		}
 
-		int amount;
+		int amount = 0;
 		if (text.contains("has sent you a Boost Token"))
 			amount = 1;
 		else {
@@ -143,7 +144,6 @@ public class NotificationReader {
 				}
 				amount = Integer.parseInt(Objects.requireNonNull(countMatch.group(1)));
 			} catch (NumberFormatException err) {
-				amount = 0;
 				Log.e(TAG, "Bad number in note:");
 				Log.e(TAG, text);
 			}
@@ -168,33 +168,33 @@ public class NotificationReader {
 		}, 10 * 1000);
 	}
 
-	private static void askToEnable(Context ctx, String message) {
-		Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-		ctx.startActivity(
-				new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-						.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-		);
+	public static boolean isRunning() {
+		return NotificationService.get() == null;
 	}
 
-	private static void askToStart(Context ctx) {
+	public static void askToStart(Context ctx) {
+		// TODO: Maybe merge all these functions?
+		if (!hasPermission(ctx)) {
+			askPermission(ctx);
+			// Return because the service should have been started by granting the activity.
+			return;
+		}
+
 		ctx.startService(new Intent(ctx, net.itsjustsomedude.tokens.NotificationReader.NotificationService.class));
 		Toast.makeText(ctx, "Notification Service Started.", Toast.LENGTH_SHORT).show();
 	}
 
-	public static boolean verifyServiceRunning(Context ctx) {
+	public static void askPermission(Context ctx) {
+		Toast.makeText(ctx, ctx.getString(R.string.enable_service_toast), Toast.LENGTH_LONG).show();
+		ctx.startActivity(
+				new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+		);
+	}
+
+	public static boolean hasPermission(Context ctx) {
 		ComponentName cn = new ComponentName(ctx, NotificationService.class);
 		String flat = Settings.Secure.getString(ctx.getContentResolver(), "enabled_notification_listeners");
-		final boolean NotificationServiceEnabled = flat != null && flat.contains(cn.flattenToString());
-		if (!NotificationServiceEnabled) {
-			askToEnable(ctx, "Please give Tokification Notification Access.");
-			return false;
-		} else {
-			if (NotificationService.get() == null) {
-//				askToEnable(ctx, "The listener is not running! Make sure Tokification access is granted.");
-				return false;
-			}
-			return true;
-		}
+		return flat != null && flat.contains(cn.flattenToString());
 	}
 
 	// Listener service.

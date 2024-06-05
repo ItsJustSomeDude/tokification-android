@@ -11,8 +11,6 @@ import java.util.Calendar;
 
 public class Database {
 	private static final String TAG = "Database";
-	private final DatabaseHelper dbHelper;
-	private final Context context;
 	private final SQLiteDatabase database;
 
 	final String[] eventCols = new String[]{
@@ -26,14 +24,15 @@ public class Database {
 			DatabaseHelper.EVENT_NOTE_ID
 	};
 
-	public Database(Context c) {
-		context = c;
-		dbHelper = new DatabaseHelper(context);
+	public Database(Context ctx) {
+		// TODO: See if this should be made non-local, and if an open() method should be added.
+		DatabaseHelper dbHelper = DatabaseHelper.getInstance(ctx);
 		database = dbHelper.getWritableDatabase();
 	}
 
 	public void close() {
-		dbHelper.close();
+//		if (database != null && database.isOpen())
+//			database.close();
 	}
 
 	public boolean eventExists(int eventNote) {
@@ -131,12 +130,6 @@ public class Database {
 				DatabaseHelper._ID + " = " + coop.id,
 				null
 		);
-
-//		for (Coop.Event ev : coop.events) {
-//			if (!ev.modified) continue;
-//
-//			saveEvent(ev);
-//		}
 	}
 
 	public Coop fetchCoop(long _id) {

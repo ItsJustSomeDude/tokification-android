@@ -31,16 +31,19 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 
 		NotificationHelper notifications = new NotificationHelper(this);
-
 		notifications.createChannels();
 		notifications.ensurePermissions();
 
-		if (!NotificationReader.verifyServiceRunning(this)) {
-			Toast.makeText(this, "Service not Running! Start it to process notifications.", Toast.LENGTH_SHORT).show();
-			isServiceRunning = false;
-		}
-
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		if (NotificationReader.isRunning()) {
+			isServiceRunning = true;
+		} else {
+			if (preferences.getBoolean("manual_service_control", false)) {
+				Toast.makeText(this, "Service not Running! Start it to process notifications.", Toast.LENGTH_SHORT).show();
+			} else {
+				NotificationReader.askToStart(this);
+			}
+		}
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
@@ -50,24 +53,7 @@ public class MainActivity extends AppCompatActivity {
 			render();
 		});
 
-		long selectedCoop = Coop.getSelectedCoop(this);
-		CoopInfoFragment fragment = CoopInfoFragment.newInstance(selectedCoop);
-		FragmentManager manager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = manager.beginTransaction();
-		fragmentTransaction.add(R.id.fragmentContainerView, fragment);
-		fragmentTransaction.commit();
-
-		if (preferences.getBoolean("enable_notification_debugger", false)) {
-			binding.notificationDebuggerSection.setVisibility(View.VISIBLE);
-		} else {
-			binding.notificationDebuggerSection.setVisibility(View.GONE);
-		}
-
-		if (preferences.getBoolean("allow_service_stopping", false)) {
-			binding.stopServiceButton.setVisibility(View.VISIBLE);
-		} else {
-			binding.stopServiceButton.setVisibility(View.GONE);
-		}
+		render();
 
 		binding.fakeSend.setOnClickListener(view -> {
 			notifications.sendFake(
@@ -91,7 +77,15 @@ public class MainActivity extends AppCompatActivity {
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		CoopInfoFragment fragment = (CoopInfoFragment) fragmentManager.findFragmentById(R.id.fragmentContainerView);
-		if (fragment != null) {
+
+		if (fragment == null) {
+			long selectedCoop = Coop.getSelectedCoop(this);
+			CoopInfoFragment newFragment = CoopInfoFragment.newInstance(selectedCoop);
+
+			FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.add(R.id.fragmentContainerView, newFragment);
+			fragmentTransaction.commit();
+		} else {
 			fragment.refresh();
 			fragment.render();
 		}
@@ -104,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
 			binding.notificationDebuggerSection.setVisibility(View.GONE);
 		}
 
-		if (preferences.getBoolean("allow_service_stopping", false)) {
-			binding.stopServiceButton.setVisibility(View.VISIBLE);
+		if (preferences.getBoolean("manual_service_control", false)) {
+			binding.serviceControlSection.setVisibility(View.VISIBLE);
 		} else {
-			binding.stopServiceButton.setVisibility(View.GONE);
+			binding.serviceControlSection.setVisibility(View.GONE);
 		}
 	}
 
@@ -127,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.main_refresh) {
-			if (isServiceRunning && false) {
+			if (isServiceRunning) {
 				NotificationReader.processNotifications();
 				render();
 			} else {

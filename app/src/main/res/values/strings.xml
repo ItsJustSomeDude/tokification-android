@@ -7,6 +7,8 @@
 	<string name="fake_channel_name">Debug</string>
 	<string name="fake_channel_desc">Channel for fake Egg Inc notifications</string>
 
+	<string name="enable_service_toast">Please grant Tokification Notification Access.</string>
+
 	<string name="all_coop_info" formatted="true">Coop: %1$s, Contract: %2$s</string>
 	<string name="no_coop_selected">No Coop Selected!</string>
 	<string name="no_coops">No Coops! Add one by clicking (+)</string>
@@ -29,7 +31,7 @@
 	<string name="auto_dismiss_title">Auto-dismiss Notifications</string>
 	<string name="num_coops_title">Track Multiple Coops</string>
 	<string name="notification_debugger_title">Enable Notification Debugger</string>
-	<string name="allow_service_stopping">Allow Service Stopping</string>
+	<string name="manual_service_control">Manual Service Control</string>
 
 	<string name="player_name_dropdown_title">Select Player</string>
 	<string name="player_name_entry_title">Enter Player Name</string>
@@ -41,6 +43,9 @@
 	<string name="toggle_player_sent_tokens">Player Sent Tokens</string>
 	<string name="toggle_player_received_tokens">Player Received Tokens</string>
 	<string name="button_save">Save</string>
-	<string name="button_stop_service">Stop Notification Service</string>
+
+	<string name="manual_service_title">Notification Service Control</string>
+	<string name="button_stop_service">Stop Service</string>
+	<string name="button_start_service">Start Service</string>
 
 </resources>

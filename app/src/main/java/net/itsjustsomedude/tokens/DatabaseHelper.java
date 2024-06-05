@@ -50,8 +50,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			EVENT_DIR + " TEXT, " +
 			EVENT_NOTE_ID + " INTEGER);";
 
-	public DatabaseHelper(Context context) {
-		super(context, DB_NAME, null, VERSION);
+	private DatabaseHelper(Context context) {
+		super(context.getApplicationContext(), DB_NAME, null, VERSION);
+	}
+
+	private static volatile DatabaseHelper instance;
+
+	public static DatabaseHelper getInstance(Context context) {
+		if (instance == null) {
+			synchronized (DatabaseHelper.class) {
+				if (instance == null) {
+					instance = new DatabaseHelper(context);
+				}
+			}
+		}
+		return instance;
 	}
 
 	@Override

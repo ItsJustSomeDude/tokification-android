@@ -139,15 +139,52 @@
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
-		<Button
-			android:id="@+id/stop_service_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="4dp"
-			android:layout_marginTop="4dp"
-			android:text="@string/button_stop_service"
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/service_control_section"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+			app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+			<Button
+				android:id="@+id/stop_service_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:text="@string/button_stop_service"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+			<TextView
+				android:id="@+id/textView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="4dp"
+				android:layout_marginTop="4dp"
+				android:text="@string/manual_service_title"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+			<View
+				android:id="@+id/divider"
+				android:layout_width="match_parent"
+				android:layout_height="3dp"
+				android:layout_marginTop="4dp"
+				android:background="?android:attr/listDivider"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+			<Button
+				android:id="@+id/button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="4dp"
+				android:text="@string/button_start_service"
+				app:layout_constraintBottom_toBottomOf="@+id/stop_service_button"
+				app:layout_constraintStart_toEndOf="@+id/stop_service_button"
+				app:layout_constraintTop_toTopOf="@+id/stop_service_button" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
