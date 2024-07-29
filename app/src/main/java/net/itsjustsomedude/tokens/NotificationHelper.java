@@ -64,6 +64,8 @@ public class NotificationHelper {
 		// Second is Copy Report if Sink Mode
 		// Third is Refresh if Normal mode.
 
+		// TODO: Lookup if a BroadcastReceiver may be better for notification buttons.
+
 		Intent openMenu = new Intent(ctx, MainActivity.class);
 		openMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent openMenuPending = PendingIntent.getActivity(ctx, 1, openMenu, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -92,7 +94,7 @@ public class NotificationHelper {
 			copy.putExtra(ReportCopyActivity.PARAM_COOP_ID, coop.id);
 			copy.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 			PendingIntent copyPending = PendingIntent.getActivity(ctx, 3, copy, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-			
+
 			note.setContentText("Click to open the menu.")
 					.addAction(
 							R.drawable.copy,
@@ -100,12 +102,14 @@ public class NotificationHelper {
 							copyPending
 					);
 		} else {
-			Intent sink1 = SinkTokensActivity.makeIntent(ctx, coop.id, 1);
-			sink1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 4, sink1, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+//			Intent sink1 = SinkTokensActivity.makeIntent(ctx, coop.id, 1);
+//			sink1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+//			PendingIntent sink1Pending = PendingIntent.getActivity(ctx, 4, sink1, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+			Intent sink1 = SinkTokensService.makeIntent(ctx, coop.id, 1);
+			PendingIntent sink1Pending = PendingIntent.getService(ctx, 4, sink1, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
 			Intent refresh = new Intent(ctx, RefreshActionsService.class);
-			//refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			refresh.putExtra(RefreshActionsService.PARAM_COOP_ID, coop.id);
 			PendingIntent refreshPending = PendingIntent.getService(ctx, 5, refresh, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -221,22 +221,10 @@ public class Database {
 			if (event != null) event.close();
 			return out;
 		}
-
-		// TODO: A bandaid fix for duplicated events!
-		long prevTime = 0;
-		String prevPlayer = "";
-
+		
 		do {
 			Calendar t = Calendar.getInstance();
 			t.setTimeInMillis(event.getLong(3) * 1000L);
-
-			// Moar bandaid!
-			if (t.getTimeInMillis() == prevTime && prevPlayer.equals(event.getString(5))) {
-				continue;
-			} else {
-				prevTime = t.getTimeInMillis();
-				prevPlayer = event.getString(5);
-			}
 
 			out.add(new Coop.Event(
 					event.getLong(0),

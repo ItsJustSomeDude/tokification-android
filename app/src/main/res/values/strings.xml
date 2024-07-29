@@ -31,7 +31,41 @@
 	<string name="auto_dismiss_title">Auto-dismiss Notifications</string>
 	<string name="num_coops_title">Track Multiple Coops</string>
 	<string name="notification_debugger_title">Enable Notification Debugger</string>
-	<string name="manual_service_control">Manual Service Control</string>
+
+	<string name="service_control_header">Service Control</string>
+	<string name="service_control_enable_service">Enable Notification Service</string>
+	<string name="service_control_enable_service_description">This can be disabled to save battery power, but must be re-enabled to track tokens.</string>
+
+	<string name="service_control_auto_disable">Auto-disable Service</string>
+	<string name="service_control_auto_disable_description">Disable service on dismissing coop notification.</string>
+
+	<string name="settings_reports_header">Report Templates</string>
+	<string name="settings_show_template_info">View Templating Info</string>
+	<!-- Do not translate between {} -->
+	<string name="settings_templating_info">
+The following items are allowed in the templates:\n\n
+{startEstimate}: true if the start time is estimated.\n
+{endEstimate}: true if the end time is estimated.\n
+{ended}: true if the coop is ended.\n
+{nowEpoch}: Current time as unix epoch.\n
+{startEpoch}: Start time as unix epoch.\n
+{endEpoch}: End time as unix epoch.\n
+{tvalNow}: The current global Token Value.\n
+{tval30Mins}: The global token value in 30 minutes.\n
+{tval60Mins}: The global token value in 60 minutes.\n
+{genTimeLine}: A simple line showing when the report was generated.\n
+{startLine}: A simple line showing the start time.\n
+{endLine}: A simple line showing the end time.\n
+{tvalTable}: A table showing all the players and their TVals.\n
+{futureTable}: A table listing the future token values.\n\n
+Templates are Case-sensitive.
+	</string>
+
+	<string name="settings_reports_simple">Simple Report</string>
+	<string name="settings_reports_simple_description">This report is used when only tracking your own TVal.</string>
+
+	<string name="settings_reports_sink">Sink Report</string>
+	<string name="settings_reports_sink_description">This report lists all players and their TVals.</string>
 
 	<string name="player_name_dropdown_title">Select Player</string>
 	<string name="player_name_entry_title">Enter Player Name</string>

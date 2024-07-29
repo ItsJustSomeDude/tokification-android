@@ -59,9 +59,9 @@ public class ListCoopsActivity extends AppCompatActivity {
 					v -> {
 						database.deleteCoop(viewId, true);
 						coops = database.fetchCoops();
-						
+
 						if (Coop.getSelectedCoop(this) == viewId)
-						    Coop.setSelectedCoop(this, 0);
+							Coop.setSelectedCoop(this, 0);
 
 						render();
 					},
@@ -72,9 +72,9 @@ public class ListCoopsActivity extends AppCompatActivity {
 					v -> {
 						database.deleteCoop(viewId, false);
 						coops = database.fetchCoops();
-						
+
 						if (Coop.getSelectedCoop(this) == viewId)
-						    Coop.setSelectedCoop(this, 0);
+							Coop.setSelectedCoop(this, 0);
 
 						render();
 					}
@@ -126,6 +126,5 @@ public class ListCoopsActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		binding = null;
-		database.close();
 	}
 }

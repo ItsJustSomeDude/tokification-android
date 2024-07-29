@@ -10,10 +10,15 @@
 		android:roundIcon="@mipmap/ic_launcher"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
+
+		<service
+			android:name=".SinkTokensService"
+			android:enabled="true"
+			android:exported="false" />
 		<service
 			android:name=".RefreshActionsService"
 			android:enabled="true"
-			android:exported="true"></service>
+			android:exported="false" />
 
 		<activity
 			android:name=".SettingsActivity"
@@ -24,30 +29,21 @@
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity
 			android:name=".EditEventActivity"
+			android:excludeFromRecents="true"
+			android:launchMode="singleTask"
+			android:taskAffinity=""
 			android:theme="@style/DialogTheme.Dark"
-			android:taskAffinity=""
-            android:launchMode="singleTask"
-            android:excludeFromRecents="true"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-		
-		<activity
-			android:name=".SinkTokensActivity"
-			android:taskAffinity=""
-            android:launchMode="singleTask"
-            android:excludeFromRecents="true" />
-		
+			android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 		<activity
 			android:name=".ReportCopyActivity"
-			android:taskAffinity=""
-            android:launchMode="singleTask"
-            android:excludeFromRecents="true" />
-		
+			android:excludeFromRecents="true"
+			android:launchMode="singleTask"
+			android:taskAffinity="" />
 		<activity
 			android:name=".ListCoopsActivity"
 			android:exported="true" />
@@ -57,12 +53,12 @@
 
 		<service
 			android:name=".NotificationReader$NotificationService"
-			android:exported="true"
+			android:exported="false"
 			android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
 			<intent-filter>
 				<action android:name="android.service.notification.NotificationListenerService" />
 			</intent-filter>
+			<!-- <meta-data android:name="android.service.notification.default_filter_types" /> -->
 		</service>
 	</application>
-
 </manifest>

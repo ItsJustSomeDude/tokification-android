@@ -24,26 +24,14 @@ public class MainActivity extends AppCompatActivity {
 	public static final String PREFERENCES = "Prefs";
 	private ActivityResultLauncher<Intent> activityCallback;
 
-	private boolean isServiceRunning = false;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// TODO: Maybe move all this to its own service?
 		NotificationHelper notifications = new NotificationHelper(this);
 		notifications.createChannels();
 		notifications.ensurePermissions();
-
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		if (NotificationReader.isRunning()) {
-			isServiceRunning = true;
-		} else {
-			if (preferences.getBoolean("manual_service_control", false)) {
-				Toast.makeText(this, "Service not Running! Start it to process notifications.", Toast.LENGTH_SHORT).show();
-			} else {
-				NotificationReader.askToStart(this);
-			}
-		}
 
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
@@ -63,10 +51,15 @@ public class MainActivity extends AppCompatActivity {
 					binding.fakeType.isChecked());
 		});
 
-		binding.stopServiceButton.setOnClickListener(view -> {
-			NotificationReader.stopService();
-			isServiceRunning = false;
-		});
+//		binding.toggleServiceButton.setOnClickListener(view -> {
+//			if (NotificationReader.isServiceRunning()) {
+//				NotificationReader.setServiceEnabled(this, false);
+//				binding.toggleServiceButton.setText(R.string.button_start_service);
+//			} else {
+//				NotificationReader.setServiceEnabled(this, true);
+//				binding.toggleServiceButton.setText(R.string.button_stop_service);
+//			}
+//		});
 	}
 
 	private void render() {
@@ -91,24 +84,23 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
 		if (preferences.getBoolean("enable_notification_debugger", false)) {
 			binding.notificationDebuggerSection.setVisibility(View.VISIBLE);
 		} else {
 			binding.notificationDebuggerSection.setVisibility(View.GONE);
 		}
 
-		if (preferences.getBoolean("manual_service_control", false)) {
-			binding.serviceControlSection.setVisibility(View.VISIBLE);
-		} else {
-			binding.serviceControlSection.setVisibility(View.GONE);
-		}
+//		if (NotificationReader.isServiceRunning()) {
+//			binding.toggleServiceButton.setText(R.string.button_stop_service);
+//		} else {
+//			binding.toggleServiceButton.setText(R.string.button_start_service);
+//		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -121,11 +113,20 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.main_refresh) {
-			if (isServiceRunning) {
-				NotificationReader.processNotifications();
+			if (NotificationReader.isServiceRunning()) {
+				NotificationReader.processAllNotifications();
 				render();
 			} else {
-				Toast.makeText(this, "Service is not running!", Toast.LENGTH_SHORT).show();
+				SimpleDialogs.yesNoPicker(
+						this,
+						"Start Service?",
+						"Service must be started to read notifications.",
+						"Yes", (a) -> {
+							NotificationReader.setServiceEnabled(this, true);
+							NotificationReader.processAllNotifications();
+						}, "No", (a) -> {
+						}, "", (a) -> {
+						});
 			}
 		} else if (id == R.id.main_settings) {
 			activityCallback.launch(new Intent(this, SettingsActivity.class));

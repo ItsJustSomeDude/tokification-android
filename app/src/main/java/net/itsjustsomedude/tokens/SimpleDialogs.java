@@ -116,6 +116,13 @@ public class SimpleDialogs {
 		builder.create().show();
 	}
 
+	public static void infoBox(Context ctx, String title, String message) {
+		android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ctx);
+		builder.setTitle(title);
+		builder.setMessage(message);
+		builder.create().show();
+	}
+
 	public static ActivityResultLauncher<Intent> registerActivityCallback(ComponentActivity ctx, Consumer<ActivityResult> callback) {
 		return ctx.registerForActivityResult(
 				new ActivityResultContracts.StartActivityForResult(),

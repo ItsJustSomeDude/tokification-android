@@ -37,6 +37,7 @@ public class CoopInfoFragment extends Fragment {
 	private Coop coop;
 	private Database database;
 
+	// TODO: Use the user's Locale here.
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
 	private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
 

@@ -30,7 +30,7 @@ public class EditEventActivity extends AppCompatActivity {
 	// will not be able to be Static after this change.
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
 	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
-	
+
 	private ActivityEditEventBinding binding;
 
 	private Coop coop;
@@ -40,13 +40,13 @@ public class EditEventActivity extends AppCompatActivity {
 
 	public static Intent makeCreateIntent(Context ctx, long coopId) {
 		return new Intent(ctx, EditEventActivity.class)
-		    .putExtra(PARAM_COOP_ID, coopId);
+				.putExtra(PARAM_COOP_ID, coopId);
 	}
-	
+
 	public static Intent makeEditIntent(Context ctx, long coopId, long eventId) {
 		return new Intent(ctx, EditEventActivity.class)
-		    .putExtra(PARAM_COOP_ID, coopId)
-		    .putExtra(PARAM_EVENT_ID, eventId);
+				.putExtra(PARAM_COOP_ID, coopId)
+				.putExtra(PARAM_EVENT_ID, eventId);
 	}
 
 	@Override
@@ -71,17 +71,6 @@ public class EditEventActivity extends AppCompatActivity {
 		// boolean refresh = b.getBooleanExtra(PARAM_REFRESH, false);
 		long coopId = b.getLongExtra(PARAM_COOP_ID, 0);
 		long eventId = b.getLongExtra(PARAM_EVENT_ID, 0);
-
-		// TODO: Remove this I guess.
-//		if (refresh) {
-//			try {
-//				NotificationReader.processNotifications();
-//				Toast.makeText(this, "Refreshed Notifications.", Toast.LENGTH_SHORT).show();
-//			} catch (Exception err) {
-//				Log.e(TAG, "Failed to get notifications.", err);
-//				Toast.makeText(this, "Failed to refresh!", Toast.LENGTH_SHORT).show();
-//			}
-//		}
 
 		Log.i(TAG, "Getting Coop: " + coopId);
 		coop = database.fetchCoop(coopId);

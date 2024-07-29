@@ -99,7 +99,7 @@ public class ReportBuilder {
 		tvalSent = new HashMap<>();
 		tvalRec = new HashMap<>();
 
-		Log.i(TAG, "Number of events: " + coop.events.size());
+		//Log.i(TAG, "Number of events: " + coop.events.size());
 
 		for (Coop.Event ev : coop.events) {
 			long time = ev.time.getTimeInMillis() / 1000L;
@@ -137,7 +137,7 @@ public class ReportBuilder {
 			double rec = zeroIfNull(tvalRec.get(person));
 			double delta = sent - rec;
 
-			Log.i(TAG, delta + " Delta");
+			//Log.i(TAG, delta + " Delta");
 
 			String output = String.format(Locale.US,
 					rowFormat,
@@ -146,7 +146,7 @@ public class ReportBuilder {
 					zeroIfNull(tokensSent.get(person)),
 					sent,
 					zeroIfNull(tokensRec.get(person)),
-				    // This looks odd, but it's to prevent -0.0 from showing up.
+					// This looks odd, but it's to prevent -0.0 from showing up.
 					rec == 0 ? 0 : (rec * -1)
 			);
 			table.put(person, output);
@@ -199,51 +199,50 @@ public class ReportBuilder {
 
 		return String.join("\n", out);
 	}
-	
+
 	public String detailedReport() {
-        String header = "Elapse|# |D|Befor|Chang";
-        String rowFormat = "`{:6d}|{:2d}|{:1s}|{:5.2f}|{:s}{:4.2f}|`<t:{:s}:f>";
+		String header = "Elapse|# |D|Befor|Chang";
+		String rowFormat = "`{:6d}|{:2d}|{:1s}|{:5.2f}|{:s}{:4.2f}|`<t:{:s}:f>";
 
-        if (startEstimate || endEstimate)
-            return "Start and End times are required to generate detailed report!";
+		if (startEstimate || endEstimate)
+			return "Start and End times are required to generate detailed report!";
 
-        HashMap<String, ArrayList<String>> rows = new HashMap<>();
-        HashMap<String, Double> cums = new HashMap<>();
+		HashMap<String, ArrayList<String>> rows = new HashMap<>();
+		HashMap<String, Double> cums = new HashMap<>();
 
-        for (String person : coop.getPeople(sinkName)) {
-		    rows.put(person, new ArrayList<>());
+		for (String person : coop.getPeople(sinkName)) {
+			rows.put(person, new ArrayList<>());
 			cums.put(person, 0.0);
-	    }
+		}
 
-        for (Coop.Event ev : coop.events) {
+		for (Coop.Event ev : coop.events) {
 			long t = ev.time.getTimeInMillis() / 1000L;
 			long elapsedSeconds = t - startEpoch;
 			double tv = tval(startEpoch, endEpoch, t, ev.count);
-			
+
 			String direction = ev.direction.equals("sent")
-			    ? "→" : "←";
-			
+					? "→" : "←";
+
 			String sign = ev.direction.equals("sent")
-			    ? "+" : "-";
-			
+					? "+" : "-";
+
 			String row = String.format(Locale.US, rowFormat,
-				elapsedSeconds,
-				ev.count,
-				direction,
-				cums.get(ev.person),
-				sign,
-				tv,
-				t
+					elapsedSeconds,
+					ev.count,
+					direction,
+					cums.get(ev.person),
+					sign,
+					tv,
+					t
 			);
-			
+
 			// add to row list
 			// add tv to cums
 		}
-		
-		
-		
+
+
 		return "";
-		
+
 //        t = ts(ev['time'])
 //        d = ev['direction']
 //        c = int(ev['count'])
@@ -317,7 +316,7 @@ public class ReportBuilder {
 		double i = Math.pow(1 - 0.9 * (elapsed / duration), 4);
 		double singleValue = Math.max(i, 0.03);
 
-		Log.i("TVAL", "Start: " + startTime + ", End: " + endTime + ", Token: " + tokenTime + " Duration: " + duration + ", Elapsed: " + elapsed + ", TVal: " + i);
+		// Log.i("TVAL", "Start: " + startTime + ", End: " + endTime + ", Token: " + tokenTime + " Duration: " + duration + ", Elapsed: " + elapsed + ", TVal: " + i);
 
 		return singleValue * count;
 	}
@@ -329,15 +328,15 @@ public class ReportBuilder {
 //
 //		return tval(startTime, endTime, tokenTime, count);
 //	}
-	
+
 	private static Double zeroIfNull(Double input) {
 		return input == null ? 0 : input;
 	}
-	
+
 	private static Integer zeroIfNull(Integer input) {
 		return input == null ? 0 : input;
 	}
-	
+
 	public static void copyText(Context ctx, String toCopy) {
 		ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
 		ClipData clip = ClipData.newPlainText("SinkReport", toCopy);

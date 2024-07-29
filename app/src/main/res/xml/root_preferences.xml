@@ -1,6 +1,19 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
+	<PreferenceCategory app:title="@string/service_control_header">
+		<SwitchPreferenceCompat
+			android:key="service_control_enable_service"
+			android:title="@string/service_control_enable_service"
+			android:summary="@string/service_control_enable_service_description" />
+
+		<SwitchPreferenceCompat
+			android:key="service_control_auto_disable"
+			android:title="@string/service_control_auto_disable"
+			android:summary="@string/service_control_auto_disable_description"
+			android:enabled="false" />
+	</PreferenceCategory>
+
 	<PreferenceCategory app:title="@string/settings_header">
 
 		<EditTextPreference
@@ -16,31 +29,38 @@
 			app:key="default_mode"
 			app:title="@string/default_mode_title"
 			app:useSimpleSummaryProvider="true" />
-		
+
 		<SwitchPreferenceCompat
 			app:key="auto_dismiss"
 			app:title="@string/auto_dismiss_title" />
-		
+
 		<SwitchPreferenceCompat
 			android:enabled="false"
 			app:key="num_coops"
 			app:title="@string/num_coops_title" />
-		
+
 		<SwitchPreferenceCompat
 			app:key="enable_notification_debugger"
 			app:title="@string/notification_debugger_title" />
+	</PreferenceCategory>
 
-		<SwitchPreferenceCompat
-			android:key="manual_service_control"
-			android:title="@string/manual_service_control" />
+	<PreferenceCategory
+		app:title="@string/settings_reports_header">
 
-		<!-- <SwitchPreferenceCompat
-			app:dependency="sync"
-			app:key="attachment"
-			app:summaryOff="@string/attachment_summary_off"
-			app:summaryOn="@string/attachment_summary_on"
-			app:title="@string/attachment_title" /> -->
+		<Preference
+			app:key="btn_show_template_info"
+			app:title="@string/settings_show_template_info" />
+
+		<EditTextPreference
+			app:key="simple_report_template"
+			app:title="@string/settings_reports_simple"
+			app:summary="@string/settings_reports_simple_description" />
+
+		<EditTextPreference
+			app:key="simple_report_template"
+			app:title="@string/settings_reports_sink"
+			app:summary="@string/settings_reports_sink_description" />
 
 	</PreferenceCategory>
-	
+
 </PreferenceScreen>
