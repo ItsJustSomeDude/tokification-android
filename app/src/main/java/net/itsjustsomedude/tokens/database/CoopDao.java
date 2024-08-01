@@ -11,7 +11,7 @@ import androidx.room.Transaction;
 import net.itsjustsomedude.tokens.Coop;
 
 @Dao
-public abstract class CoopDao extends RoomDatabase {
+public interface CoopDao {
 	@Transaction
 	@Query("SELECT * FROM Coop WHERE id = :coopId")
 	LiveData<CoopWithEvents> getById(int coopId);

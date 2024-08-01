@@ -14,9 +14,12 @@ import androidx.room.RoomDatabase;
 import androidx.room.Transaction;
 import androidx.room.Database;
 
+import androidx.room.TypeConverters;
 import java.util.List;
+import net.itsjustsomedude.tokens.database.Converters;
 
-@Database(entities = {net.itsjustsomedude.tokens.database.Coop.class, AppDatabase.Event.class}, version = 1)
+@Database(entities = {}, version = 1)
+@TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 
 
