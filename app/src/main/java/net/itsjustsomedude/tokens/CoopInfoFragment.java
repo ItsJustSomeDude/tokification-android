@@ -76,7 +76,6 @@ public class CoopInfoFragment extends Fragment {
 			refresh();
 			render();
 		});
-
 	}
 
 	@Override

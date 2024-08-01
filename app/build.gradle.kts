@@ -2,6 +2,7 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id("com.android.application")
+    id("com.google.devtools.ksp")
 
 }
 
@@ -51,18 +52,6 @@ android {
             )
             resValue("string", "app_name", "Tokification")
             signingConfig = signingConfigs.getByName("release")
-//            applicationVariants.all { variant ->
-//                variant.outputs.all { output ->
-//                    val date = Date()
-//                    val formattedDate = date.format(Locale.US, "yyyyMMddHHmmss")
-//                    output.outputFile = File(
-//                        output.outputFile.parent,
-//                        output.outputFile.name.replace("-release", "-" + formattedDate)
-//                        //for Debug use output.outputFile = new File(output.outputFile.parent,
-//                        //output.outputFile.name.replace("-debug", "-" + formattedDate)
-//                    )
-//                }
-//            }
 
         }
         debug {
@@ -78,8 +67,15 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    val roomVersion = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    // To use Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:$roomVersion")
+
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.preference:preference:1.2.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.preference:preference:1.2.1")
 }

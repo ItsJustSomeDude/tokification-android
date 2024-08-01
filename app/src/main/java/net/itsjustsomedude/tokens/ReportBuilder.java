@@ -321,14 +321,6 @@ public class ReportBuilder {
 		return singleValue * count;
 	}
 
-//	public static double tval(Calendar coopStart, Calendar coopEnd, Calendar token, int count) {
-//		long tokenTime = token.getTimeInMillis() / 1000L;
-//		long startTime = coopStart.getTimeInMillis() / 1000L;
-//		long endTime = coopEnd.getTimeInMillis() / 1000L;
-//
-//		return tval(startTime, endTime, tokenTime, count);
-//	}
-
 	private static Double zeroIfNull(Double input) {
 		return input == null ? 0 : input;
 	}
