@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import net.itsjustsomedude.tokens.db.Coop;
+
 import java.util.Calendar;
 
 public class SinkTokensService extends Service {

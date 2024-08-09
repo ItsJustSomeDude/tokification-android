@@ -14,6 +14,7 @@ import android.widget.SimpleCursorAdapter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.itsjustsomedude.tokens.db.Coop;
 import net.itsjustsomedude.tokens.databinding.ActivityListCoopsBinding;
 
 public class ListCoopsActivity extends AppCompatActivity {

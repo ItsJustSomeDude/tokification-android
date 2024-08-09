@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import net.itsjustsomedude.tokens.db.Coop;
+
 public class RefreshActionsService extends Service {
 	public static final String PARAM_COOP_ID = "CoopId";
 

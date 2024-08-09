@@ -1,7 +1,8 @@
-package net.itsjustsomedude.tokens.database;
+package net.itsjustsomedude.tokens.db;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
 import java.util.Calendar;
 
 @Entity
@@ -10,7 +11,7 @@ public class Event {
 	public int id;
 
 	public int coop; // this is the foreign key
-	
+
 	public Calendar time;
 	public int count;
 	public String group;

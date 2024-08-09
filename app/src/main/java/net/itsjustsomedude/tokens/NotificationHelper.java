@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import net.itsjustsomedude.tokens.db.Coop;
+
 import java.util.Random;
 
 public class NotificationHelper {

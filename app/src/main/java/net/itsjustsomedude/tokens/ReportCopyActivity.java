@@ -7,6 +7,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.itsjustsomedude.tokens.db.Coop;
+
 public class ReportCopyActivity extends AppCompatActivity {
 	public static final String PARAM_COOP_ID = "CoopId";
 

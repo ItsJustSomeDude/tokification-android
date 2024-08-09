@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import androidx.preference.PreferenceManager;
 
+import net.itsjustsomedude.tokens.db.Coop;
 import net.itsjustsomedude.tokens.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {

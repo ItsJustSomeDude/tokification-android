@@ -1,26 +1,31 @@
 package net.itsjustsomedude.tokens;
 
-import androidx.lifecycle.LiveData;
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.Insert;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Relation;
-import androidx.room.RoomDatabase;
-import androidx.room.Transaction;
 import androidx.room.Database;
-
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-import java.util.List;
-import net.itsjustsomedude.tokens.database.Converters;
 
-@Database(entities = {}, version = 1)
+import android.content.Context;
+
+import net.itsjustsomedude.tokens.db.Coop;
+import net.itsjustsomedude.tokens.db.CoopDao;
+import net.itsjustsomedude.tokens.db.Converters;
+import net.itsjustsomedude.tokens.db.Event;
+
+@Database(entities = {Coop.class, Event.class}, version = 1)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
+	private static AppDatabase instance;
 
+	public abstract CoopDao coopDao();
 
+	public static synchronized AppDatabase getInstance(Context context) {
+		if (instance == null) {
+			instance = Room.databaseBuilder(context.getApplicationContext(),
+							AppDatabase.class, "database")
+					.fallbackToDestructiveMigration()
+					.build();
+		}
+		return instance;
+	}
 }

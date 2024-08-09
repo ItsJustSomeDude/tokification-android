@@ -10,6 +10,7 @@ import android.widget.SimpleCursorAdapter;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.itsjustsomedude.tokens.db.Coop;
 import net.itsjustsomedude.tokens.databinding.ActivityEventListBinding;
 
 public class EventListActivity extends AppCompatActivity {

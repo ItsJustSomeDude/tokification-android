@@ -3,7 +3,6 @@ package net.itsjustsomedude.tokens;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -13,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.itsjustsomedude.tokens.db.Coop;
 import net.itsjustsomedude.tokens.databinding.ActivityEditEventBinding;
 
 import java.text.SimpleDateFormat;

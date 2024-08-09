@@ -4,9 +4,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+
+import net.itsjustsomedude.tokens.db.Coop;
 
 import java.util.ArrayList;
 import java.util.Calendar;
