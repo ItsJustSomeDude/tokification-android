@@ -9,12 +9,22 @@ import kotlinx.coroutines.withContext
 
 class CoopRepository(application: Application) {
     private val coopDao: CoopDao
-    private val allCoops: LiveData<List<Coop>>
 
     init {
-        val database = CoopDatabase.getInstance(application)
+        val database = AppDatabase.getInstance(application)
         coopDao = database.coopDao()
-        allCoops = coopDao.getAllCoops()
+    }
+
+    suspend fun getCoop(id: Int): LiveData<Coop>? {
+        return withContext(Dispatchers.IO) {
+            coopDao.getCoop(id)
+        }
+    }
+
+    suspend fun listCoops(): LiveData<List<CoopSummary>> {
+        return withContext(Dispatchers.IO) {
+            coopDao.listCoops()
+        }
     }
 
     fun insert(coop: Coop) {

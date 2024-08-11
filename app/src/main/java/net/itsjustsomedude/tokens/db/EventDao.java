@@ -1,5 +1,7 @@
 package net.itsjustsomedude.tokens.db;
 
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -8,6 +10,7 @@ import androidx.room.Upsert;
 
 import java.util.List;
 
+@Dao
 public interface EventDao {
 	@Insert
 	void insert(Event event);
@@ -21,6 +24,9 @@ public interface EventDao {
 	@Delete
 	void delete(Event event);
 
-	@Query("SELECT * FROM Event ORDER BY id ASC")
-	List<Event> getAll();
+	@Query("SELECT * FROM Event WHERE coop = :coopId ORDER BY id ASC")
+	LiveData<List<Event>> listEvents(int coopId);
+
+	@Query("SELECT * FROM Event WHERE id = :id LIMIT 1")
+	LiveData<Event> getEvent(int id);
 }

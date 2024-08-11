@@ -16,9 +16,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import net.itsjustsomedude.tokens.db.Coop;
 import net.itsjustsomedude.tokens.databinding.FragmentCoopInfoBinding;
+import net.itsjustsomedude.tokens.db.CoopViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -33,9 +35,10 @@ public class CoopInfoFragment extends Fragment {
 
 	private FragmentCoopInfoBinding binding;
 	private static final String ARG_COOP_ID = "CoopId";
-	private long coopId;
+	private int coopId;
 	private Coop coop;
-	private Database database;
+
+	private CoopViewModel viewModel;
 
 	// TODO: Use the user's Locale here.
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.US);
@@ -66,10 +69,12 @@ public class CoopInfoFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		if (getArguments() != null) {
-			coopId = getArguments().getLong(ARG_COOP_ID);
+			coopId = getArguments().getInt(ARG_COOP_ID);
 
-			database = new Database(getContext());
-			coop = database.fetchCoop(coopId);
+			viewModel = new ViewModelProvider(this).get(CoopViewModel.class);
+
+//			database = new Database(getContext());
+//			coop = database.fetchCoop(coopId);
 		}
 
 		activityCallback = registerActivityCallback(requireActivity(), result -> {
@@ -102,7 +107,9 @@ public class CoopInfoFragment extends Fragment {
 
 	public void refresh() {
 		// This refreshes the coop.
-		coop = database.fetchCoop(coopId);
+		viewModel.getCoop(coopId);
+		coop = viewModel;
+//		coop = database.fetchCoop(coopId);
 	}
 
 	public void render() {

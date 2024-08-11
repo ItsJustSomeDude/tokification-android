@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens.db;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -26,6 +27,9 @@ public interface CoopDao {
 	@Query("DELETE FROM Coop")
 	void deleteAllCoops();
 
-	@Query("SELECT * FROM Coop ORDER BY id ASC")
-	List<Coop> getAllCoops();
+	@Query("SELECT id, name FROM Coop ORDER BY id ASC")
+	LiveData<List<CoopSummary>> listCoops();
+
+	@Query("SELECT * FROM Coop WHERE id = :id")
+	LiveData<Coop> getCoop(int id);
 }

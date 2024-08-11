@@ -81,5 +81,6 @@ Templates are Case-sensitive.
 	<string name="manual_service_title">Notification Service Control</string>
 	<string name="button_stop_service">Stop Service</string>
 	<string name="button_start_service">Start Service</string>
+	<string name="title_activity_main2">MainActivity2</string>
 
 </resources>
