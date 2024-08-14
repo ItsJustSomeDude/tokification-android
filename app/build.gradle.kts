@@ -2,6 +2,9 @@
 
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
+
+//import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
@@ -35,7 +38,7 @@ android {
     }
 
 
-    val localProps = gradleLocalProperties(rootDir)
+    val localProps = gradleLocalProperties(rootDir, providers)
     signingConfigs {
         create("release") {
             storeFile = file(localProps.getProperty("storeFilePath"))

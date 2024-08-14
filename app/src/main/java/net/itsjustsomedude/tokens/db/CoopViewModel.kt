@@ -38,7 +38,7 @@ class CoopViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteAllCoops() {
         viewModelScope.launch {
-            repository.deleteAllCoops()
+            repository.deleteAll()
         }
     }
 

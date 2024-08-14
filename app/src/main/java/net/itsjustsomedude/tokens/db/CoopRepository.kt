@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class CoopRepository(application: Application) {
@@ -45,9 +46,27 @@ class CoopRepository(application: Application) {
         }
     }
 
-    fun deleteAllCoops() {
+    fun deleteAll() {
         CoroutineScope(Dispatchers.IO).launch {
             coopDao.deleteAllCoops()
         }
     }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingGetCoop(coopId: Int): LiveData<Coop>? = runBlocking { getCoop(coopId) }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingListCoops(): LiveData<List<CoopSummary>> = runBlocking { listCoops() }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingInsert(coop: Coop) = runBlocking { insert(coop) }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingUpdate(coop: Coop) = runBlocking { update(coop) }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingDelete(coop: Coop) = runBlocking { delete(coop) }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingDeleteAllCoops() = runBlocking { deleteAll() }
 }
