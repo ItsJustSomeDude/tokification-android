@@ -13,16 +13,16 @@ public class RefreshActionsService extends Service {
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Database db = new Database(this);
-		long coopId = intent.getLongExtra(PARAM_COOP_ID, 0);
-		Coop coop = db.fetchCoop(coopId);
-
-		if (coop.sinkMode) {
-			String report = ReportBuilder.makeBuilder(this, coop).sinkReport();
-			ReportBuilder.copyText(this, report);
-		} else {
-			new NotificationHelper(this).sendActions(coop);
-		}
+//		Database db = new Database(this);
+//		long coopId = intent.getLongExtra(PARAM_COOP_ID, 0);
+//		Coop coop = db.fetchCoop(coopId);
+//
+//		if (coop.sinkMode) {
+//			String report = ReportBuilder.makeBuilder(this, coop).sinkReport();
+//			ReportBuilder.copyText(this, report);
+//		} else {
+//			new NotificationHelper(this).sendActions(coop);
+//		}
 
 		stopSelf();
 

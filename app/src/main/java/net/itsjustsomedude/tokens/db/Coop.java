@@ -1,60 +1,33 @@
 package net.itsjustsomedude.tokens.db;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import net.itsjustsomedude.tokens.MainActivity;
-
 import java.util.Calendar;
+import java.util.List;
 
 @Entity
 public class Coop {
-	@PrimaryKey(autoGenerate = true)
-	public long id;
+    @PrimaryKey(autoGenerate = true)
+    public long id;
 
-	public String name;
-	public String contract;
-	public Calendar startTime;
-	public Calendar endTime;
-	public boolean sinkMode;
+    public String name;
+    public String contract;
+    public Calendar startTime;
+    public Calendar endTime;
+    public boolean sinkMode;
 
-//	public void addEvent(net.itsjustsomedude.tokens.database.Coop.Event toAdd) {
-//		this.events.add(toAdd);
-//	}
+    public List<String> players;
 
-//	public String[] getPeople(String sinkName) {
-//		ArrayList<String> out = new ArrayList<>();
-//
-//		for (net.itsjustsomedude.tokens.database.Coop.Event ev : this.events) {
-//			if (!out.contains(ev.person)) out.add(ev.person);
-//		}
-//
-//		if (sinkName != null) out.add(sinkName);
-//
-//		// TODO: Sort this list by the order of the first Received token.
-//
-//		return out.toArray(new String[0]);
-//	}
+    public Coop() {
+        this("New Coop", "KevID", null, null, false);
+    }
 
-	public static void setSelectedCoop(Context ctx, long id) {
-		// TODO: Replace with AndroidX preference.
-		SharedPreferences sharedPref = ctx.getSharedPreferences(
-				MainActivity.PREFERENCES,
-				Context.MODE_PRIVATE
-		);
-		sharedPref.edit().putLong("SelectedCoop", id).apply();
-	}
-
-	public static long getSelectedCoop(Context ctx) {
-		// TODO: Replace with AndroidX preference.
-		SharedPreferences sharedPref = ctx.getSharedPreferences(
-				MainActivity.PREFERENCES,
-				Context.MODE_PRIVATE
-		);
-		return sharedPref.getLong("SelectedCoop", 0);
-	}
-
+    public Coop(String name, String kevId, Calendar startTime, Calendar endTime, boolean sinkMode) {
+        this.name = name;
+        this.contract = kevId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.sinkMode = sinkMode;
+    }
 }

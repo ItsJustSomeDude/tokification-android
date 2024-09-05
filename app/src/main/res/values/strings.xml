@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Tokification</string>
+    <string name="app_name">Tokification</string>
 
-	<string name="action_channel_name">Actions</string>
-	<string name="action_channel_desc">Channel for the clickable "action" notification</string>
-	<string name="fake_channel_name">Debug</string>
-	<string name="fake_channel_desc">Channel for fake Egg Inc notifications</string>
+    <string name="action_channel_name">Actions</string>
+    <string name="action_channel_desc">Channel for the clickable "action" notification</string>
+    <string name="fake_channel_name">Debug</string>
+    <string name="fake_channel_desc">Channel for fake Egg Inc notifications</string>
 
-	<string name="enable_service_toast">Please grant Tokification Notification Access.</string>
+    <string name="enable_service_toast">Please grant Tokification Notification Access.</string>
 
-	<string name="all_coop_info" formatted="true">Coop: %1$s, Contract: %2$s</string>
-	<string name="no_coop_selected">No Coop Selected!</string>
-	<string name="no_coops">No Coops! Add one by clicking (+)</string>
-	<string name="generate_report">Generate</string>
-	<string name="edit_events" formatted="true">Edit Events (%1$d)</string>
+    <string name="all_coop_info" formatted="true">Coop: %1$s, Contract: %2$s</string>
+    <string name="no_coop_selected">No Coop Selected!</string>
+    <string name="no_coops">No Coops! Add one by clicking (+)</string>
+    <string name="generate_report">Generate</string>
+    <string name="edit_events" formatted="true">Edit Events (%1$d)</string>
 
-	<string name="unset_button">Set</string>
-	<string name="start_date_label">Start Date</string>
-	<string name="start_time_label">Start Time</string>
-	<string name="end_date_label">End Date</string>
-	<string name="end_time_label">End Time</string>
-	<string name="event_date_label">Date</string>
-	<string name="event_time_label">Time</string>
+    <string name="unset_button">Set</string>
+    <string name="start_date_label">Start Date</string>
+    <string name="start_time_label">Start Time</string>
+    <string name="end_date_label">End Date</string>
+    <string name="end_time_label">End Time</string>
+    <string name="event_date_label">Date</string>
+    <string name="event_time_label">Time</string>
 
-	<!-- Preference Titles -->
-	<string name="title_activity_settings">Settings</string>
-	<string name="settings_header">Options</string>
-	<string name="settings_name_title">Your In-Game Name</string>
-	<string name="default_mode_title">Default Coop Mode</string>
-	<string name="auto_dismiss_title">Auto-dismiss Notifications</string>
-	<string name="num_coops_title">Track Multiple Coops</string>
-	<string name="notification_debugger_title">Enable Notification Debugger</string>
+    <!-- Preference Titles -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="settings_header">Options</string>
+    <string name="settings_name_title">Your In-Game Name</string>
+    <string name="default_mode_title">Default Coop Mode</string>
+    <string name="auto_dismiss_title">Auto-dismiss Notifications</string>
+    <string name="num_coops_title">Track Multiple Coops</string>
+    <string name="notification_debugger_title">Enable Notification Debugger</string>
 
-	<string name="service_control_header">Service Control</string>
-	<string name="service_control_enable_service">Enable Notification Service</string>
-	<string name="service_control_enable_service_description">This can be disabled to save battery power, but must be re-enabled to track tokens.</string>
+    <string name="service_control_header">Service Control</string>
+    <string name="service_control_enable_service">Enable Notification Service</string>
+    <string name="service_control_enable_service_description">This can be disabled to save battery power, but must be re-enabled to track tokens.</string>
 
-	<string name="service_control_auto_disable">Auto-disable Service</string>
-	<string name="service_control_auto_disable_description">Disable service on dismissing coop notification.</string>
+    <string name="service_control_auto_disable">Auto-disable Service</string>
+    <string name="service_control_auto_disable_description">Disable service on dismissing coop notification.</string>
 
-	<string name="settings_reports_header">Report Templates</string>
-	<string name="settings_show_template_info">View Templating Info</string>
-	<!-- Do not translate between {} -->
-	<string name="settings_templating_info">
+    <string name="settings_reports_header">Report Templates</string>
+    <string name="settings_show_template_info">View Templating Info</string>
+    <!-- Do not translate between {} -->
+    <string name="settings_templating_info">
 The following items are allowed in the templates:\n\n
 {startEstimate}: true if the start time is estimated.\n
 {endEstimate}: true if the end time is estimated.\n
@@ -61,26 +61,30 @@ The following items are allowed in the templates:\n\n
 Templates are Case-sensitive.
 	</string>
 
-	<string name="settings_reports_simple">Simple Report</string>
-	<string name="settings_reports_simple_description">This report is used when only tracking your own TVal.</string>
+    <string name="settings_reports_simple">Simple Report</string>
+    <string name="settings_reports_simple_description">This report is used when only tracking your own TVal.</string>
 
-	<string name="settings_reports_sink">Sink Report</string>
-	<string name="settings_reports_sink_description">This report lists all players and their TVals.</string>
+    <string name="settings_reports_sink">Sink Report</string>
+    <string name="settings_reports_sink_description">This report lists all players and their TVals.</string>
 
-	<string name="player_name_dropdown_title">Select Player</string>
-	<string name="player_name_entry_title">Enter Player Name</string>
-	<string name="player_name_entry_hint">Name</string>
-	<string name="token_count_title">Tokens</string>
-	<string name="add_1_description">Add 1</string>
-	<string name="token_entry_hint">#</string>
-	<string name="subtract_1_description">Subtract 1</string>
-	<string name="toggle_player_sent_tokens">Player Sent Tokens</string>
-	<string name="toggle_player_received_tokens">Player Received Tokens</string>
-	<string name="button_save">Save</string>
+    <string name="player_name_dropdown_title">Select Player</string>
+    <string name="player_name_entry_title">Enter Player Name</string>
+    <string name="player_name_entry_hint">Name</string>
+    <string name="token_count_title">Tokens</string>
+    <string name="add_1_description">Add 1</string>
+    <string name="token_entry_hint">#</string>
+    <string name="subtract_1_description">Subtract 1</string>
+    <string name="toggle_player_sent_tokens">Player Sent Tokens</string>
+    <string name="toggle_player_received_tokens">Player Received Tokens</string>
+    <string name="button_save">Save</string>
 
-	<string name="manual_service_title">Notification Service Control</string>
-	<string name="button_stop_service">Stop Service</string>
-	<string name="button_start_service">Start Service</string>
-	<string name="title_activity_main2">MainActivity2</string>
+    <string name="manual_service_title">Notification Service Control</string>
+    <string name="button_stop_service">Stop Service</string>
+    <string name="button_start_service">Start Service</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_list_coops2">ListCoops2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

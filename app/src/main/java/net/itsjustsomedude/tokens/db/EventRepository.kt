@@ -16,15 +16,26 @@ class EventRepository(application: Application) {
         eventDao = database.eventDao()
     }
 
-    suspend fun getEvent(id: Int): LiveData<Event>? {
+    suspend fun getEvent(id: Long): LiveData<Event?> {
         return withContext(Dispatchers.IO) {
             eventDao.getEvent(id)
         }
     }
 
-    suspend fun listEvents(coopId: Int): LiveData<List<Event>> {
+    fun getEventSync(id: Long): LiveData<Event?> {
+        return eventDao.getEvent(id)
+    }
+
+
+    suspend fun listEvents(coop: String, kevId: String): LiveData<List<Event>> {
         return withContext(Dispatchers.IO) {
-            eventDao.listEvents(coopId)
+            eventDao.listEvents(coop, kevId)
+        }
+    }
+
+    suspend fun exists(coop: String, kevId: String, noteId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            eventDao.eventExists(coop, kevId, noteId)
         }
     }
 
@@ -46,17 +57,18 @@ class EventRepository(application: Application) {
         }
     }
 
-//    fun deleteAll() {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            eventDao.delete()
-//        }
-//    }
+    fun deleteAll(coop: String, kevId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            eventDao.deleteAll(coop, kevId)
+        }
+    }
 
     @Deprecated("Don't use blocking calls.")
-    fun blockingGetEvent(eventId: Int): LiveData<Event>? = runBlocking { getEvent(eventId) }
+    fun blockingGetEvent(eventId: Long): LiveData<Event?> = runBlocking { getEvent(eventId) }
 
     @Deprecated("Don't use blocking calls.")
-    fun blockingListEvents(coopId: Int): LiveData<List<Event>> = runBlocking { listEvents(coopId) }
+    fun blockingListEvents(coop: String, kevId: String): LiveData<List<Event>> =
+        runBlocking { listEvents(coop, kevId) }
 
     @Deprecated("Don't use blocking calls.")
     fun blockingInsert(event: Event) = runBlocking { insert(event) }
@@ -67,7 +79,12 @@ class EventRepository(application: Application) {
     @Deprecated("Don't use blocking calls.")
     fun blockingDelete(event: Event) = runBlocking { delete(event) }
 
-//    @Deprecated("Don't use blocking calls.")
-//    fun blockingDeleteAll() = runBlocking { deleteAll() }
+    @Deprecated("Don't use blocking calls.")
+    fun blockingDeleteAll(coop: String, kevId: String) = runBlocking { deleteAll(coop, kevId) }
+
+    @Deprecated("Don't use blocking calls.")
+    fun blockingExists(coop: String, kevId: String, noteId: Int) =
+        runBlocking { exists(coop, kevId, noteId) }
+
 
 }

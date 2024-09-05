@@ -102,56 +102,56 @@ public class ReportBuilder {
 
 		//Log.i(TAG, "Number of events: " + coop.events.size());
 
-		for (Coop.Event ev : coop.events) {
-			long time = ev.time.getTimeInMillis() / 1000L;
-
-			double tv = tval(startEpoch, endEpoch, time, ev.count);
-			if (ev.direction.equals("sent")) {
-				Integer i = tokensSent.get(ev.person);
-				tokensSent.put(ev.person, i == null ? ev.count : i + ev.count);
-
-				Double j = tvalSent.get(ev.person);
-				tvalSent.put(ev.person, j == null ? tv : j + tv);
-
-				Integer k = tokensRec.get(sinkName);
-				tokensRec.put(sinkName, k == null ? ev.count : k + ev.count);
-
-				Double l = tvalRec.get(sinkName);
-				tvalRec.put(sinkName, l == null ? tv : l + tv);
-			} else {
-				Integer k = tokensRec.get(ev.person);
-				tokensRec.put(ev.person, k == null ? ev.count : k + ev.count);
-
-				Double l = tvalRec.get(ev.person);
-				tvalRec.put(ev.person, l == null ? tv : l + tv);
-
-				Integer i = tokensSent.get(sinkName);
-				tokensSent.put(sinkName, i == null ? ev.count : i + ev.count);
-
-				Double j = tvalSent.get(sinkName);
-				tvalSent.put(sinkName, j == null ? tv : j + tv);
-			}
-		}
-
-		for (String person : coop.getPeople(sinkName)) {
-			double sent = zeroIfNull(tvalSent.get(person));
-			double rec = zeroIfNull(tvalRec.get(person));
-			double delta = sent - rec;
-
-			//Log.i(TAG, delta + " Delta");
-
-			String output = String.format(Locale.US,
-					rowFormat,
-					person,
-					delta,
-					zeroIfNull(tokensSent.get(person)),
-					sent,
-					zeroIfNull(tokensRec.get(person)),
-					// This looks odd, but it's to prevent -0.0 from showing up.
-					rec == 0 ? 0 : (rec * -1)
-			);
-			table.put(person, output);
-		}
+//		for (Coop.Event ev : coop.events) {
+//			long time = ev.time.getTimeInMillis() / 1000L;
+//
+//			double tv = tval(startEpoch, endEpoch, time, ev.count);
+//			if (ev.direction.equals("sent")) {
+//				Integer i = tokensSent.get(ev.person);
+//				tokensSent.put(ev.person, i == null ? ev.count : i + ev.count);
+//
+//				Double j = tvalSent.get(ev.person);
+//				tvalSent.put(ev.person, j == null ? tv : j + tv);
+//
+//				Integer k = tokensRec.get(sinkName);
+//				tokensRec.put(sinkName, k == null ? ev.count : k + ev.count);
+//
+//				Double l = tvalRec.get(sinkName);
+//				tvalRec.put(sinkName, l == null ? tv : l + tv);
+//			} else {
+//				Integer k = tokensRec.get(ev.person);
+//				tokensRec.put(ev.person, k == null ? ev.count : k + ev.count);
+//
+//				Double l = tvalRec.get(ev.person);
+//				tvalRec.put(ev.person, l == null ? tv : l + tv);
+//
+//				Integer i = tokensSent.get(sinkName);
+//				tokensSent.put(sinkName, i == null ? ev.count : i + ev.count);
+//
+//				Double j = tvalSent.get(sinkName);
+//				tvalSent.put(sinkName, j == null ? tv : j + tv);
+//			}
+//		}
+//
+//		for (String person : coop.getPeople(sinkName)) {
+//			double sent = zeroIfNull(tvalSent.get(person));
+//			double rec = zeroIfNull(tvalRec.get(person));
+//			double delta = sent - rec;
+//
+//			//Log.i(TAG, delta + " Delta");
+//
+//			String output = String.format(Locale.US,
+//					rowFormat,
+//					person,
+//					delta,
+//					zeroIfNull(tokensSent.get(person)),
+//					sent,
+//					zeroIfNull(tokensRec.get(person)),
+//					// This looks odd, but it's to prevent -0.0 from showing up.
+//					rec == 0 ? 0 : (rec * -1)
+//			);
+//			table.put(person, output);
+//		}
 		tvalTable = String.join("\n", table.values());
 
 		ArrayList<String> futures = new ArrayList<>();
@@ -211,35 +211,35 @@ public class ReportBuilder {
 		HashMap<String, ArrayList<String>> rows = new HashMap<>();
 		HashMap<String, Double> cums = new HashMap<>();
 
-		for (String person : coop.getPeople(sinkName)) {
-			rows.put(person, new ArrayList<>());
-			cums.put(person, 0.0);
-		}
-
-		for (Coop.Event ev : coop.events) {
-			long t = ev.time.getTimeInMillis() / 1000L;
-			long elapsedSeconds = t - startEpoch;
-			double tv = tval(startEpoch, endEpoch, t, ev.count);
-
-			String direction = ev.direction.equals("sent")
-					? "→" : "←";
-
-			String sign = ev.direction.equals("sent")
-					? "+" : "-";
-
-			String row = String.format(Locale.US, rowFormat,
-					elapsedSeconds,
-					ev.count,
-					direction,
-					cums.get(ev.person),
-					sign,
-					tv,
-					t
-			);
-
-			// add to row list
-			// add tv to cums
-		}
+//		for (String person : coop.getPeople(sinkName)) {
+//			rows.put(person, new ArrayList<>());
+//			cums.put(person, 0.0);
+//		}
+//
+//		for (Coop.Event ev : coop.events) {
+//			long t = ev.time.getTimeInMillis() / 1000L;
+//			long elapsedSeconds = t - startEpoch;
+//			double tv = tval(startEpoch, endEpoch, t, ev.count);
+//
+//			String direction = ev.direction.equals("sent")
+//					? "→" : "←";
+//
+//			String sign = ev.direction.equals("sent")
+//					? "+" : "-";
+//
+//			String row = String.format(Locale.US, rowFormat,
+//					elapsedSeconds,
+//					ev.count,
+//					direction,
+//					cums.get(ev.person),
+//					sign,
+//					tv,
+//					t
+//			);
+//
+//			// add to row list
+//			// add tv to cums
+//		}
 
 
 		return "";

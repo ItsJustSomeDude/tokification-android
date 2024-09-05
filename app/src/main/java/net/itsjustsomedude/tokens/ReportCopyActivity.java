@@ -3,11 +3,12 @@ package net.itsjustsomedude.tokens;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.itsjustsomedude.tokens.db.Coop;
+import net.itsjustsomedude.tokens.db.CoopRepository;
+
+import java.util.Objects;
 
 public class ReportCopyActivity extends AppCompatActivity {
 	public static final String PARAM_COOP_ID = "CoopId";
@@ -20,15 +21,13 @@ public class ReportCopyActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
-		if (intent == null) {
-			Toast.makeText(this, "Tell Dude: The report activity had no intent!", Toast.LENGTH_LONG).show();
-			this.finish();
-			return;
-		}
 
-		Database db = new Database(this);
-		long coopId = intent.getLongExtra(PARAM_COOP_ID, 0);
-		Coop coop = db.fetchCoop(coopId);
+		CoopRepository coopRepo = new CoopRepository(getApplication());
+
+		int coopId = intent.getIntExtra(PARAM_COOP_ID, 0);
+		Coop coop = Objects.requireNonNull(coopRepo.blockingGetCoop(coopId)).getValue();
+
+		assert coop != null;
 
 		if (coop.sinkMode) {
 			String report = ReportBuilder.makeBuilder(this, coop).sinkReport();

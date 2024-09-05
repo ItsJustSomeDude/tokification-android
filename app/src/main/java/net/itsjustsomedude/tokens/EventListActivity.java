@@ -20,7 +20,6 @@ public class EventListActivity extends AppCompatActivity {
 	ActivityEventListBinding binding;
 	Cursor events;
 	SimpleCursorAdapter adapter;
-	Database database;
 	long coopId;
 	Coop coop;
 
@@ -35,75 +34,77 @@ public class EventListActivity extends AppCompatActivity {
 		setSupportActionBar(binding.toolbar);
 		setTitle("Select Event");
 
-		callbackHandler = SimpleDialogs.registerActivityCallback(this, result -> {
-			coop = database.fetchCoop(coopId);
-			events = database.fetchEvents(coop.name, coop.contract);
+		finish();
 
-			adapter = new SimpleCursorAdapter(
-					this,
-					android.R.layout.simple_list_item_2,
-					events,
-					new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
-					new int[]{android.R.id.text1, android.R.id.text2},
-					0
-			);
-
-			binding.listView.setAdapter(adapter);
-		});
-
-		Intent b = getIntent();
-		coopId = b.getLongExtra(PARAM_COOP_ID, 0);
-
-		database = new Database(this);
-		coop = database.fetchCoop(coopId);
-		events = database.fetchEvents(coop.name, coop.contract);
-
-		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
-		binding.toolbar.setNavigationOnClickListener(v -> {
-			startActivity(new Intent(this, MainActivity.class));
-		});
-
-		adapter = new SimpleCursorAdapter(
-				this,
-				android.R.layout.simple_list_item_2,
-				events,
-				new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
-				new int[]{android.R.id.text1, android.R.id.text2},
-				0
-		);
-
-		binding.listView.setEmptyView(binding.empty);
-		binding.listView.setAdapter(adapter);
-
-		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
-			callbackHandler.launch(
-					EditEventActivity.makeEditIntent(this, coopId, viewId)
-			);
-		});
-
-		binding.listView.setOnItemLongClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
-			SimpleDialogs.yesNoPicker(
-					this,
-					"Delete Event",
-					"Are you sure you want to delete this event?",
-					"Yes",
-					v -> {
-						// TODO: make refresh + render methods.
-						database.deleteEvent(viewId);
-						events = database.fetchEvents(coop.name, coop.contract);
-
-						adapter.notifyDataSetChanged();
-					},
-					"No",
-					v -> {
-					},
-					"",
-					v -> {
-					}
-			);
-
-			// Consume the event.
-			return true;
-		});
+//		callbackHandler = SimpleDialogs.registerActivityCallback(this, result -> {
+//			coop = database.fetchCoop(coopId);
+//			events = database.fetchEvents(coop.name, coop.contract);
+//
+//			adapter = new SimpleCursorAdapter(
+//					this,
+//					android.R.layout.simple_list_item_2,
+//					events,
+//					new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
+//					new int[]{android.R.id.text1, android.R.id.text2},
+//					0
+//			);
+//
+//			binding.listView.setAdapter(adapter);
+//		});
+//
+//		Intent b = getIntent();
+//		coopId = b.getLongExtra(PARAM_COOP_ID, 0);
+//
+//		database = new Database(this);
+//		coop = database.fetchCoop(coopId);
+//		events = database.fetchEvents(coop.name, coop.contract);
+//
+//		binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+//		binding.toolbar.setNavigationOnClickListener(v -> {
+//			startActivity(new Intent(this, MainActivity.class));
+//		});
+//
+//		adapter = new SimpleCursorAdapter(
+//				this,
+//				android.R.layout.simple_list_item_2,
+//				events,
+//				new String[]{DatabaseHelper.EVENT_PERSON, DatabaseHelper.EVENT_COUNT},
+//				new int[]{android.R.id.text1, android.R.id.text2},
+//				0
+//		);
+//
+//		binding.listView.setEmptyView(binding.empty);
+//		binding.listView.setAdapter(adapter);
+//
+//		binding.listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
+//			callbackHandler.launch(
+//					EditEventActivity.makeEditIntent(this, coopId, viewId)
+//			);
+//		});
+//
+//		binding.listView.setOnItemLongClickListener((AdapterView<?> parent, View view, int position, long viewId) -> {
+//			SimpleDialogs.yesNoPicker(
+//					this,
+//					"Delete Event",
+//					"Are you sure you want to delete this event?",
+//					"Yes",
+//					v -> {
+//						// TODO: make refresh + render methods.
+//						database.deleteEvent(viewId);
+//						events = database.fetchEvents(coop.name, coop.contract);
+//
+//						adapter.notifyDataSetChanged();
+//					},
+//					"No",
+//					v -> {
+//					},
+//					"",
+//					v -> {
+//					}
+//			);
+//
+//			// Consume the event.
+//			return true;
+//		});
 	}
 }

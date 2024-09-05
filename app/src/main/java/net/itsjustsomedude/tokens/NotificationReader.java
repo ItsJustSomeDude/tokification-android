@@ -17,6 +17,10 @@ import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import net.itsjustsomedude.tokens.db.CoopRepository;
+import net.itsjustsomedude.tokens.db.Event;
+import net.itsjustsomedude.tokens.db.EventRepository;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -144,8 +148,8 @@ public class NotificationReader {
 				return;
 			}
 
-			Database db = new Database(this);
-			processNotification(db, sbn);
+
+			processNotification(new EventRepository(getApplication()), sbn);
 		}
 
 		private boolean shouldProcessNotification(StatusBarNotification sbn) {
@@ -165,7 +169,7 @@ public class NotificationReader {
 			return true;
 		}
 
-		private void processNotification(Database database, StatusBarNotification sbn) {
+		private void processNotification(EventRepository repository, StatusBarNotification sbn) {
 			int id = sbn.getId();
 
 			Notification innerNote = sbn.getNotification();
@@ -203,7 +207,9 @@ public class NotificationReader {
 			String person = matches.group(1);
 			String coopName = matches.group(2);
 
-			if (database.eventExists(id)) {
+			assert coopName != null;
+
+			if (repository.blockingExists(coopName, group, id)) {
 				Log.i(TAG, "Skipping notification that has already been processed.");
 				scheduleRemoval(key);
 				return;
@@ -212,7 +218,7 @@ public class NotificationReader {
 			if (title.contains("🐣")) {
 				Log.i(TAG, "Processing CR");
 				// Count of 0 indicates a CR.
-				database.createEvent(coopName, group, when, 0, "sent", person, id);
+				repository.blockingInsert(new Event(coopName, group, when, 0, person, Event.DIRECTION_SENT, id));
 				scheduleRemoval(key);
 				return;
 			}
@@ -235,7 +241,7 @@ public class NotificationReader {
 				}
 			}
 
-			database.createEvent(coopName, group, when, amount, "sent", person, id);
+			repository.blockingInsert(new Event(coopName, group, when, amount, person, Event.DIRECTION_SENT, id));
 			Log.i(TAG, "Added event from note:");
 			Log.i(TAG, text);
 
@@ -247,12 +253,12 @@ public class NotificationReader {
 				return;
 			}
 
-			Database db = new Database(this);
+			EventRepository repo = new EventRepository(getApplication());
 
 			StatusBarNotification[] activeNotifications = getActiveNotifications();
 			for (StatusBarNotification sbn : activeNotifications) {
 				if (shouldProcessNotification(sbn))
-					processNotification(db, sbn);
+					processNotification(repo, sbn);
 			}
 		}
 
