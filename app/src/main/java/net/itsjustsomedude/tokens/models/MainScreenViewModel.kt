@@ -1,7 +1,6 @@
 package net.itsjustsomedude.tokens.models
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
@@ -37,36 +36,13 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-//    private fun fetchToSelectedCoop(id: Long) {
-//        println("FetchToSelected: $id")
-//        viewModelScope.launch {
-//            val coopLiveData = coopRepo.getCoop(id)
-//            _selectedCoop.removeSource(coopLiveData)
-//            _selectedCoop.addSource(coopLiveData) { coop ->
-//                println("Setting: $coop")
-//                _selectedCoop.value = coop
-//                println("FetchToSelected2")
-//            }
-//        }
-//        println("FetchToSelected3... Never fires?")
-////        _selectedCoop.value = coopRepo.blockingGetCoop(id).value
-//    }
-
-//    fun getCoop(id: Long): LiveData<Coop?> {
-//        return _coops.map { coops ->
-//            coops.firstOrNull { it.id == id }
-//        }
-//    }
-
     fun insert(coop: Coop) {
         viewModelScope.launch {
             coopRepo.insert(coop)
-            Log.i(TAG, "Created a Coop.")
         }
     }
 
     fun update(coop: Coop) {
-        println("Update")
         viewModelScope.launch {
             coopRepo.update(coop)
         }

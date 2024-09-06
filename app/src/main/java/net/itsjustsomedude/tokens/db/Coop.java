@@ -6,6 +6,13 @@ import androidx.room.PrimaryKey;
 import java.util.Calendar;
 import java.util.List;
 
+//@Entity
+//data class User(
+//        @PrimaryKey val uid: Int,
+//        @ColumnInfo(name = "first_name") val firstName: String?,
+//        @ColumnInfo(name = "last_name") val lastName: String?
+//)
+
 @Entity
 public class Coop {
     @PrimaryKey(autoGenerate = true)
