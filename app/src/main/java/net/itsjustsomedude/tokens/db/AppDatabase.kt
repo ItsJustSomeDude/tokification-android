@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 
 // TODO: This was auto-converted by JetBrains. Find out if this is the best way.
 
-@Database(entities = [Coop::class, Event::class], version = 4, exportSchema = false)
+@Database(entities = [Coop::class, Event::class], version = 5, exportSchema = false)
 @TypeConverters(
     Converters::class
 )

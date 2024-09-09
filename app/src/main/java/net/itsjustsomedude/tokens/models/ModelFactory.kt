@@ -14,7 +14,7 @@ class ModelFactory(
             return EventViewModel(application, id) as T
         } else if (modelClass.isAssignableFrom(CoopViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return CoopViewModel(application, id) as T
+            return CoopViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

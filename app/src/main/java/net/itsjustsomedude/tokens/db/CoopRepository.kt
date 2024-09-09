@@ -1,7 +1,6 @@
 package net.itsjustsomedude.tokens.db
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,10 +48,9 @@ class CoopRepository(application: Application) {
         }
     }
 
-    fun insert(coop: Coop) {
-        CoroutineScope(Dispatchers.IO).launch {
+    suspend fun insert(coop: Coop): Long {
+        return withContext(Dispatchers.IO) {
             coopDao.insert(coop)
-            Log.i("CoopRepo", "Created.")
         }
     }
 

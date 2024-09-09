@@ -11,7 +11,7 @@ import androidx.room.Upsert
 @Dao
 interface CoopDao {
     @Insert
-    suspend fun insert(coop: Coop)
+    suspend fun insert(coop: Coop): Long
 
     @Update
     suspend fun update(coop: Coop)

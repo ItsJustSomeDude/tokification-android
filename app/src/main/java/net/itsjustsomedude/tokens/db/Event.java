@@ -11,7 +11,7 @@ public class Event {
     public static final int DIRECTION_RECEIVED = 2;
 
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public Long id;
 
     public Calendar time;
     public int count;
@@ -22,7 +22,7 @@ public class Event {
     public int notification;
 
     public Event(String coop, String kevId, Calendar time, int count, String person, int direction, int note) {
-        this.id = 0;
+        this.id = 0L;
         this.coop = coop;
         this.kevId = kevId;
         this.time = time;

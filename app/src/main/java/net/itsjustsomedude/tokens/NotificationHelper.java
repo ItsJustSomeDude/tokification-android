@@ -217,13 +217,6 @@ public class NotificationHelper {
                 Log.e(TAG, "Attempted to send a notification from something a context that's not an activity, and we don't have permissions!");
                 return;
             }
-//			if (!ActivityCompat.shouldShowRequestPermissionRationale(
-//					(Activity) ctx,
-//					Manifest.permission.POST_NOTIFICATIONS)
-//			) {
-//				Toast.makeText(ctx, "Please grant notification permissions in settings/App Info!", Toast.LENGTH_LONG).show();
-//				return;
-//			}
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 String[] toRequest = new String[]{Manifest.permission.POST_NOTIFICATIONS};

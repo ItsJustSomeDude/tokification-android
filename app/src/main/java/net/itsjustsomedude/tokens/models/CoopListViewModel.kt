@@ -32,5 +32,4 @@ class CoopListViewModel(application: Application) : AndroidViewModel(application
             storeRepo.setSelectedCoop(id)
         }
     }
-
 }

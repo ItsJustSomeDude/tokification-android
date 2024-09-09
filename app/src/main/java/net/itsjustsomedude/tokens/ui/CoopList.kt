@@ -38,7 +38,6 @@ fun CoopList(
             HorizontalDivider()
         }
     }
-
 }
 
 @Composable
