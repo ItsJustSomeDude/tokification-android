@@ -1,140 +1,314 @@
 package net.itsjustsomedude.tokens.ui
 
-import android.app.Application
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Event
-import net.itsjustsomedude.tokens.models.EventViewModel
-import net.itsjustsomedude.tokens.models.ModelFactory
+import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventEdit(
-    eventId: Long,
+fun EventEditDialog(
     modifier: Modifier = Modifier,
+    event: Event?,
+    players: List<String>,
+    showExtendedButtons: Boolean = true,
+    onDismissRequest: () -> Unit,
+    onDoneClicked: () -> Unit,
+    onChanged: (Event) -> Unit
 ) {
-    val application = LocalContext.current.applicationContext as Application
-    val viewModelFactory = ModelFactory(application, eventId)
-    val model: EventViewModel = viewModel(factory = viewModelFactory)
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(onClick = onDoneClicked) {
+                Text("Done")
+            }
+        },
+        text = {
+            event?.let {
+                EventEdit(
+                    event = it,
+                    players = players,
+                    showExtendedButtons = showExtendedButtons,
+                    onChanged = onChanged
+                )
+            } ?: EventEdiSkeleton(showExtendedButtons = showExtendedButtons)
+        })
+}
 
-//    LaunchedEffect(key1 = eventId) {
-//        model.setEvent(eventId)
-//    }
+@Composable
+fun EventEdiSkeleton(
+    modifier: Modifier = Modifier,
+    showExtendedButtons: Boolean = true
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        Box(
+            Modifier
+                .size(218.dp, 20.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .skeletonColors()
+        )
 
-    val coop by model.coop.observeAsState()
-    val modelEvent by model.event.observeAsState()
-    modelEvent?.let { event ->
+        Box(
+            Modifier
+                .size(272.dp, 56.dp)
+                .clip(RoundedCornerShape(4.dp, 4.dp, 0.dp, 0.dp))
+                .skeletonColors()
+        )
 
-    } ?: Text(text = "No event!")
+        if (showExtendedButtons)
+            Box(
+                Modifier
+                    .size(212.dp, 48.dp)
+                    .clip(RoundedCornerShape(50))
+                    .skeletonColors()
+            )
+
+        NumberEntrySkeleton()
+
+        if (showExtendedButtons)
+            DateTimeRowSkeleton()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventInfo(
+fun EventEdit(
+    modifier: Modifier = Modifier,
     event: Event,
-    players: List<String>
+    players: List<String>,
+    showExtendedButtons: Boolean = true,
+    onChanged: (Event) -> Unit
 ) {
     var playerMenuExpanded by remember { mutableStateOf(false) }
-    var selectedPlayer by remember { mutableStateOf(players[0]) }
-    var customPlayerVisible by remember { mutableStateOf(false) }
-    var customPlayer by remember { mutableStateOf("") }
-    var count by remember { mutableIntStateOf(6) }
+    var selectedPlayer by remember { mutableStateOf(event.person) }
+    var customPlayerMode by remember {
+        mutableStateOf(
+            event.person.isNotBlank() &&
+                    !players.contains(event.person)
+        )
+    }
+    var customPlayer by remember { mutableStateOf(if (customPlayerMode) event.person else "") }
 
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
         Text("Coop: ${event.coop}, Contract: ${event.kevId}")
-        Row {
-            ExposedDropdownMenuBox(expanded = playerMenuExpanded, onExpandedChange = {
+
+        ExposedDropdownMenuBox(
+            expanded = playerMenuExpanded,
+            onExpandedChange = {
                 playerMenuExpanded = !playerMenuExpanded
-            }) {
-                TextField(
-                    modifier = Modifier.menuAnchor(),
-                    readOnly = true,
-                    value = selectedPlayer ?: "",
-                    onValueChange = {},
-                    label = { Text("Label") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerMenuExpanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                )
-                ExposedDropdownMenu(
-                    expanded = playerMenuExpanded,
-                    onDismissRequest = { playerMenuExpanded = false },
-                ) {
-                    players.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            text = { Text(text = selectionOption) },
-                            onClick = {
-                                customPlayerVisible = false
-                                selectedPlayer = selectionOption
-                                playerMenuExpanded = false
-                            },
+            },
+            modifier = Modifier.debugRuler(LocalDensity.current, "DDL")
+        ) {
+            TextField(
+                modifier = Modifier.menuAnchor(),
+                readOnly = !customPlayerMode,
+                singleLine = true,
+                value = if (customPlayerMode) customPlayer else selectedPlayer,
+                onValueChange = {
+                    if (customPlayerMode) {
+                        customPlayer = it
+
+                        onChanged(
+                            event.copy(
+                                person = it
+                            )
                         )
                     }
-
+                },
+                label = {
+                    Text(
+                        if (customPlayerMode) "Enter Player" else "Select Player"
+                    )
+                },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerMenuExpanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            )
+            ExposedDropdownMenu(
+                expanded = playerMenuExpanded,
+                onDismissRequest = { playerMenuExpanded = false },
+            ) {
+                players.forEach { player ->
                     DropdownMenuItem(
-                        text = { Text(text = "Add a player", fontStyle = FontStyle.Italic) },
+                        text = { Text(text = player) },
                         onClick = {
-                            selectedPlayer = "Add a player"
+                            customPlayerMode = false
+                            selectedPlayer = player
                             playerMenuExpanded = false
-                            customPlayerVisible = true
+
+                            onChanged(
+                                event.copy(
+                                    person = player
+                                )
+                            )
                         },
                     )
                 }
+
+                DropdownMenuItem(
+                    text = { Text(text = "Add a player", fontStyle = FontStyle.Italic) },
+                    onClick = {
+                        selectedPlayer = "Add a player"
+                        playerMenuExpanded = false
+                        customPlayerMode = true
+                    },
+                )
             }
         }
 
-        if (customPlayerVisible) {
-            TextField(
-                value = customPlayer,
-                onValueChange = {
-                    customPlayer = it
-                },
-                label = { Text("Player") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Player"
+        if (showExtendedButtons)
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier.debugRuler(LocalDensity.current, "ButtonRow")
+            ) {
+                SegmentedButton(
+                    selected = event.direction == Event.DIRECTION_SENT,
+                    onClick = {
+                        onChanged(
+                            event.copy(
+                                direction = Event.DIRECTION_SENT
+                            )
+                        )
+                    },
+                    shape = SegmentedButtonDefaults.itemShape(0, 2)
+                ) {
+                    Text("Sent")
+                }
+
+                SegmentedButton(
+                    selected = event.direction == Event.DIRECTION_RECEIVED,
+                    onClick = {
+                        onChanged(
+                            event.copy(
+                                direction = Event.DIRECTION_RECEIVED
+                            )
+                        )
+                    },
+                    shape = SegmentedButtonDefaults.itemShape(1, 2)
+                ) {
+                    Text("Received")
+                }
+            }
+
+        NumberEntry(
+            modifier = Modifier.debugRuler(LocalDensity.current, "NumberEntry"),
+            value = event.count, onChanged = {
+                onChanged(
+                    event.copy(
+                        count = it
                     )
+                )
+            })
+
+        if (showExtendedButtons)
+            DateTimeRow(
+                modifier = Modifier.debugRuler(LocalDensity.current, "DateRow"),
+                dateLabel = "Date",
+                timeLabel = "Time",
+                unsetText = "Set",
+                date = event.time,
+                onChange = {
+                    it?.let {
+                        onChanged(
+                            event.copy(
+                                time = it
+                            )
+                        )
+                    }
                 }
             )
-        }
-
-        NumberEntry(value = count, onChange = { count = it })
-
-        DateTimeRow(
-            dateLabel = "Date",
-            timeLabel = "Time",
-            unsetText = "Set",
-            date = event.time,
-            onChange = {
-                event.time = it
-            }
-        )
-
-        Button(onClick = {
-            model.update(event)
-        }) {
-            Text("Save")
-        }
     }
+}
+
+@Preview
+@Composable
+fun PreviewNullEventEditDialog() {
+    EventEditDialog(
+        event = null,
+        players = emptyList(),
+        onDoneClicked = {},
+        onChanged = {},
+        onDismissRequest = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreviewEventEditDialog() {
+    EventEditDialog(
+        event = Event(
+            coop = "coop",
+            kevId = "kev-id",
+            time = Calendar.getInstance(),
+            count = 4,
+            person = "SomePlayer",
+            direction = Event.DIRECTION_RECEIVED
+        ),
+        players = listOf("Player1", "Player2", "SomePlayer"),
+        onDoneClicked = {},
+        onChanged = {},
+        onDismissRequest = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreviewShortEventEditDialog() {
+    EventEditDialog(
+        event = Event(
+            coop = "coop",
+            kevId = "kev-id",
+            time = Calendar.getInstance(),
+            count = 4,
+            person = "SomePlayer",
+            direction = Event.DIRECTION_RECEIVED
+        ),
+        players = listOf("Player1", "Player2", "SomePlayer"),
+        showExtendedButtons = false,
+        onDoneClicked = {},
+        onChanged = {},
+        onDismissRequest = {}
+    )
+}
+
+@Preview
+@Composable
+fun PreviewShortNullEventEditDialog() {
+    EventEditDialog(
+        event = null,
+        players = emptyList(),
+        showExtendedButtons = false,
+        onDoneClicked = {},
+        onChanged = {},
+        onDismissRequest = {}
+    )
 }

@@ -1,8 +1,7 @@
 package net.itsjustsomedude.tokens.models
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -12,12 +11,11 @@ import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
 
 class EventViewModel(
-    application: Application,
     eventId: Long,
-    private val eventRepo: EventRepository = EventRepository(application),
-    private val coopRepo: CoopRepository = CoopRepository(application)
-) : AndroidViewModel(application) {
-    
+    private val eventRepo: EventRepository,
+    private val coopRepo: CoopRepository
+) : ViewModel() {
+
     val event: LiveData<Event?> = liveData {
         val newEvent = eventRepo.getEvent(eventId)
         emitSource(newEvent)
@@ -29,17 +27,10 @@ class EventViewModel(
         }
     }
 
-    fun insert(event: Event) {
+    fun upsert() {
         viewModelScope.launch {
-            eventRepo.insert(event)
+            event.value?.let { eventRepo.upsert(it) }
         }
-    }
-
-    fun update(event: Event) {
-        viewModelScope.launch {
-            eventRepo.update(event)
-        }
-
     }
 
     fun delete(event: Event) {

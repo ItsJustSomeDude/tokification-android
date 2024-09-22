@@ -6,31 +6,32 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-// TODO: This was auto-converted by JetBrains. Find out if this is the best way.
-
-@Database(entities = [Coop::class, Event::class], version = 5, exportSchema = false)
-@TypeConverters(
-    Converters::class
-)
+@Database(entities = [Coop::class, Event::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun coopDao(): CoopDao
 
     abstract fun eventDao(): EventDao
 
     companion object {
-        private var instance: AppDatabase? = null
+        fun createInstance(context: Context): AppDatabase = databaseBuilder(
+            context.applicationContext,
+            AppDatabase::class.java,
+            "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
-        @Synchronized
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
         fun getInstance(context: Context): AppDatabase {
-            if (instance == null) {
-                instance = databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java, "database"
-                )
-                    .fallbackToDestructiveMigration()
-                    .build()
+            return INSTANCE ?: synchronized(this) {
+                val instance = createInstance(context)
+
+                INSTANCE = instance
+                instance
             }
-            return instance as AppDatabase
         }
     }
 }

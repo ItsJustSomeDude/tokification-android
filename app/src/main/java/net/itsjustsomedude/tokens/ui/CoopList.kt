@@ -1,6 +1,6 @@
 package net.itsjustsomedude.tokens.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,44 +9,60 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import net.itsjustsomedude.tokens.db.Coop
-import net.itsjustsomedude.tokens.models.CoopListViewModel
 
 @Composable
 fun CoopList(
     modifier: Modifier = Modifier,
-    model: CoopListViewModel = viewModel(),
+    coops: List<Coop>,
+    onDelete: (id: Long, deleteEvents: Boolean) -> Unit,
     onSelect: (id: Long) -> Unit,
 ) {
-    val items by model.coops.observeAsState(emptyList())
-
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
     ) {
-        items(items) { item ->
-            CoopListItem(item, onclick = onSelect)
+        items(coops) { item ->
+            CoopListItem(
+                coop = item,
+                onclick = onSelect,
+                onDelete = onDelete
+            )
             HorizontalDivider()
         }
     }
 }
 
 @Composable
-private fun CoopListItem(coop: Coop, onclick: (id: Long) -> Unit, modifier: Modifier = Modifier) {
+private fun CoopListItem(
+    modifier: Modifier = Modifier,
+    coop: Coop,
+    onDelete: (id: Long, deleteEvents: Boolean) -> Unit,
+    onclick: (id: Long) -> Unit,
+) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                onclick(coop.id)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { onclick(coop.id) },
+                    onLongPress = { showDeleteDialog = true },
+                )
             }
             .padding(16.dp)
     ) {
@@ -79,6 +95,35 @@ private fun CoopListItem(coop: Coop, onclick: (id: Long) -> Unit, modifier: Modi
                 text = coop.id.toString(),
                 style = MaterialTheme.typography.bodySmall,
             )
+        }
+    }
+
+    if (showDeleteDialog) {
+        var deleteEvents by remember { mutableStateOf(false) }
+
+        YesNoDialog(
+            title = "Delete Coop '${coop.name}'?",
+            onDismissRequest = { showDeleteDialog = false },
+            onNoClick = { showDeleteDialog = false },
+            onYesClick = {
+                showDeleteDialog = false
+
+                onDelete(coop.id, deleteEvents)
+            }
+        ) {
+            Text(text = "Really delete this coop?")
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text("Delete Events")
+                Checkbox(
+                    enabled = false,
+                    checked = deleteEvents,
+                    onCheckedChange = { deleteEvents = it }
+                )
+            }
         }
     }
 }

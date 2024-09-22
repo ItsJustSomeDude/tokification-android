@@ -1,20 +1,14 @@
 package net.itsjustsomedude.tokens.db
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
-class EventRepository(application: Application) {
-    private val eventDao: EventDao
-
-    init {
-        val database = AppDatabase.getInstance(application)
-        eventDao = database.eventDao()
-    }
+class EventRepository(private val eventDao: EventDao) {
 
     suspend fun getEvent(id: Long): LiveData<Event?> {
         return withContext(Dispatchers.IO) {
@@ -22,10 +16,17 @@ class EventRepository(application: Application) {
         }
     }
 
-    fun getEventSync(id: Long): LiveData<Event?> {
-        return eventDao.getEvent(id)
+    suspend fun getEventDirect(id: Long): Event? {
+        return withContext(Dispatchers.IO) {
+            eventDao.getEventDirect(id)
+        }
     }
 
+    suspend fun listEventsDirect(coop: String, kevId: String): List<Event> {
+        return withContext(Dispatchers.IO) {
+            eventDao.listEventsDirect(coop, kevId)
+        }
+    }
 
     suspend fun listEvents(coop: String, kevId: String): LiveData<List<Event>> {
         return withContext(Dispatchers.IO) {
@@ -39,6 +40,28 @@ class EventRepository(application: Application) {
         }
     }
 
+    suspend fun create(
+        coop: String,
+        kevId: String,
+        time: Calendar = Calendar.getInstance(),
+        count: Int = 1,
+        player: String = "",
+        direction: Int = Event.DIRECTION_RECEIVED
+    ): Long {
+        return withContext(Dispatchers.IO) {
+            eventDao.insert(
+                Event(
+                    coop = coop,
+                    kevId = kevId,
+                    time = time,
+                    count = count,
+                    person = player,
+                    direction = direction
+                )
+            )
+        }
+    }
+
     fun insert(event: Event) {
         CoroutineScope(Dispatchers.IO).launch {
             eventDao.insert(event)
@@ -48,6 +71,22 @@ class EventRepository(application: Application) {
     fun update(event: Event) {
         CoroutineScope(Dispatchers.IO).launch {
             eventDao.update(event)
+        }
+    }
+
+    fun upsert(event: Event) {
+        CoroutineScope(Dispatchers.IO).launch {
+            eventDao.upsert(event)
+        }
+    }
+
+    suspend fun upsertCor(event: Event) {
+        eventDao.upsert(event)
+    }
+
+    fun deleteById(id: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            eventDao.deleteById(id)
         }
     }
 
@@ -64,27 +103,9 @@ class EventRepository(application: Application) {
     }
 
     @Deprecated("Don't use blocking calls.")
-    fun blockingGetEvent(eventId: Long): LiveData<Event?> = runBlocking { getEvent(eventId) }
-
-    @Deprecated("Don't use blocking calls.")
-    fun blockingListEvents(coop: String, kevId: String): LiveData<List<Event>> =
-        runBlocking { listEvents(coop, kevId) }
-
-    @Deprecated("Don't use blocking calls.")
     fun blockingInsert(event: Event) = runBlocking { insert(event) }
-
-    @Deprecated("Don't use blocking calls.")
-    fun blockingUpdate(event: Event) = runBlocking { update(event) }
-
-    @Deprecated("Don't use blocking calls.")
-    fun blockingDelete(event: Event) = runBlocking { delete(event) }
-
-    @Deprecated("Don't use blocking calls.")
-    fun blockingDeleteAll(coop: String, kevId: String) = runBlocking { deleteAll(coop, kevId) }
 
     @Deprecated("Don't use blocking calls.")
     fun blockingExists(coop: String, kevId: String, noteId: Int) =
         runBlocking { exists(coop, kevId, noteId) }
-
-
 }

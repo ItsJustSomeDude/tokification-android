@@ -11,26 +11,35 @@ import androidx.room.Upsert
 @Dao
 interface EventDao {
     @Insert
-    fun insert(event: Event)
-
-    @Update
-    fun update(event: Event)
+    suspend fun insert(event: Event): Long
 
     @Upsert
-    fun upsert(event: Event)
+    suspend fun upsert(event: Event)
+
+    @Update
+    suspend fun update(event: Event)
 
     @Delete
-    fun delete(event: Event)
+    suspend fun delete(event: Event)
+
+    @Query("DELETE FROM Event WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query("SELECT EXISTS(SELECT * FROM Event WHERE coop = :coop AND kevId = :kevId AND notification = :noteId)")
-    fun eventExists(coop: String, kevId: String, noteId: Int): Boolean
+    suspend fun eventExists(coop: String, kevId: String, noteId: Int): Boolean
 
     @Query("DELETE FROM Event WHERE coop = :coop AND kevId = :kevId")
-    fun deleteAll(coop: String, kevId: String)
+    suspend fun deleteAll(coop: String, kevId: String)
 
-    @Query("SELECT * FROM Event WHERE coop = :coop AND kevId = :kevId ORDER BY id ASC")
+    @Query("SELECT * FROM Event WHERE coop = :coop AND kevId = :kevId ORDER BY time DESC")
     fun listEvents(coop: String, kevId: String): LiveData<List<Event>>
 
     @Query("SELECT * FROM Event WHERE id = :id LIMIT 1")
     fun getEvent(id: Long): LiveData<Event?>
+
+    @Query("SELECT * FROM Event WHERE id = :id LIMIT 1")
+    suspend fun getEventDirect(id: Long): Event?
+
+    @Query("SELECT * FROM Event WHERE coop = :coop AND kevId = :kevId ORDER BY time DESC")
+    fun listEventsDirect(coop: String, kevId: String): List<Event>
 }

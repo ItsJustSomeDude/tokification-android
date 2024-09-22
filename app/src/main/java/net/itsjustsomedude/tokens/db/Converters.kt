@@ -36,13 +36,13 @@ object Converters {
         return if (value == null) null else if (value) 1 else 0
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+    @ExperimentalSerializationApi
     @TypeConverter
     fun fromStringList(value: List<String>?): String? {
         return value?.let { Json.encodeToString(it) }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+    @ExperimentalSerializationApi
     @TypeConverter
     fun toStringList(value: String?): List<String>? {
         return value?.let { Json.decodeFromString<List<String>>(it) }

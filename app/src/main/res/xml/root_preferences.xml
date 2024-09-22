@@ -44,23 +44,23 @@
 			app:title="@string/notification_debugger_title" />
 	</PreferenceCategory>
 
-	<PreferenceCategory
-		app:title="@string/settings_reports_header">
+<!--	<PreferenceCategory-->
+<!--		app:title="@string/settings_reports_header">-->
 
-		<Preference
-			app:key="btn_show_template_info"
-			app:title="@string/settings_show_template_info" />
+<!--		<Preference-->
+<!--			app:key="btn_show_template_info"-->
+<!--			app:title="@string/settings_show_template_info" />-->
 
-		<EditTextPreference
-			app:key="simple_report_template"
-			app:title="@string/settings_reports_simple"
-			app:summary="@string/settings_reports_simple_description" />
+<!--		<EditTextPreference-->
+<!--			app:key="simple_report_template"-->
+<!--			app:title="@string/settings_reports_simple"-->
+<!--			app:summary="@string/settings_reports_simple_description" />-->
 
-		<EditTextPreference
-			app:key="simple_report_template"
-			app:title="@string/settings_reports_sink"
-			app:summary="@string/settings_reports_sink_description" />
+<!--		<EditTextPreference-->
+<!--			app:key="simple_report_template"-->
+<!--			app:title="@string/settings_reports_sink"-->
+<!--			app:summary="@string/settings_reports_sink_description" />-->
 
-	</PreferenceCategory>
+<!--	</PreferenceCategory>-->
 
 </PreferenceScreen>

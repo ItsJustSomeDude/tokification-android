@@ -7,8 +7,6 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.android")
 
-    id("com.google.dagger.hilt.android")
-
 }
 
 android {
@@ -116,13 +114,14 @@ dependencies {
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$roomVersion")
 
-    implementation("com.google.dagger:hilt-android:2.44")
-    ksp("com.google.dagger:hilt-android-compiler:2.44")
-
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+
+    // Koin
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
 }

@@ -13,10 +13,7 @@ class StoreRepo(private val context: Context) {
         }
 
     suspend fun setSelectedCoop(newValue: Long) {
-        println("Setting it, part 1: $newValue")
-
         context.dataStore.edit { preferences ->
-            println("Setting DS to store $newValue")
             preferences[PreferencesKeys.SELECTED_COOP] = newValue
         }
     }

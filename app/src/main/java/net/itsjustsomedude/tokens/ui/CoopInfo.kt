@@ -1,114 +1,150 @@
 package net.itsjustsomedude.tokens.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import net.itsjustsomedude.tokens.ReportBuilder
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.models.CoopViewModel
+import net.itsjustsomedude.tokens.models.SelfReport
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCoop(
     coopId: Long?,
-    modifier: Modifier = Modifier,
-    model: CoopViewModel = viewModel()
+    model: CoopViewModel = koinViewModel(
+        parameters = { parametersOf(coopId) },
+        key = coopId.toString()
+    )
 ) {
-    LaunchedEffect(key1 = coopId) {
-        model.setSelectedCoop(coopId)
-    }
-
-    var showEventListSheet by remember { mutableStateOf(false) }
-    var showEventEditDialog by remember { mutableStateOf(false) }
-    var event by remember { mutableLongStateOf(0) }
+    var showEventList by model.showEventList
+    var showEventEdit by model.showEventEdit
+    var showNameEdit by model.showNameEdit
 
     val modelCoop by model.coop.observeAsState()
+    val selectedEvent by model.selectedEvent.observeAsState()
+    val events by model.events.observeAsState(emptyList())
+
+    println("The Coop Outside: $modelCoop with ID $coopId")
+
     modelCoop?.let { coop ->
+        println("The Coop: $coop with ID $coopId")
+
         CoopInfo(
             coop = coop,
+            numEvents = events.size,
+            reportText = SelfReport().generate(coop, events),
             onEventsClicked = {
-                showEventListSheet = true
+                showEventList = true
             },
             onSendClicked = {
-                showEventEditDialog = true
+                model.createEvent(
+                    count = if (coop.sinkMode) 6 else 2
+                )
+                showEventEdit = true
+            },
+            onEditClicked = {
+
+                showNameEdit = true
+            },
+            onReportClicked = {
+                model.copySinkReport()
             },
             onChanged = {
                 model.update(it)
+                model.postActions()
             }
         )
 
-        if (showEventListSheet)
-            ModalBottomSheet(onDismissRequest = { showEventListSheet = false }) {
-                EventList(
-                    coop = coop.name,
-                    kevId = coop.contract,
-                    onSelect = {
-                        event = it
-                        showEventListSheet = false
-                    }
-                )
-            }
-
-        if (showEventEditDialog)
-            AlertDialog(
+        if (showEventList)
+            EventListSheet(
+                events = events,
+                coop = coop,
                 onDismissRequest = {
-                    event = 0
-                    showEventEditDialog = false
+                    showEventList = false
                 },
-                confirmButton = {
-                    Button(onClick = {
-                        event = 0
-                        showEventEditDialog = false
-                    }) {
-                        Text("Save")
-                    }
-                },
-                text = {
-                    EventEdit(eventId = event)
+                onSelect = {
+                    model.loadEvent(it)
+
+                    showEventList = false
+                    showEventEdit = true
                 })
 
-    } ?: Text("Invalid Coop Selected.")
+        if (showEventEdit)
+            EventEditDialog(
+                event = selectedEvent,
+                players = coop.players,
+                onDismissRequest = {
+                    showEventEdit = false
+                },
+                onDoneClicked = {
+                    model.saveSelectedEvent()
+                    showEventEdit = false
+                },
+                onChanged = {
+                    model.updateSelectedEvent(it)
+                }
+            )
+
+        if (showNameEdit)
+            CoopNameEditDialog(
+                coop = coop,
+                onDismiss = { showNameEdit = false },
+                onChanged = { coopName, kevId ->
+                    model.update(
+                        coop.copy(
+                            name = coopName,
+                            contract = kevId
+                        )
+                    )
+
+                    showNameEdit = false
+                })
+
+    } ?: CoopInfoSkeleton()
 }
 
 @Composable
 fun CoopInfo(
+    modifier: Modifier = Modifier,
     coop: Coop,
+    numEvents: Int = 0,
+    reportText: String = "",
     onEventsClicked: () -> Unit,
     onSendClicked: () -> Unit,
-    onChanged: (coop: Coop) -> Unit
+    onEditClicked: () -> Unit,
+    onReportClicked: () -> Unit,
+    onChanged: (coop: Coop) -> Unit,
 ) {
-    var showEditDialog by remember { mutableStateOf(false) }
-
-    Column {
+    Column(modifier = modifier) {
         Row {
             Column {
-                if (coop.name.isNullOrBlank())
+                if (coop.name.isBlank())
                     Text(
                         text = "No coop name",
                         style = MaterialTheme.typography.titleLarge,
@@ -120,7 +156,7 @@ fun CoopInfo(
                         style = MaterialTheme.typography.titleLarge
                     )
 
-                if (coop.contract.isNullOrBlank())
+                if (coop.contract.isBlank())
                     Text(
                         text = "No contract id",
                         style = MaterialTheme.typography.bodySmall,
@@ -133,9 +169,7 @@ fun CoopInfo(
                     )
             }
             Column {
-                IconButton(onClick = {
-                    showEditDialog = true
-                }) {
+                IconButton(onClick = onEditClicked) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit Coop"
@@ -145,7 +179,7 @@ fun CoopInfo(
         }
         Row {
             Button(onClick = onEventsClicked) {
-                Text(text = "Edit Events")
+                Text(text = "Edit Events ($numEvents)")
             }
             IconButton(onClick = onSendClicked) {
                 Icon(
@@ -161,8 +195,11 @@ fun CoopInfo(
             unsetText = "Set",
             date = coop.startTime,
             onChange = {
-                coop.startTime = it
-                onChanged(coop)
+                onChanged(
+                    coop.copy(
+                        startTime = it
+                    )
+                )
             }
         )
 
@@ -172,8 +209,11 @@ fun CoopInfo(
             unsetText = "Set",
             date = coop.endTime,
             onChange = {
-                coop.endTime = it
-                onChanged(coop)
+                onChanged(
+                    coop.copy(
+                        endTime = it
+                    )
+                )
             }
         )
 
@@ -197,8 +237,11 @@ fun CoopInfo(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Switch(checked = coop.sinkMode, onCheckedChange = {
-                coop.sinkMode = it
-                onChanged(coop)
+                onChanged(
+                    coop.copy(
+                        sinkMode = it
+                    )
+                )
             })
 
             Text(
@@ -209,44 +252,125 @@ fun CoopInfo(
 
         Row {
             if (coop.sinkMode) {
-                Button(onClick = {}) {
+                Button(onClick = onReportClicked) {
                     Text("Generate")
                 }
             } else {
-                ReportBuilder(coop)
-                Text("Report...")
+                Text(reportText)
             }
         }
     }
+}
 
-    if (showEditDialog) {
-        val regex = remember { Regex("^[a-z0-9\\-]*\$") }
+@Composable
+fun CoopInfoSkeleton(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Row {
+            Column {
+                Box(
+                    Modifier
+                        .size(100.dp, 28.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .skeletonColors()
+                )
 
-        TwoTextFieldDialog(
-            onDismiss = { showEditDialog = false },
-            onConfirm = { coopName, kevId ->
-                coop.name = coopName
-                coop.contract = kevId
-
-                onChanged(coop)
-                showEditDialog = false
-            },
-            title = "Edit Coop",
-            //TODO!
-            text = "Note that this will... something, idk.\nIf one of these is left blank it will be auto-determined.",
-            field1Label = "Coop Name",
-            field1Initial = coop.name,
-            field2Label = "Contract ID (KevID)",
-            field2Initial = coop.contract,
-            valueSetter = {
-                val a = it
-                    .lowercase()
-                    .replace(" ", "-")
-                    .replace("_", "-")
-                if (a.matches(regex)) {
-                    a
-                } else null
+                Box(
+                    Modifier
+                        .size(100.dp, 16.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .skeletonColors()
+                )
             }
+            Column {
+                IconButton(onClick = {}, enabled = false) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Coop"
+                    )
+                }
+            }
+        }
+        Row {
+            Box(
+                Modifier
+                    .size(116.dp, 40.dp)
+                    .clip(RoundedCornerShape(50))
+                    .skeletonColors()
+            )
+
+            IconButton(onClick = {}, enabled = false) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send Tokens"
+                )
+            }
+        }
+
+        DateTimeRowSkeleton(
+            dateLabel = "Start Date",
+            timeLabel = "Start Time",
+        )
+
+        DateTimeRowSkeleton(
+            dateLabel = "End Date",
+            timeLabel = "End Time",
+        )
+
+        Box(
+            Modifier
+                .padding(vertical = 4.dp)
+                .size(52.dp, 32.dp)
+                .clip(RoundedCornerShape(50))
+                .skeletonColors()
         )
     }
+
+}
+
+@Composable
+fun CoopNameEditDialog(
+    coop: Coop,
+    onDismiss: () -> Unit,
+    onChanged: (name: String, kevId: String) -> Unit,
+) {
+    val regex = remember { Regex("^[a-z0-9\\-]*\$") }
+
+    TwoTextFieldDialog(
+        onDismiss = onDismiss,
+        onConfirm = onChanged,
+        title = "Edit Coop",
+        //TODO!
+        text = "Note that this will... something, idk.\nIf one of these is left blank it will be auto-determined.",
+        field1Label = "Coop Name",
+        field1Initial = coop.name,
+        field2Label = "Contract ID (KevID)",
+        field2Initial = coop.contract,
+        valueSetter = {
+            val a = it
+                .lowercase()
+                .replace(" ", "-")
+                .replace("_", "-")
+            if (a.matches(regex)) {
+                a
+            } else null
+        }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCoopInfo() {
+    CoopInfo(coop = Coop(),
+        onSendClicked = {},
+        onEditClicked = {},
+        onEventsClicked = {},
+        onReportClicked = {},
+        onChanged = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewNullCoopInfo() {
+    CoopInfoSkeleton()
 }
