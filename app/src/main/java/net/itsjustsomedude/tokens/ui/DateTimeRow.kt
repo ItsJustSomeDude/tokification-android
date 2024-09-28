@@ -1,16 +1,20 @@
 package net.itsjustsomedude.tokens.ui
 
-import android.content.Context
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -18,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +43,7 @@ fun DateTimeRow(
     var dateDialog by remember { mutableStateOf(false) }
     var timeDialog by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current as? Context
+    val context = LocalContext.current
 
     val dateFormatter = remember {
         DateFormat.getDateFormat(context)
@@ -75,6 +80,9 @@ fun DateTimeRow(
         )
 
         DatePickerDialog(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth(),
             onDismissRequest = {
                 dateDialog = false
             },
@@ -105,7 +113,10 @@ fun DateTimeRow(
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                state = datePickerState
+            )
         }
     }
 
@@ -117,7 +128,10 @@ fun DateTimeRow(
                 .get(Calendar.MINUTE),
         )
 
-        AlertDialog(
+        DatePickerDialog(
+            modifier = Modifier
+//                .horizontalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState()),
             onDismissRequest = {
                 timeDialog = false
             },
@@ -138,11 +152,19 @@ fun DateTimeRow(
                 }) {
                     Text("OK")
                 }
-            },
-            text = {
-                TimePicker(state = timePickerState)
+            }) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(PaddingValues(top = 32.dp)),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TimePicker(
+                    layoutType = TimePickerLayoutType.Vertical,
+                    state = timePickerState
+                )
             }
-        )
+        }
     }
 }
 

@@ -2,19 +2,18 @@ package net.itsjustsomedude.tokens.reports
 
 class DetailedReport : Report() {
     override fun generate(data: ReportData): String {
-        return "Detailed Report coming soon..."
+        if (data.isStartEstimated || data.isEndEstimated)
+            return "Start and End are required for detailed report."
+
+        val header = "Elapse|# |D|Prior|Diff"
+        val rowFormat = "`{:6d}|{:2d}|{:1s}|{:5.2f}|{:s}{:4.2f}|`<t:{:s}:f>"
+
+        val rows = mapOf<String, List<String>>()
+        val cums = mapOf<String, Double>()
+
+        return "Thoon."
     }
 }
-
-//fun detailedReport(): String {
-//    val header = "Elapse|# |D|Befor|Chang"
-//    val rowFormat = "`{:6d}|{:2d}|{:1s}|{:5.2f}|{:s}{:4.2f}|`<t:{:s}:f>"
-//
-//    if (startEstimate || endEstimate) return "Start and End times are required to generate detailed report!"
-//
-//    val rows = java.util.HashMap<String, java.util.ArrayList<String>>()
-//    val cums = java.util.HashMap<String, Double>()
-
 
 //		for (String person : coop.getPeople(sinkName)) {
 //			rows.put(person, new ArrayList<>());

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import net.itsjustsomedude.tokens.NotificationHelper
-import net.itsjustsomedude.tokens.NotificationReader
+import net.itsjustsomedude.tokens.NotificationService
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.store.StoreRepo
@@ -23,7 +23,7 @@ class MainScreenViewModel(
     private val notificationHelper: NotificationHelper
 ) : ViewModel() {
 
-    private val _selectedCoopId: StateFlow<Long> = storeRepo.selectedCoop
+    private val _selectedCoopId: StateFlow<Long> = storeRepo.selectedCoopState
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     val selectedCoopId: LiveData<Long> = _selectedCoopId.asLiveData()
@@ -55,6 +55,6 @@ class MainScreenViewModel(
     }
 
     fun refreshNotifications() {
-        NotificationReader.processAllNotifications()
+        NotificationService.processAllNotifications()
     }
 }

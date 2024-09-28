@@ -1,7 +1,5 @@
-package net.itsjustsomedude.tokens.models
+package net.itsjustsomedude.tokens.reports
 
-import net.itsjustsomedude.tokens.reports.Report
-import net.itsjustsomedude.tokens.reports.ReportData
 import net.itsjustsomedude.tokens.round
 
 class SelfReport : Report() {

@@ -12,10 +12,8 @@ import net.itsjustsomedude.tokens.ClipboardHelper
 import net.itsjustsomedude.tokens.NotificationHelper
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
-import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
 import net.itsjustsomedude.tokens.reports.SinkReport
-import java.util.Calendar
 
 class CoopViewModel(
     private val coopId: Long,
@@ -44,47 +42,10 @@ class CoopViewModel(
         }
     }
 
-    val selectedEvent = MutableLiveData<Event?>(null)
+    val selectedEventId = MutableLiveData<Long?>(null)
 
-    fun loadEvent(id: Long?) {
-        if (id == null) {
-            selectedEvent.value = null
-            return
-        }
-
-        viewModelScope.launch {
-            val newEvent = eventRepo.getEventDirect(id)
-            println("Loaded event: $newEvent")
-
-            selectedEvent.value = newEvent
-        }
-    }
-
-    fun createEvent(count: Int = 1) {
-        coop.value?.let { coop ->
-            selectedEvent.value = Event(
-                coop = coop.name,
-                kevId = coop.contract,
-                count = count,
-                direction = Event.DIRECTION_RECEIVED,
-                time = Calendar.getInstance(),
-                person = ""
-            )
-        } ?: run {
-            selectedEvent.value = null
-        }
-    }
-
-    fun updateSelectedEvent(event: Event) {
-        selectedEvent.value = event
-    }
-
-    fun saveSelectedEvent() {
-        selectedEvent.value?.let {
-            viewModelScope.launch {
-                eventRepo.upsert(it)
-            }
-        }
+    fun selectEvent(id: Long?) {
+        selectedEventId.value = id
     }
 
     fun update(coop: Coop) {
@@ -98,8 +59,6 @@ class CoopViewModel(
             coopRepo.delete(coop)
         }
     }
-
-//    fun
 
     fun copySinkReport() {
         coop.value?.let {

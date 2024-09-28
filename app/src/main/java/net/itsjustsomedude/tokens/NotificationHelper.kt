@@ -19,7 +19,7 @@ import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
-import net.itsjustsomedude.tokens.models.SelfReport
+import net.itsjustsomedude.tokens.reports.SelfReport
 import java.util.Random
 
 class NotificationHelper(

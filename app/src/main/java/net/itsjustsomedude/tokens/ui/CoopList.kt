@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens.ui
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Coop
 
@@ -30,11 +33,15 @@ fun CoopList(
     coops: List<Coop>,
     onDelete: (id: Long, deleteEvents: Boolean) -> Unit,
     onSelect: (id: Long) -> Unit,
+    listPre: @Composable (() -> Unit)? = null
 ) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
     ) {
+        if (listPre != null)
+            item { listPre() }
+
         items(coops) { item ->
             CoopListItem(
                 coop = item,
@@ -55,7 +62,17 @@ private fun CoopListItem(
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    Column(
+    val context = LocalContext.current
+
+    val dateFormatter = remember {
+        DateFormat.getDateFormat(context)
+    }
+
+    val timeFormatter = remember {
+        DateFormat.getTimeFormat(context)
+    }
+
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .pointerInput(Unit) {
@@ -64,32 +81,51 @@ private fun CoopListItem(
                     onLongPress = { showDeleteDialog = true },
                 )
             }
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .weight(6 / 12f)
+                .fillMaxWidth()
         ) {
             Text(
-                text = coop.name,
-                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                text = coop.name.ifBlank { "<No Name>" },
+                style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = if (false) "..." else "...",
-                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+
+                text = coop.contract.ifBlank { "<No KevID>" },
+                style = MaterialTheme.typography.bodySmall
             )
         }
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier.weight(2 / 12f),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = coop.contract,
-                style = MaterialTheme.typography.bodySmall,
+                text = if (coop.endTime == null) "-" else dateFormatter.format(coop.endTime.time),
+
+                style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = if (coop.sinkMode) "Sink Mode" else "Normal Mode",
-                style = MaterialTheme.typography.bodySmall,
+                text = if (coop.sinkMode) "Sink" else "Normal",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(4 / 12f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = if (coop.endTime == null) "-" else timeFormatter.format(coop.endTime.time),
+                style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 text = coop.id.toString(),
@@ -97,6 +133,69 @@ private fun CoopListItem(
             )
         }
     }
+
+//    Column(
+//        modifier = modifier
+//            .fillMaxWidth()
+//            .pointerInput(Unit) {
+//                detectTapGestures(
+//                    onTap = { onclick(coop.id) },
+//                    onLongPress = { showDeleteDialog = true },
+//                )
+//            }
+//            .padding(16.dp)
+//    ) {
+//        Row(
+//            modifier = modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(
+////                modifier = Modifier.weight(0.5f),
+////                maxLines = 1,
+////                overflow = TextOverflow.Ellipsis,
+//                text = coop.name.ifBlank { "<No Name>" },
+//                style = MaterialTheme.typography.bodyLarge,
+//            )
+//            Text(
+////                modifier = Modifier.weight(0.5f),
+////                maxLines = 1,
+////                overflow = TextOverflow.Ellipsis,
+//                text = if (coop.startTime == null) "?" else dateFormatter.format(coop.startTime.time),
+//                style = MaterialTheme.typography.bodyLarge,
+//            )
+//        }
+//        Row(
+//            modifier = modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(
+////                modifier = Modifier.weight(0.3f),
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//
+//                text = coop.contract.ifBlank { "<No KevID>" },
+//                style = MaterialTheme.typography.bodySmall,
+//            )
+//            Spacer(modifier = Modifier.weight(1f))
+//            Text(
+////                modifier = Modifier.weight(0.3f),
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//
+//                text = if (coop.sinkMode) "Sink Mode" else "Normal Mode",
+//                style = MaterialTheme.typography.bodySmall,
+//            )
+//            Spacer(modifier = Modifier.weight(1f))
+//            Text(
+////                modifier = Modifier.weight(0.3f),
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//
+//                text = coop.id.toString(),
+//                style = MaterialTheme.typography.bodySmall,
+//            )
+//        }
+//    }
 
     if (showDeleteDialog) {
         var deleteEvents by remember { mutableStateOf(false) }

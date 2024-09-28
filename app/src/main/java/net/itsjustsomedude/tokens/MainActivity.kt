@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
@@ -108,16 +110,17 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
 
         if (showCoopListSheet)
             ModalBottomSheet(onDismissRequest = { showCoopListSheet = false }) {
-                Button(modifier = Modifier.padding(8.dp),
-                    onClick = {
-                        model.createAndSelectCoop()
-                        showCoopListSheet = false
-                    }) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "")
-                    Text("Create Coop")
-                }
-
                 CoopList(
+                    listPre = {
+                        Button(modifier = Modifier.padding(8.dp),
+                            onClick = {
+                                model.createAndSelectCoop()
+                                showCoopListSheet = false
+                            }) {
+                            Icon(imageVector = Icons.Default.Add, contentDescription = "")
+                            Text("Create Coop")
+                        }
+                    },
                     coops = coopList ?: emptyList(),
                     onSelect = {
                         model.setSelectedCoopId(it)
@@ -161,6 +164,7 @@ private fun Header(
 
             Column(
                 modifier = Modifier
+                    .verticalScroll(rememberScrollState())
                     .padding(
                         PaddingValues(
                             start = 8.dp,

@@ -19,7 +19,7 @@ class SinkReport : Report() {
             "```",
             "Player      |   Δ TVal| +TS|  +TSVal| -TR|   -TRVal",
             "------------+---------+----+--------+----+---------",
-            data.tvalTable,
+            data.tvalTable.values.joinToString("\n"),
             "```",
             "_This is not a wonky command, but an app written by ItsJustSomeDude. Stay tuned for further updates!_",
         ).joinToString("\n")

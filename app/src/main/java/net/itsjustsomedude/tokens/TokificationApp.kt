@@ -6,8 +6,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import net.itsjustsomedude.tokens.db.AppDatabase
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.EventRepository
+import net.itsjustsomedude.tokens.models.CoopNameEditViewModel
 import net.itsjustsomedude.tokens.models.CoopViewModel
-import net.itsjustsomedude.tokens.models.CreateEventViewModel
+import net.itsjustsomedude.tokens.models.EventEditViewModel
 import net.itsjustsomedude.tokens.models.MainScreenViewModel
 import net.itsjustsomedude.tokens.models.NotificationDebuggerViewModel
 import net.itsjustsomedude.tokens.store.StoreRepo
@@ -44,6 +45,10 @@ val appModule = module {
 
     viewModel { MainScreenViewModel(get(), get(), get()) }
     viewModel { parameters -> CoopViewModel(parameters.get(), get(), get(), get(), get()) }
-    viewModel { CreateEventViewModel(get(), get()) }
+//    viewModel { CreateEventViewModel(get(), get()) }
     viewModel { NotificationDebuggerViewModel(get()) }
+
+    viewModel { parameters -> CoopNameEditViewModel(parameters[0], parameters[1], get()) }
+
+    viewModel { parameters -> EventEditViewModel(parameters[0], parameters[1], get(), get()) }
 }

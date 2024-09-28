@@ -20,17 +20,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.models.CoopViewModel
-import net.itsjustsomedude.tokens.models.SelfReport
+import net.itsjustsomedude.tokens.reports.SelfReport
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -47,7 +47,7 @@ fun EditCoop(
     var showNameEdit by model.showNameEdit
 
     val modelCoop by model.coop.observeAsState()
-    val selectedEvent by model.selectedEvent.observeAsState()
+    val selectedEventId by model.selectedEventId.observeAsState()
     val events by model.events.observeAsState(emptyList())
 
     println("The Coop Outside: $modelCoop with ID $coopId")
@@ -63,13 +63,11 @@ fun EditCoop(
                 showEventList = true
             },
             onSendClicked = {
-                model.createEvent(
-                    count = if (coop.sinkMode) 6 else 2
-                )
+                // Create new event.
+                model.selectEvent(null)
                 showEventEdit = true
             },
             onEditClicked = {
-
                 showNameEdit = true
             },
             onReportClicked = {
@@ -89,7 +87,7 @@ fun EditCoop(
                     showEventList = false
                 },
                 onSelect = {
-                    model.loadEvent(it)
+                    model.selectEvent(it)
 
                     showEventList = false
                     showEventEdit = true
@@ -97,25 +95,17 @@ fun EditCoop(
 
         if (showEventEdit)
             EventEditDialog(
-                event = selectedEvent,
-                players = coop.players,
-                onDismissRequest = {
-                    showEventEdit = false
-                },
-                onDoneClicked = {
-                    model.saveSelectedEvent()
-                    showEventEdit = false
-                },
-                onChanged = {
-                    model.updateSelectedEvent(it)
-                }
+                coopId = coop.id,
+                eventId = selectedEventId,
+                onDismiss = { showEventEdit = false }
             )
 
         if (showNameEdit)
             CoopNameEditDialog(
-                coop = coop,
+                initialCoop = coop.name,
+                initialKevId = coop.contract,
                 onDismiss = { showNameEdit = false },
-                onChanged = { coopName, kevId ->
+                onConfirm = { coopName, kevId ->
                     model.update(
                         coop.copy(
                             name = coopName,
@@ -124,8 +114,8 @@ fun EditCoop(
                     )
 
                     showNameEdit = false
-                })
-
+                },
+            )
     } ?: CoopInfoSkeleton()
 }
 
@@ -143,7 +133,9 @@ fun CoopInfo(
 ) {
     Column(modifier = modifier) {
         Row {
-            Column {
+            Column(
+                Modifier.weight(1f, false)
+            ) {
                 if (coop.name.isBlank())
                     Text(
                         text = "No coop name",
@@ -153,6 +145,8 @@ fun CoopInfo(
                 else
                     Text(
                         text = coop.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleLarge
                     )
 
@@ -165,16 +159,18 @@ fun CoopInfo(
                 else
                     Text(
                         text = coop.contract,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodySmall
                     )
             }
-            Column {
-                IconButton(onClick = onEditClicked) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Coop"
-                    )
-                }
+            IconButton(
+                onClick = onEditClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit Coop"
+                )
             }
         }
         Row {
@@ -324,37 +320,6 @@ fun CoopInfoSkeleton(modifier: Modifier = Modifier) {
                 .skeletonColors()
         )
     }
-
-}
-
-@Composable
-fun CoopNameEditDialog(
-    coop: Coop,
-    onDismiss: () -> Unit,
-    onChanged: (name: String, kevId: String) -> Unit,
-) {
-    val regex = remember { Regex("^[a-z0-9\\-]*\$") }
-
-    TwoTextFieldDialog(
-        onDismiss = onDismiss,
-        onConfirm = onChanged,
-        title = "Edit Coop",
-        //TODO!
-        text = "Note that this will... something, idk.\nIf one of these is left blank it will be auto-determined.",
-        field1Label = "Coop Name",
-        field1Initial = coop.name,
-        field2Label = "Contract ID (KevID)",
-        field2Initial = coop.contract,
-        valueSetter = {
-            val a = it
-                .lowercase()
-                .replace(" ", "-")
-                .replace("_", "-")
-            if (a.matches(regex)) {
-                a
-            } else null
-        }
-    )
 }
 
 @Preview(showBackground = true)
