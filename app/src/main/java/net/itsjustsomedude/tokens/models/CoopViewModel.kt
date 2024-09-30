@@ -13,7 +13,9 @@ import net.itsjustsomedude.tokens.NotificationHelper
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.EventRepository
+import net.itsjustsomedude.tokens.reports.DetailedReport
 import net.itsjustsomedude.tokens.reports.SinkReport
+import net.itsjustsomedude.tokens.updateInferredCoopValues
 
 class CoopViewModel(
     private val coopId: Long,
@@ -29,6 +31,8 @@ class CoopViewModel(
     val coop: LiveData<Coop?> = liveData {
         println("Fetching Coop: $coopId")
         emitSource(coopRepo.getCoop(coopId))
+        // TODO: Usage of update inferred values.
+        updateInferredCoopValues(coopId)
     }
 
     val events = coop.switchMap { co ->
@@ -63,6 +67,14 @@ class CoopViewModel(
     fun copySinkReport() {
         coop.value?.let {
             val report = SinkReport().generate(coop = it, events = events.value ?: emptyList())
+
+            clipboard.copyText(report)
+        }
+    }
+
+    fun copyDetailedReport() {
+        coop.value?.let {
+            val report = DetailedReport().generate(coop = it, events = events.value ?: emptyList())
 
             clipboard.copyText(report)
         }

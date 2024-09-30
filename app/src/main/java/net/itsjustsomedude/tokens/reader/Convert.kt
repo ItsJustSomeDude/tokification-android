@@ -17,6 +17,7 @@ private val ALLOWED_PACKAGES = listOf(
 )
 
 fun ShortNotification.toEvent(): Event? {
+    println("Relevant data: $packageName, $flags, $title, $text, $group, $id")
     if (!ALLOWED_PACKAGES.contains(packageName)) return null
     if ((flags and Notification.FLAG_GROUP_SUMMARY) != 0) return null
     if (!title.contains("Gift Received")) return null

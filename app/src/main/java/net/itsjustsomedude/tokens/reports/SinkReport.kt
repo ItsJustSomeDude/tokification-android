@@ -3,7 +3,8 @@ package net.itsjustsomedude.tokens.reports
 class SinkReport : Report() {
     override fun generate(data: ReportData): String {
         return arrayOf(
-            "# __Tokification__ (Android Alpha :eyes:)",
+            "# __Tokification__",
+            "_The NEW Android Alpha!_",
             "",
             data.generationInfoLine,
             "_This message will be manually updated every 15 to 45 minutes, depending on how busy I am._",

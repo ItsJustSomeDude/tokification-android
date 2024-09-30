@@ -4,8 +4,8 @@ import android.app.Notification
 import android.service.notification.StatusBarNotification
 import java.util.Calendar
 
-class ShortNotification(
-    sbn: StatusBarNotification
+data class ShortNotification(
+    private val sbn: StatusBarNotification
 ) {
     private val innerNote: Notification? = sbn.notification
 
@@ -18,10 +18,12 @@ class ShortNotification(
 
     val title = innerNote?.extras?.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
     val text = bigText?.toString() ?: (extraText?.toString() ?: "")
+
+    // Time is set in init {}
     val time: Calendar = Calendar.getInstance()
     val user = sbn.user.hashCode()
 
-    val packageName = innerNote?.group ?: ""
+    val packageName = sbn.packageName
     val flags = innerNote?.flags ?: 0
 
     init {

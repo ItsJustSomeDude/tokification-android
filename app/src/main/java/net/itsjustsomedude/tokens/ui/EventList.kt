@@ -96,6 +96,8 @@ private fun EventListItem(
         DateFormat.getTimeFormat(context)
     }
 
+    // TODO: Add ability to delete events.
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -133,7 +135,7 @@ private fun EventListItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${roundedTval(3, coopStart, coopEnd, event.time, event.count)} / ",
+                        text = "${roundedTval(3, coopStart, coopEnd, event.time, 1)} / ",
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Icon(

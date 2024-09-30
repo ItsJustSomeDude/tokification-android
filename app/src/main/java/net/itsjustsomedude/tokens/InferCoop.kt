@@ -1,7 +1,10 @@
 package net.itsjustsomedude.tokens
 
 import net.itsjustsomedude.tokens.db.Coop
+import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.Event
+import net.itsjustsomedude.tokens.db.EventRepository
+import org.koin.mp.KoinPlatform.getKoin
 
 // This should...
 // 1. Auto determine Coop/KevID if either of these are null.
@@ -22,6 +25,8 @@ fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
     for (ev in events) {
         eventPlayers.add(ev.person)
     }
+    // TODO: Do this better.
+    eventPlayers.remove("Sink")
     val newPlayerList = eventPlayers.union(coop.players).toList()
 
     val newStart =
@@ -37,4 +42,26 @@ fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
         players = newPlayerList,
         startTime = newStart
     )
+}
+
+suspend fun inferCoopValues(id: Long): Coop {
+    // TODO: Usages of getKoin()
+    val coopRepo: CoopRepository = getKoin().get()
+    val eventRepo: EventRepository = getKoin().get()
+
+    val coop = coopRepo.getCoopDirect(id) ?: throw Error("No Coop Found!")
+    val events = eventRepo.listEventsDirect(coop.name, coop.contract)
+
+    return inferCoopValues(coop, events)
+}
+
+suspend fun updateInferredCoopValues(id: Long) {
+    // TODO: Usages of getKoin()
+    val coopRepo: CoopRepository = getKoin().get()
+
+    try {
+        val newCoop = inferCoopValues(id)
+        coopRepo.update(newCoop)
+    } catch (_: Error) {
+    }
 }

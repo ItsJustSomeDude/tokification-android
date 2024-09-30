@@ -50,11 +50,7 @@ fun EditCoop(
     val selectedEventId by model.selectedEventId.observeAsState()
     val events by model.events.observeAsState(emptyList())
 
-    println("The Coop Outside: $modelCoop with ID $coopId")
-
     modelCoop?.let { coop ->
-        println("The Coop: $coop with ID $coopId")
-
         CoopInfo(
             coop = coop,
             numEvents = events.size,
@@ -64,6 +60,7 @@ fun EditCoop(
             },
             onSendClicked = {
                 // Create new event.
+                // TODO: Add keys to the CreateEventModel, as this breaks when switching coops then clicking send!
                 model.selectEvent(null)
                 showEventEdit = true
             },
@@ -72,6 +69,9 @@ fun EditCoop(
             },
             onReportClicked = {
                 model.copySinkReport()
+            },
+            onDetailedReportClicked = {
+                model.copyDetailedReport()
             },
             onChanged = {
                 model.update(it)
@@ -129,6 +129,7 @@ fun CoopInfo(
     onSendClicked: () -> Unit,
     onEditClicked: () -> Unit,
     onReportClicked: () -> Unit,
+    onDetailedReportClicked: () -> Unit,
     onChanged: (coop: Coop) -> Unit,
 ) {
     Column(modifier = modifier) {
@@ -249,8 +250,12 @@ fun CoopInfo(
         Row {
             if (coop.sinkMode) {
                 Button(onClick = onReportClicked) {
-                    Text("Generate")
+                    Text("Copy Report")
                 }
+                if (coop.startTime != null && coop.endTime != null)
+                    Button(onClick = onDetailedReportClicked) {
+                        Text("Copy Detailed Report")
+                    }
             } else {
                 Text(reportText)
             }
@@ -330,6 +335,7 @@ fun PreviewCoopInfo() {
         onEditClicked = {},
         onEventsClicked = {},
         onReportClicked = {},
+        onDetailedReportClicked = {},
         onChanged = {}
     )
 }

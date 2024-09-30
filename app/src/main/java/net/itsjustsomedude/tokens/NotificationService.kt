@@ -67,7 +67,9 @@ class NotificationService : NotificationListenerService() {
     private suspend fun processNotification(
         note: ShortNotification,
     ) {
+        println("Processing $note")
         val event = note.toEvent() ?: return
+        println("Valid Notification, adding.")
 
         if (eventRepo.exists(event.coop, event.kevId, event.notification)) {
             Log.i(TAG, "Skipping notification that has already been processed.")
@@ -89,10 +91,9 @@ class NotificationService : NotificationListenerService() {
     }
 
     private fun processAllNotifications() {
-        for (sbn in activeNotifications) {
-            val sbnData = ShortNotification(sbn)
-
-            serviceScope.launch {
+        serviceScope.launch {
+            for (sbn in activeNotifications) {
+                val sbnData = ShortNotification(sbn)
                 processNotification(sbnData)
             }
         }
@@ -100,8 +101,13 @@ class NotificationService : NotificationListenerService() {
 
     // TODO: usage of SharedPrefs.
     private val shouldDismiss: Boolean =
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean(PREF_DISMISS, false)
+        try {
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(PREF_DISMISS, false)
+        } catch (e: RuntimeException) {
+            false
+        }
+
 
     // TODO: usage of SharedPrefs.
     private val dismissDelay: Long

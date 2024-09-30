@@ -8,6 +8,7 @@ import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
+import net.itsjustsomedude.tokens.updateInferredCoopValues
 import java.util.Calendar
 
 class EventEditViewModel(
@@ -25,6 +26,9 @@ class EventEditViewModel(
 
     init {
         viewModelScope.launch {
+            // TODO: Usage of update inferred values.
+            updateInferredCoopValues(coopId)
+
             coopRepo.getCoopDirect(coopId)?.let {
                 coop.value = it
 
