@@ -4,6 +4,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 
 class ClipboardHelper(private val ctx: Context) {
@@ -27,7 +29,9 @@ class ClipboardHelper(private val ctx: Context) {
         manager.setPrimaryClip(clip)
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
-            Toast.makeText(ctx, "Report Copied!", Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(ctx, "Report Copied!", Toast.LENGTH_SHORT).show()
+            }
     }
 }
 

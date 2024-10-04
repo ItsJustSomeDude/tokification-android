@@ -26,6 +26,12 @@ class CoopRepository(private val coopDao: CoopDao) {
         }
     }
 
+    suspend fun getCoopByNameDirect(coopName: String, kevId: String): Coop? {
+        return withContext(Dispatchers.IO) {
+            coopDao.getCoopByNameDirect(coopName, kevId)
+        }
+    }
+
     suspend fun listCoops(): LiveData<List<Coop>> {
         return withContext(Dispatchers.IO) {
             coopDao.listCoops()

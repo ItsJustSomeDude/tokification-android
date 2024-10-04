@@ -37,18 +37,17 @@ import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.R
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.models.EventEditViewModel
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun EventEditDialog(
     modifier: Modifier = Modifier,
+    dialogKey: String = "",
     coopId: Long,
     eventId: Long?,
     showExtendedButtons: Boolean = true,
     showBoostOptions: Boolean = false,
     onDismiss: () -> Unit,
-    model: EventEditViewModel = koinViewModel { parametersOf(coopId, eventId) }
+    model: EventEditViewModel = EventEditViewModel.provide(dialogKey, coopId, eventId)
 ) {
     val coop by model.coop.observeAsState()
     val event by model.event.observeAsState()
@@ -77,7 +76,6 @@ fun EventEditDialog(
                 )
             } ?: EventEditSkeleton(showExtendedButtons = showExtendedButtons)
         })
-
 }
 
 

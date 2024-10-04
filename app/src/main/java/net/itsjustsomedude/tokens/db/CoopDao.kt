@@ -30,6 +30,9 @@ interface CoopDao {
     @Query("SELECT * FROM Coop WHERE name = :name AND contract = :kevId")
     fun getCoopByName(name: String, kevId: String): LiveData<Coop?>
 
+    @Query("SELECT * FROM Coop WHERE name = :name AND contract = :kevId")
+    fun getCoopByNameDirect(name: String, kevId: String): Coop?
+
     @Query("SELECT * FROM Coop WHERE id = :id")
     fun getCoopDirect(id: Long): Coop?
 }

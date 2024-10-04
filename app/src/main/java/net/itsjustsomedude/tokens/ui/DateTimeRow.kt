@@ -76,7 +76,9 @@ fun DateTimeRow(
 
     if (dateDialog) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = date?.timeInMillis ?: Calendar.getInstance().timeInMillis
+            initialSelectedDateMillis =
+            date?.timeInMillis?.plus(date.timeZone.getOffset(date.timeInMillis))
+                ?: Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis
         )
 
         DatePickerDialog(

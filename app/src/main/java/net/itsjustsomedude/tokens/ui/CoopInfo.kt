@@ -30,25 +30,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.models.CoopViewModel
+import net.itsjustsomedude.tokens.models.provideDialogModel
 import net.itsjustsomedude.tokens.reports.SelfReport
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun EditCoop(
-    coopId: Long?,
-    model: CoopViewModel = koinViewModel(
-        parameters = { parametersOf(coopId) },
-        key = coopId.toString()
-    )
+    coopId: Long,
+    model: CoopViewModel = CoopViewModel.provide(coopId)
 ) {
     var showEventList by model.showEventList
-    var showEventEdit by model.showEventEdit
+//    var showEventEdit by model.showEventEdit
     var showNameEdit by model.showNameEdit
 
     val modelCoop by model.coop.observeAsState()
     val selectedEventId by model.selectedEventId.observeAsState()
     val events by model.events.observeAsState(emptyList())
+
+    val eventDialog = provideDialogModel()
 
     modelCoop?.let { coop ->
         CoopInfo(
@@ -62,7 +60,7 @@ fun EditCoop(
                 // Create new event.
                 // TODO: Add keys to the CreateEventModel, as this breaks when switching coops then clicking send!
                 model.selectEvent(null)
-                showEventEdit = true
+                eventDialog.show()
             },
             onEditClicked = {
                 showNameEdit = true
@@ -90,14 +88,15 @@ fun EditCoop(
                     model.selectEvent(it)
 
                     showEventList = false
-                    showEventEdit = true
+                    eventDialog.show()
                 })
 
-        if (showEventEdit)
+        if (eventDialog.visible)
             EventEditDialog(
+                dialogKey = eventDialog.key,
                 coopId = coop.id,
                 eventId = selectedEventId,
-                onDismiss = { showEventEdit = false }
+                onDismiss = { eventDialog.hide() }
             )
 
         if (showNameEdit)

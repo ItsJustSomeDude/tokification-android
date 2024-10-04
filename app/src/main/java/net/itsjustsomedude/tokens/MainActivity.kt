@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +46,7 @@ import net.itsjustsomedude.tokens.models.MainScreenViewModel
 import net.itsjustsomedude.tokens.ui.CoopList
 import net.itsjustsomedude.tokens.ui.EditCoop
 import net.itsjustsomedude.tokens.ui.NotificationDebuggerDialog
+import net.itsjustsomedude.tokens.ui.SettingsScreen
 import net.itsjustsomedude.tokens.ui.theme.TokificationTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -61,7 +65,8 @@ class MainActivity : ComponentActivity() {
 private fun Content(model: MainScreenViewModel = koinViewModel()) {
     val context = LocalContext.current
 
-    val coop by model.selectedCoopId.observeAsState()
+    val notificationDebuggerEnabled by model.noteDebugger.collectAsState()
+    val coop by model.selectedCoopId.collectAsState()
     val coopList by model.coopsList.observeAsState()
 
     var showCoopListSheet by remember { mutableStateOf(false) }
@@ -78,14 +83,15 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
                 )
             }
 
-            IconButton(onClick = {
-                showNotificationDebugger = true
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Build,
-                    contentDescription = "Notification Debugger"
-                )
-            }
+            if (notificationDebuggerEnabled)
+                IconButton(onClick = {
+                    showNotificationDebugger = true
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Build,
+                        contentDescription = "Notification Debugger"
+                    )
+                }
 
             IconButton(onClick = {
                 context.startActivity(Intent(context, SettingsActivity::class.java))
@@ -107,6 +113,11 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
         }
     ) {
         EditCoop(coopId = coop)
+
+        // TODO: Move _all_ this to a preferences screen.
+        HorizontalDivider()
+        Text("Eventually, this will be moved to a Settings screen, but right now that's not added so I tacked them on here.")
+        SettingsScreen()
 
         if (showCoopListSheet)
             ModalBottomSheet(onDismissRequest = { showCoopListSheet = false }) {
@@ -173,7 +184,8 @@ private fun Header(
                             bottom = paddingValues.calculateBottomPadding(),
                         )
                     )
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 content()
             }

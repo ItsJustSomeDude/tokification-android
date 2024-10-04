@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.Toast
-import androidx.preference.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,7 +19,9 @@ import kotlinx.coroutines.launch
 import net.itsjustsomedude.tokens.db.EventRepository
 import net.itsjustsomedude.tokens.reader.ShortNotification
 import net.itsjustsomedude.tokens.reader.toEvent
+import net.itsjustsomedude.tokens.store.PreferencesRepository
 import org.koin.android.ext.android.inject
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "NotificationReader"
 
@@ -31,10 +33,15 @@ class NotificationService : NotificationListenerService() {
 
     override fun onListenerConnected() {
         instance = this
+        dismissHandler = Handler(Looper.getMainLooper())
 
+        // On boot, android will try to bind the listener, and we need to stop it if the user
+        // doesn't want the service running.
         // Theoretically, on lower android versions this will never run, because "stopped" is "disabled."
-        if (!isServiceEnabled(this))
-            disableService(this)
+        serviceScope.launch {
+            if (!isServiceEnabled())
+                disableService(this@NotificationService)
+        }
     }
 
     override fun onListenerDisconnected() {
@@ -57,9 +64,9 @@ class NotificationService : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        val note = ShortNotification(sbn)
-
         serviceScope.launch {
+            val note = ShortNotification(sbn)
+
             processNotification(note)
         }
     }
@@ -78,15 +85,19 @@ class NotificationService : NotificationListenerService() {
         }
 
         eventRepo.insert(event)
-
         scheduleRemoval(note.key)
+
+        updateInferredCoopValues(event)
     }
 
-    private fun scheduleRemoval(key: String) {
+    private suspend fun scheduleRemoval(key: String) {
+        val shouldDismiss = shouldDismiss()
+
+        println("Dismiss? $shouldDismiss")
         if (shouldDismiss)
             dismissHandler!!.postDelayed(
                 { cancelNotification(key) },
-                dismissDelay.toLong()
+                dismissDelay
             )
     }
 
@@ -99,24 +110,14 @@ class NotificationService : NotificationListenerService() {
         }
     }
 
-    // TODO: usage of SharedPrefs.
-    private val shouldDismiss: Boolean =
-        try {
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(PREF_DISMISS, false)
-        } catch (e: RuntimeException) {
-            false
-        }
-
+    private suspend fun shouldDismiss() =
+        getKoin().get<PreferencesRepository>().autoDismiss.getValue()
 
     // TODO: usage of SharedPrefs.
     private val dismissDelay: Long
         get() = 10 * 1000
 
     companion object {
-        const val PREF_ENABLED: String = "service_control_enable_service"
-        const val PREF_DISMISS: String = "auto_dismiss"
-
         var instance: NotificationService? = null
             private set
 
@@ -126,13 +127,11 @@ class NotificationService : NotificationListenerService() {
         val isServiceRunning: Boolean
             get() = instance != null
 
-        fun enableService(ctx: Context) {
-            // TODO: Usage of SharedPrefs
-            PreferenceManager.getDefaultSharedPreferences(ctx)
-                .edit()
-                .putBoolean(PREF_ENABLED, true)
-                .apply()
+        suspend fun enableService(ctx: Context) {
+            getKoin().get<PreferencesRepository>()
+                .serviceEnable.setValue(true)
 
+            // Older Android: If service is disabled, permission will be denied, so we won't hit this.
             if (isPermissionGranted(ctx)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                     requestRebind(
@@ -143,12 +142,9 @@ class NotificationService : NotificationListenerService() {
             }
         }
 
-        fun disableService(ctx: Context) {
-            // TODO: Usable of SharedPref
-            PreferenceManager.getDefaultSharedPreferences(ctx)
-                .edit()
-                .putBoolean(PREF_ENABLED, false)
-                .apply()
+        suspend fun disableService(ctx: Context) {
+            getKoin().get<PreferencesRepository>()
+                .serviceEnable.setValue(false)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                 instance?.requestUnbind()
@@ -156,8 +152,8 @@ class NotificationService : NotificationListenerService() {
                 requestPermissionDisable(ctx)
         }
 
-        fun isServiceEnabled(ctx: Context) =
-            PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PREF_ENABLED, true)
+        suspend fun isServiceEnabled() =
+            getKoin().get<PreferencesRepository>().serviceEnable.getValue()
 
         private fun requestPermission(
             ctx: Context,

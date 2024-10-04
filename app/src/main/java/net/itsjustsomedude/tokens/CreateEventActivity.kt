@@ -24,6 +24,7 @@ class CreateEventActivity : ComponentActivity() {
                     eventId = null,
                     showExtendedButtons = false,
                     onDismiss = {
+                        // TODO: Get out of the composable function.
                         context.sendBroadcast(
                             NotificationActions.refreshNotificationIntent(
                                 context,
@@ -34,21 +35,6 @@ class CreateEventActivity : ComponentActivity() {
                         finish()
                     }
                 )
-
-//                CreateEventContent(
-//                    coopId = coopId,
-//                    scope = lifecycleScope,
-//                    onDismiss = {
-//                        context.sendBroadcast(
-//                            NotificationActions.refreshNotificationIntent(
-//                                context,
-//                                coopId
-//                            )
-//                        )
-//
-//                        finish()
-//                    }
-//                )
             }
         }
     }
@@ -60,40 +46,3 @@ class CreateEventActivity : ComponentActivity() {
             Intent(ctx, CreateEventActivity::class.java).putExtra(PARAM_COOP_ID, coopId)
     }
 }
-
-//@Composable
-//fun CreateEventContent(
-//    coopId: Long,
-//    scope: CoroutineScope,
-//    onDismiss: () -> Unit,
-//    model: CreateEventViewModel = koinViewModel(),
-//    // TODO: Make this ViewModel have params...
-//    // Actually... this doesn't get a ViewModel. Make the composable have its own.
-//) {
-//    LaunchedEffect(key1 = coopId) {
-//        model.createEvent(coopId)
-//
-//        println("Setup stuff done.")
-//    }
-//
-//    val modelCoop by model.selectedCoop.observeAsState()
-//    val selectedEvent by model.selectedEvent.observeAsState()
-//
-//    println(modelCoop)
-//
-//    EventEditDialog(
-//        event = if (modelCoop == null) null else selectedEvent,
-//        players = if (modelCoop == null) emptyList() else modelCoop!!.players,
-//        onChanged = {
-//            model.updateSelectedEvent(it)
-//        },
-//        onDoneClicked = {
-//            scope.launch {
-//                model.saveSelectedEventCor()
-//                onDismiss()
-//            }
-//        },
-//        onDismissRequest = onDismiss,
-//        showExtendedButtons = false
-//    )
-//}

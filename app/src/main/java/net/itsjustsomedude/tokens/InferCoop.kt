@@ -12,15 +12,6 @@ import org.koin.mp.KoinPlatform.getKoin
 // 3. Auto determine Start Time based on time of first event.
 
 fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
-    var newCoopName = coop.name
-    var newKevId = coop.contract
-
-    if (newKevId.isBlank() && newCoopName.isNotBlank()) {
-        println("Attempting to determine KevID.")
-    } else if (newKevId.isNotBlank() && newCoopName.isBlank()) {
-        println("Attempting to determine Coop Name")
-    }
-
     val eventPlayers = mutableListOf<String>()
     for (ev in events) {
         eventPlayers.add(ev.person)
@@ -28,6 +19,7 @@ fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
     // TODO: Do this better.
     eventPlayers.remove("Sink")
     val newPlayerList = eventPlayers.union(coop.players).toList()
+    println("Inferred player list: $newPlayerList")
 
     val newStart =
         coop.startTime
@@ -37,12 +29,27 @@ fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
                 null
 
     return coop.copy(
-        name = newCoopName,
-        contract = newKevId,
         players = newPlayerList,
         startTime = newStart
     )
 }
+
+//suspend fun inferCoopName(coop: Coop): Coop {
+//    var newCoopName = coop.name
+//    var newKevId = coop.contract
+//
+//    if (newKevId.isBlank() && newCoopName.isNotBlank()) {
+//        println("Attempting to determine KevID.")
+//        events.firstOrNull { it.coop == newCoopName }?.let {
+//            newKevId = it.kevId
+//        }
+//    } else if (newKevId.isNotBlank() && newCoopName.isBlank()) {
+//        println("Attempting to determine Coop Name")
+//        events.firstOrNull { it.kevId == newKevId }?.let {
+//            newCoopName = it.coop
+//        }
+//    }
+//}
 
 suspend fun inferCoopValues(id: Long): Coop {
     // TODO: Usages of getKoin()
@@ -63,5 +70,29 @@ suspend fun updateInferredCoopValues(id: Long) {
         val newCoop = inferCoopValues(id)
         coopRepo.update(newCoop)
     } catch (_: Error) {
+    }
+}
+
+// Probably Unused?
+suspend fun updateInferredCoopValues(coopId: Long, event: Event) {
+    // TODO: Usages of getKoin()
+    val coopRepo: CoopRepository = getKoin().get()
+
+    coopRepo.getCoopDirect(coopId)?.let {
+        val newCoop = inferCoopValues(it, listOf(event))
+
+        coopRepo.update(newCoop)
+    }
+}
+
+suspend fun updateInferredCoopValues(event: Event) {
+    // TODO: Usages of getKoin()
+    val coopRepo: CoopRepository = getKoin().get()
+
+    coopRepo.getCoopByNameDirect(event.coop, event.kevId)?.let {
+        val newCoop = inferCoopValues(it, listOf(event))
+        println("Inferring...")
+
+        coopRepo.update(newCoop)
     }
 }

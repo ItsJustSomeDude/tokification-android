@@ -2,36 +2,32 @@ package net.itsjustsomedude.tokens.models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import net.itsjustsomedude.tokens.NotificationHelper
 import net.itsjustsomedude.tokens.NotificationService
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
-import net.itsjustsomedude.tokens.store.StoreRepo
+import net.itsjustsomedude.tokens.store.PreferencesRepository
 
 private const val TAG = "MainViewModel"
 
 class MainScreenViewModel(
-    private val storeRepo: StoreRepo,
+    private val preferencesRepo: PreferencesRepository,
     private val coopRepo: CoopRepository,
-    private val notificationHelper: NotificationHelper
+    private val notificationHelper: NotificationHelper,
+    private val preferences: PreferencesRepository
 ) : ViewModel() {
 
-    private val _selectedCoopId: StateFlow<Long> = storeRepo.selectedCoopState
-        .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
-
-    val selectedCoopId: LiveData<Long> = _selectedCoopId.asLiveData()
+    val noteDebugger = preferences.notificationDebugger.getStateFlow(viewModelScope)
+    val selectedCoopId = preferencesRepo.selectedCoop.getStateFlow(viewModelScope)
 
     fun setSelectedCoopId(id: Long) {
         viewModelScope.launch {
-            storeRepo.setSelectedCoop(id)
+            preferencesRepo.selectedCoop.setValue(id)
 
+            // TODO: Move this maybe? Maybe?
             notificationHelper.sendActions(id)
         }
     }
@@ -56,5 +52,11 @@ class MainScreenViewModel(
 
     fun refreshNotifications() {
         NotificationService.processAllNotifications()
+
+        // TODO: This is NOT the right place to put this...
+        // Since notificationHelper is injected, I can run from almost anywhere I know the CoopID.
+        viewModelScope.launch {
+            notificationHelper.sendActions(selectedCoopId.value)
+        }
     }
 }

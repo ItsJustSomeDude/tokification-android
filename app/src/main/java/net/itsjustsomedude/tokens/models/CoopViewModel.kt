@@ -1,5 +1,6 @@
 package net.itsjustsomedude.tokens.models
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +17,8 @@ import net.itsjustsomedude.tokens.db.EventRepository
 import net.itsjustsomedude.tokens.reports.DetailedReport
 import net.itsjustsomedude.tokens.reports.SinkReport
 import net.itsjustsomedude.tokens.updateInferredCoopValues
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 class CoopViewModel(
     private val coopId: Long,
@@ -45,7 +48,7 @@ class CoopViewModel(
             Unit
         }
     }
-
+    
     val selectedEventId = MutableLiveData<Long?>(null)
 
     fun selectEvent(id: Long?) {
@@ -86,5 +89,11 @@ class CoopViewModel(
                 notificationHelper.sendActions(c, e)
             }
         }
+    }
+
+    companion object {
+        @Composable
+        fun provide(coopId: Long): CoopViewModel =
+            koinViewModel(key = coopId.toString()) { parametersOf(coopId) }
     }
 }
