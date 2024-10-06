@@ -19,6 +19,7 @@ import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
+import net.itsjustsomedude.tokens.reports.LuckBoostReport
 import net.itsjustsomedude.tokens.reports.SelfReport
 import java.util.Random
 
@@ -110,7 +111,7 @@ class NotificationHelper(
     // Second is Copy Report if Sink Mode
     // Third is Refresh if Normal mode.
 
-    fun sendSinkActions(coopId: Long, title: String) {
+    fun sendSinkActions(coopId: Long, title: String, body: String = "Click to open menu.") {
         val copyReportIntent = PendingIntent.getBroadcast(
             ctx,
             3,
@@ -122,7 +123,8 @@ class NotificationHelper(
 
         val note = createBaseActions(coopId)
             .setContentTitle(title)
-            .setContentText("Click to open menu.")
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .addAction(
                 R.drawable.copy,
                 "Copy Report",
@@ -140,13 +142,6 @@ class NotificationHelper(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val refreshIntent = PendingIntent.getBroadcast(
-            ctx,
-            5,
-            NotificationActions.refreshNotificationIntent(ctx, coopId),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
         val note = createBaseActions(coopId)
             .setContentTitle(title)
             .setContentText(body)
@@ -155,10 +150,6 @@ class NotificationHelper(
                 R.drawable.send,
                 "Send 1 Token",
                 sink1Intent
-            ).addAction(
-                R.drawable.refresh,
-                "Refresh",
-                refreshIntent
             ).build()
 
         sendNotification(coopId.toInt(), note)
@@ -166,17 +157,16 @@ class NotificationHelper(
 
     suspend fun sendActions(coopId: Long) {
         val coop = coopRepo.getCoopDirect(coopId) ?: return
-        val events = if (coop.sinkMode)
-            eventRepo.listEventsDirect(coop.name, coop.contract)
-        else
-            emptyList()
+        val events = eventRepo.listEventsDirect(coop.name, coop.contract)
 
         sendActions(coop, events)
     }
 
     fun sendActions(coop: Coop, events: List<Event>) {
         if (coop.sinkMode) {
-            sendSinkActions(coop.id, coop.name)
+            val report = LuckBoostReport().generate(coop, events)
+
+            sendSinkActions(coop.id, coop.name, report)
         } else {
             val report = SelfReport().generate(coop, events)
 
@@ -203,6 +193,13 @@ class NotificationHelper(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val refreshIntent = PendingIntent.getBroadcast(
+            ctx,
+            5,
+            NotificationActions.refreshNotificationIntent(ctx, coopId),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
         return NotificationCompat.Builder(ctx, ACTION_CHANNEL)
             .setSmallIcon(R.drawable.offline_bolt)
             .setAutoCancel(false)
@@ -211,6 +208,10 @@ class NotificationHelper(
                 R.drawable.send,
                 "Send Tokens",
                 createEventIntent
+            ).addAction(
+                R.drawable.refresh,
+                "Refresh",
+                refreshIntent
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVibrate(null)

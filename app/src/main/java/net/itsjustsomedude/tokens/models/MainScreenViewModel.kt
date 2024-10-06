@@ -13,6 +13,7 @@ import net.itsjustsomedude.tokens.store.PreferencesRepository
 
 private const val TAG = "MainViewModel"
 
+// TODO: This needs a Koin conversion
 class MainScreenViewModel(
     private val preferencesRepo: PreferencesRepository,
     private val coopRepo: CoopRepository,
@@ -39,11 +40,19 @@ class MainScreenViewModel(
 
     fun createAndSelectCoop() {
         viewModelScope.launch {
-            val newId = coopRepo.insert(Coop())
+            val sinkMode =
+                preferences.defaultCoopMode.getValue() == PreferencesRepository.DEFAULT_COOP_MODE_SINK
+
+            val newId = coopRepo.insert(
+                Coop(
+                    sinkMode = sinkMode
+                )
+            )
             setSelectedCoopId(newId)
         }
     }
 
+    // TODO: Delete the events, too.
     fun deleteCoopById(id: Long, deleteEvents: Boolean) {
         viewModelScope.launch {
             coopRepo.deleteById(id)

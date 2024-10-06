@@ -6,7 +6,7 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Coop::class, Event::class], version = 1, exportSchema = false)
+@Database(entities = [Coop::class, Event::class], version = 1, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun coopDao(): CoopDao
@@ -17,9 +17,10 @@ abstract class AppDatabase : RoomDatabase() {
         fun createInstance(context: Context): AppDatabase = databaseBuilder(
             context.applicationContext,
             AppDatabase::class.java,
-            "database"
+            "Coops.db"
         )
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_10_1)
+//            .fallbackToDestructiveMigration()
             .build()
 
         @Volatile

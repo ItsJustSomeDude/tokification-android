@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.models.CoopViewModel
 import net.itsjustsomedude.tokens.models.provideDialogModel
+import net.itsjustsomedude.tokens.reports.LuckBoostReport
 import net.itsjustsomedude.tokens.reports.SelfReport
 
 @Composable
@@ -52,7 +53,11 @@ fun EditCoop(
         CoopInfo(
             coop = coop,
             numEvents = events.size,
-            reportText = SelfReport().generate(coop, events),
+            reportText = if (coop.sinkMode)
+                LuckBoostReport().generate(coop, events)
+            else
+                SelfReport().generate(coop, events),
+
             onEventsClicked = {
                 showEventList = true
             },
@@ -246,8 +251,10 @@ fun CoopInfo(
             )
         }
 
-        Row {
-            if (coop.sinkMode) {
+        if (coop.sinkMode)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(onClick = onReportClicked) {
                     Text("Copy Report")
                 }
@@ -255,10 +262,9 @@ fun CoopInfo(
                     Button(onClick = onDetailedReportClicked) {
                         Text("Copy Detailed Report")
                     }
-            } else {
-                Text(reportText)
             }
-        }
+
+        Text(reportText)
     }
 }
 

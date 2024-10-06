@@ -12,12 +12,12 @@ plugins {
 
 android {
     namespace = "net.itsjustsomedude.tokens"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "net.itsjustsomedude.tokens"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 20
         versionName = "0.5"
 
@@ -27,6 +27,16 @@ android {
 
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+            }
+        }
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 

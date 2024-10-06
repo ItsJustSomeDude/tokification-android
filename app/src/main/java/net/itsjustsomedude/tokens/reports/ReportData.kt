@@ -53,10 +53,10 @@ data class ReportData(
 
     val generationInfoLine = "Report Generated at <t:$nowEpoch> (<t:$nowEpoch:R>)"
 
-    val tokensSent: Map<String, Int>
-    val tokensRec: Map<String, Int>
-    val tvalSent: Map<String, Double>
-    val tvalRec: Map<String, Double>
+    val tokensSent = mutableMapOf<String, Int>()
+    val tokensRec = mutableMapOf<String, Int>()
+    val tvalSent = mutableMapOf<String, Double>()
+    val tvalRec = mutableMapOf<String, Double>()
 
     val selfTokensSent: Int
     val selfTokensReceived: Int
@@ -68,11 +68,6 @@ data class ReportData(
     val tvalTableString: String
 
     init {
-        val tokensSent = mutableMapOf<String, Int>()
-        val tokensRec = mutableMapOf<String, Int>()
-        val tvalSent = mutableMapOf<String, Double>()
-        val tvalRec = mutableMapOf<String, Double>()
-
         var selfTokensSent = 0
         var selfTokensReceived = 0
         var selfTvalSent = 0.0
@@ -93,14 +88,9 @@ data class ReportData(
                 tvalRec[person] = (tvalRec[person] ?: 0.0) + tv
 
                 selfTokensSent += count
-                selfTvalSent += selfTvalReceived
+                selfTvalSent += tv
             }
         }
-
-        this.tokensSent = tokensSent
-        this.tokensRec = tokensRec
-        this.tvalSent = tvalSent
-        this.tvalRec = tvalRec
 
         this.selfTokensSent = selfTokensSent
         this.selfTokensReceived = selfTokensReceived
