@@ -58,10 +58,14 @@ data class ReportData(
     val tvalSent = mutableMapOf<String, Double>()
     val tvalRec = mutableMapOf<String, Double>()
 
+    val tvalDelta: Map<String, Double>
+
     val selfTokensSent: Int
     val selfTokensReceived: Int
     val selfTvalSent: Double
     val selfTvalReceived: Double
+
+    val selfTvalDelta: Double
 
     // Keyed by Player Name, value is table row.
     val tvalTable: Map<String, String>
@@ -90,6 +94,12 @@ data class ReportData(
                 selfTokensSent += count
                 selfTvalSent += tv
             }
+        }
+
+        selfTvalDelta = selfTvalSent - selfTvalReceived
+
+        tvalDelta = tvalSent.mapValues { (key, value) ->
+            value - (tvalRec[key] ?: 0.0)
         }
 
         this.selfTokensSent = selfTokensSent
