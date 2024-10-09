@@ -48,10 +48,27 @@ android {
     val localProps = gradleLocalProperties(rootDir, providers)
     signingConfigs {
         create("release") {
-            storeFile = file(localProps.getProperty("storeFilePath"))
-            storePassword = localProps.getProperty("storePassword")
-            keyPassword = localProps.getProperty("storePassword")
-            keyAlias = "key1"
+            try {
+                storeFile = file(localProps.getProperty("storeFilePath"))
+                storePassword = localProps.getProperty("storePassword")
+                keyPassword = localProps.getProperty("storePassword")
+                keyAlias = "key1"
+            } catch (_: Error) {
+                // Fallback to environment variables
+                try {
+                    storeFile = file(
+                        System.getenv("SIGNING_STORE_FILE")
+                            ?: throw Error("Missing env var SIGNING_STORE_FILE")
+                    )
+                    storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                        ?: throw Error("Missing env var SIGNING_STORE_PASSWORD")
+                    keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+                        ?: throw Error("Missing env var SIGNING_KEY_PASSWORD")
+                    keyAlias = "key1"
+                } catch (e: Error) {
+                    throw GradleException("Failed to load signing config from both local properties and environment variables: ${e.message}")
+                }
+            }
         }
     }
     println("Loaded local.properties signing keys.")
