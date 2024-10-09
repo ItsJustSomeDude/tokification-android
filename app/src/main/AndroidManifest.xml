@@ -1,64 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-	<application
-		android:allowBackup="true"
-		android:icon="@mipmap/ic_launcher"
-		android:label="@string/app_name"
-		android:roundIcon="@mipmap/ic_launcher"
-		android:supportsRtl="true"
-		android:theme="@style/AppTheme">
+    <application
+        android:name=".TokificationApp"
+        android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:targetApi="tiramisu">
 
-		<service
-			android:name=".SinkTokensService"
-			android:enabled="true"
-			android:exported="false" />
-		<service
-			android:name=".RefreshActionsService"
-			android:enabled="true"
-			android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-		<activity
-			android:name=".SettingsActivity"
-			android:exported="false"
-			android:label="@string/title_activity_settings" />
-		<activity
-			android:name=".MainActivity"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name=".EditEventActivity"
-			android:excludeFromRecents="true"
-			android:launchMode="singleTask"
-			android:taskAffinity=""
-			android:theme="@style/DialogTheme.Dark"
-			android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-		<activity
-			android:name=".ReportCopyActivity"
-			android:excludeFromRecents="true"
-			android:launchMode="singleTask"
-			android:taskAffinity="" />
-		<activity
-			android:name=".ListCoopsActivity"
-			android:exported="true" />
-		<activity
-			android:name=".EventListActivity"
-			android:exported="true" />
+        <activity
+            android:name=".CreateEventActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/title_activity_create_event"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Material3.DayNight.Dialog" />
+        <!--android:windowSoftInputMode="stateAlwaysHidden|adjustResize"-->
 
-		<service
-			android:name=".NotificationReader$NotificationService"
-			android:exported="false"
-			android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-			<intent-filter>
-				<action android:name="android.service.notification.NotificationListenerService" />
-			</intent-filter>
-			<!-- <meta-data android:name="android.service.notification.default_filter_types" /> -->
-		</service>
-	</application>
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
+
+        <service
+            android:name=".NotificationService"
+            android:exported="false"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".NotificationActions"
+            android:enabled="true"
+            android:exported="false" />
+
+    </application>
+
 </manifest>
