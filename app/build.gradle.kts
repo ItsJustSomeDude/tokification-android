@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 
 plugins {
     id("com.android.application")
@@ -23,7 +22,7 @@ android {
 
         resValue("string", "app_name", "Tokification")
 
-        archivesName.set("Tokification-v$versionCode($versionName)")
+//        archivesName.set("Tokification-v$versionCode($versionName)")
 
         vectorDrawables {
             useSupportLibrary = true
