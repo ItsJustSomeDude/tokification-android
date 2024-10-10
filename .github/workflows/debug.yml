@@ -36,7 +36,7 @@ jobs:
 
       - name: Decode and Save Keystore
         run: |
-          echo "${{ secrets.SIGNING_STORE_FILE }}" | base64 -d > keystore.jks
+          echo "${{ secrets.SIGNING_STORE_FILE }}" | base64 -d > app/keystore.jks
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -44,7 +44,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
         env:
-          SIGNING_STORE_FILE: app/keystore.jks
+          SIGNING_STORE_FILE: keystore.jks
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
