@@ -53,6 +53,8 @@ android {
                 storePassword = localProps.getProperty("storePassword")
                 keyPassword = localProps.getProperty("storePassword")
                 keyAlias = "key1"
+
+                println("Loaded local.properties signing keys.")
             } catch (_: Exception) {
                 // Fallback to environment variables
                 try {
@@ -65,13 +67,15 @@ android {
                     keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
                         ?: throw Error("Missing env var SIGNING_KEY_PASSWORD")
                     keyAlias = "key1"
+
+                    println("Loaded signing keys from environment.")
                 } catch (e: Error) {
                     throw GradleException("Failed to load signing config from both local properties and environment variables: ${e.message}")
                 }
             }
         }
     }
-    println("Loaded local.properties signing keys.")
+
 
     buildTypes {
         release {
