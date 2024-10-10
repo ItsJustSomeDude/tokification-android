@@ -53,7 +53,7 @@ android {
                 storePassword = localProps.getProperty("storePassword")
                 keyPassword = localProps.getProperty("storePassword")
                 keyAlias = "key1"
-            } catch (_: Error) {
+            } catch (_: Exception) {
                 // Fallback to environment variables
                 try {
                     storeFile = file(
