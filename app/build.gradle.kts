@@ -43,8 +43,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
-
+    
     val localProps = gradleLocalProperties(rootDir, providers)
     signingConfigs {
         create("release") {
@@ -54,7 +53,7 @@ android {
                 keyPassword = localProps.getProperty("storePassword")
                 keyAlias = "key1"
 
-                println("Loaded local.properties signing keys.")
+                // println("Loaded local.properties signing keys.")
             } catch (_: Exception) {
                 // Fallback to environment variables
                 try {
@@ -68,7 +67,7 @@ android {
                         ?: throw Error("Missing env var SIGNING_KEY_PASSWORD")
                     keyAlias = "key1"
 
-                    println("Loaded signing keys from environment.")
+                    // println("Loaded signing keys from environment.")
                 } catch (e: Error) {
                     throw GradleException("Failed to load signing config from both local properties and environment variables: ${e.message}")
                 }
@@ -109,6 +108,12 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+tasks.register("printVersionName") {
+    doLast {
+        println(android.defaultConfig.versionName)
     }
 }
 

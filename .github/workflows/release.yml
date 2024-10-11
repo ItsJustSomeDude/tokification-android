@@ -45,16 +45,26 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
-      - name: Upload APK to GitHub Release
-        uses: actions/upload-release-asset@v1
+      - name: Extract Version Name
+        id: get_version
+        run: echo "VERSION_NAME=$(./gradlew -q printVersionName)" >> $GITHUB_ENV
+
+      - name: Rename and Upload Release APK to Build Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: app/build/outputs/apk/release/app-release.apk
-          asset_name: app-release.apk
-          asset_content_type: application/vnd.android.package-archive
+          name: Tokification-${{ env.VERSION_NAME }}
+          path: app/build/outputs/apk/release/app-release.apk
 
       - name: Create Proguard mapping file artifact
         uses: actions/upload-artifact@v3
         with:
           name: proguard-mapping
           path: app/build/outputs/mapping/release/mapping.txt
+
+      - name: Upload APK to GitHub Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: app/build/outputs/apk/release/app-release.apk
+          asset_name: Tokification-${{ env.VERSION_NAME }}
+          asset_content_type: application/vnd.android.package-archive

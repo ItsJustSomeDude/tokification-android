@@ -39,6 +39,10 @@ import org.koin.compose.viewmodel.koinViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // TODO: This should be an Onboarding thing. But I haven't built that yet...
+        NotificationHelper.requestPermission(this)
+
         enableEdgeToEdge()
         setContent {
             Content()

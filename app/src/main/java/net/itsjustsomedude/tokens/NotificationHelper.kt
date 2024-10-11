@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -224,14 +223,7 @@ class NotificationHelper(
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            if (ctx !is Activity) {
-                Log.e(
-                    TAG,
-                    "Attempted to send a notification from something a context that's not an activity, and we don't have permissions!"
-                )
-                return
-            }
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(
+            if (ctx !is Activity || !ActivityCompat.shouldShowRequestPermissionRationale(
                     ctx,
                     Manifest.permission.POST_NOTIFICATIONS
                 )
@@ -260,5 +252,18 @@ class NotificationHelper(
 
         private const val ACTION_CHANNEL = "Actions"
         private const val FAKE_CHANNEL = "Fake"
+
+        fun requestPermission(ctx: Activity) {
+            if (ActivityCompat.checkSelfPermission(
+                    ctx,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val toRequest = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+                    ActivityCompat.requestPermissions(ctx, toRequest, 1)
+                }
+            }
+        }
     }
 }

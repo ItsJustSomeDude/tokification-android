@@ -48,5 +48,12 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
-#      - name: Run Unit Tests
-#        run: ./gradlew testDebugUnitTest
+      - name: Extract Version Name
+        id: get_version
+        run: echo "VERSION_NAME=$(./gradlew -q printVersionName)" >> $GITHUB_ENV
+
+      - name: Rename and Upload Debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: Tokification-debug-${{ env.VERSION_NAME }}
+          path: app/build/outputs/apk/debug/app-debug.apk

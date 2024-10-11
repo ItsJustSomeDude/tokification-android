@@ -15,7 +15,9 @@ class DetailedReport : Report() {
         val rows = mutableMapOf<String, MutableList<String>>()
         val cums = mutableMapOf<String, Double>()
 
-        for (ev in data.events) {
+        val evs = data.events.reversed()
+
+        for (ev in evs) {
             val t = ev.time.timeInMillis / 1000L
             val elapsedSeconds = t - data.startEpoch
 
