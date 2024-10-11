@@ -51,6 +51,10 @@ jobs:
       - name: Extract Version Name
         id: get_version
         run: echo "VERSION_NAME=$(./gradlew -q printVersionName)" >> $GITHUB_ENV
+        env:
+          SIGNING_STORE_FILE: keystore.jks
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
       - name: Rename and Upload Debug APK
         uses: actions/upload-artifact@v3
