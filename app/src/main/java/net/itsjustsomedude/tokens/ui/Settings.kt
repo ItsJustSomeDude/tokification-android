@@ -44,7 +44,7 @@ fun SettingsScreen(
         model.setNoteDebugger(newState)
     })
 
-    Text("Player Name (Janky Field, might fix later, idk.)")
+    Text("Player Name (Janky Field, type very slowly...)")
     OutlinedTextField(
         value = playerName,
         onValueChange = {

@@ -5,7 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
@@ -16,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,6 +63,7 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
     val context = LocalContext.current
 
     val notificationDebuggerEnabled by model.noteDebugger.collectAsState()
+    val serviceEnabled by model.serviceEnabled.collectAsState(true)
     val coop by model.selectedCoopId.collectAsState()
     val coopList by model.coopsList.observeAsState()
 
@@ -103,6 +111,32 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
             }
         }
     ) {
+        if (!serviceEnabled) {
+            Box(
+                modifier = Modifier
+                    .border(
+                        width = 2.dp,
+                        color = Color.Yellow,
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(8.dp)
+                    .clickable {
+                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                    },
+            ) {
+                Column {
+                    Text(
+                        text = "Service Not Running",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "Service must be running to process notifications. Start the service from the Settings screen.",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
+            }
+        }
+
         EditCoop(coopId = coop)
 
         if (showCoopListSheet)

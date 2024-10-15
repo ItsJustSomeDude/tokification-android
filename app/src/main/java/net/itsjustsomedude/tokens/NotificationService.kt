@@ -32,6 +32,7 @@ class NotificationService : NotificationListenerService() {
     private var dismissHandler: Handler? = null
 
     override fun onListenerConnected() {
+
         instance = this
         dismissHandler = Handler(Looper.getMainLooper())
 
@@ -42,16 +43,20 @@ class NotificationService : NotificationListenerService() {
             if (!isServiceEnabled())
                 disableService(this@NotificationService)
         }
+
+        println("Connected!")
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
         destroy()
+        println("Disconnected.")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         destroy()
+        println("Destroyed.")
     }
 
     private fun destroy() {
@@ -124,8 +129,7 @@ class NotificationService : NotificationListenerService() {
         fun processAllNotifications() =
             instance?.processAllNotifications()
 
-        val isServiceRunning: Boolean
-            get() = instance != null
+//        fun isServiceRunning(): Boolean = instance != null
 
         suspend fun enableService(ctx: Context) {
             getKoin().get<PreferencesRepository>()

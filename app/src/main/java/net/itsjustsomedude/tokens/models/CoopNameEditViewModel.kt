@@ -29,6 +29,7 @@ class CoopNameEditViewModel(
     }
 
     init {
+        readClipboard()
         // TODO: Change the way this whole thing and UI works, it spams too much.
         updateClipboardValidity()
         clipboard.manager.addPrimaryClipChangedListener(clipChangedListener)
@@ -53,8 +54,8 @@ class CoopNameEditViewModel(
             val match = pattern.matcher(text)
 
             if (match.matches()) {
-                clipboardCoop.value = match.group(1) ?: ""
-                clipboardKevId.value = match.group(2) ?: ""
+                clipboardKevId.value = match.group(1) ?: ""
+                clipboardCoop.value = match.group(2) ?: ""
                 return true
             }
         }

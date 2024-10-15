@@ -23,6 +23,7 @@ class MainScreenViewModel(
 
     val noteDebugger = preferences.notificationDebugger.getStateFlow(viewModelScope)
     val selectedCoopId = preferencesRepo.selectedCoop.getStateFlow(viewModelScope)
+    val serviceEnabled = preferencesRepo.serviceEnable.getStateFlow(viewModelScope)
 
     fun setSelectedCoopId(id: Long) {
         viewModelScope.launch {
@@ -44,9 +45,7 @@ class MainScreenViewModel(
                 preferences.defaultCoopMode.getValue() == PreferencesRepository.DEFAULT_COOP_MODE_SINK
 
             val newId = coopRepo.insert(
-                Coop(
-                    sinkMode = sinkMode
-                )
+                Coop(sinkMode = sinkMode)
             )
             setSelectedCoopId(newId)
         }
@@ -68,4 +67,12 @@ class MainScreenViewModel(
             notificationHelper.sendActions(selectedCoopId.value)
         }
     }
+
+//    fun isServiceRunning(): Boolean {
+//        val status = NotificationService.isServiceRunning()
+//
+//        println("Current Service Status: $status")
+//
+//        return status
+//    }
 }

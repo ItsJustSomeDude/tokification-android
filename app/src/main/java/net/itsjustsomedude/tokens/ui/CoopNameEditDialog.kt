@@ -102,7 +102,7 @@ fun CoopNameEditDialog(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             fontFamily = FontFamily.Monospace,
-                            text = "${model.clipboardCoop.value}/${model.clipboardKevId.value}"
+                            text = "${model.clipboardKevId.value}/${model.clipboardCoop.value}"
                         )
                     }
 
