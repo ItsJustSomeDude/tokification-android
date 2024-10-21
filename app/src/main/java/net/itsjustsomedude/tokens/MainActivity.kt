@@ -1,6 +1,7 @@
 package net.itsjustsomedude.tokens
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,11 +33,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.models.MainScreenViewModel
+import net.itsjustsomedude.tokens.network.UpdateChecker
 import net.itsjustsomedude.tokens.ui.CoopList
 import net.itsjustsomedude.tokens.ui.EditCoop
 import net.itsjustsomedude.tokens.ui.Header
@@ -69,6 +70,8 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
 
     var showCoopListSheet by remember { mutableStateOf(false) }
     var showNotificationDebugger by remember { mutableStateOf(false) }
+
+    val updateAvailable by model.updateAvailable.collectAsState(false)
 
     Header(
         title = { Text(stringResource(R.string.app_name)) },
@@ -116,7 +119,7 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
                 modifier = Modifier
                     .border(
                         width = 2.dp,
-                        color = Color.Yellow,
+                        color = MaterialTheme.colorScheme.error,
                         shape = RoundedCornerShape(4.dp)
                     )
                     .padding(8.dp)
@@ -167,5 +170,36 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
             NotificationDebuggerDialog(onDismissRequest = {
                 showNotificationDebugger = false
             })
+
+        if (updateAvailable)
+            Box(
+                modifier = Modifier
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(8.dp)
+                    .clickable {
+                        // TODO: Move this to... BuildConfig maybe?
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://github.com/${UpdateChecker.REPO}/releases")
+                            )
+                        )
+                    },
+            ) {
+                Column {
+                    Text(
+                        text = "An Update is Available!",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "Click to open the release page.",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
+            }
     }
 }

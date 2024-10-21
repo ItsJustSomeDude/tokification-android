@@ -40,6 +40,7 @@ jobs:
           SIGNING_STORE_FILE: keystore.jks
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
       - name: Build APK
         run: ./gradlew :app:assembleDebug :app:assembleRelease
@@ -47,6 +48,7 @@ jobs:
           SIGNING_STORE_FILE: keystore.jks
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
       - name: Upload Debug APK (for main branch pushes)
         if: github.event_name == 'push' && contains(github.ref, 'refs/heads/main')

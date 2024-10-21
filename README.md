@@ -56,4 +56,25 @@ have been sent and received. In Sink Mode, a report will show who has boosted an
 waiting, sorted by the current TVal of each player. These reports will be shown both on the main
 screen of the app, and in the notification.
 
+## Permissions and Privacy
+
+Tokification requests a few permissions:
+
+Notification Access
+
+- Used to read Egg, Inc. notifications to track incoming tokens and chicken runs.
+    * Only Egg, Inc. and Tokification's own notifications are read. See the `Convert.kt`
+      file [here]() if concerned about what these are used for.
+- Optionally used to dismiss notifications after processing.
+
+Show Notifications
+
+- Used to show the Actions for quickly recording Sent tokens.
+- Optionally used for sending fake Egg, Inc. notifications for debugging purposes. See
+  the `NotificationHelper.kt` file [here]().
+
+Network
+
+- Optionally used to check for updates.
+- Optionally used to send usage information and analytics.
 

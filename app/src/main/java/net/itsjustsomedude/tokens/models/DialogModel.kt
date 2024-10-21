@@ -1,42 +1,42 @@
 package net.itsjustsomedude.tokens.models
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-// TODO: This may be bad. Really bad.
 @Composable
-fun provideDialogModel(initiallyVisible: Boolean = false): DialogModel {
-    return viewModel<DialogModel>()
+fun provideDialogController(): DialogControllerViewModel {
+    return viewModel<DialogControllerViewModel>()
 }
 
-class DialogModel : ViewModel() {
-    private val _key = mutableIntStateOf(1)
+class DialogControllerViewModel : ViewModel() {
+    private val _key = mutableLongStateOf(1)
 
     val key
-        get() = _key.intValue.toString()
+        get() = _key.longValue.toString()
 
-    var visible by mutableStateOf(false)
+    private val _visible = MutableStateFlow(false)
+    val visible: StateFlow<Boolean> = _visible.asStateFlow()
 
     fun reset() {
-        _key.intValue++
+        _key.longValue++
     }
 
     fun show() {
         reset()
-        visible = true
+        _visible.value = true
     }
 
     fun hide() {
-        visible = false
+        _visible.value = false
     }
 
     fun toggle() {
-        if (visible)
+        if (_visible.value)
             hide()
         else
             show()

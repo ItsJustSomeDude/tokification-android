@@ -2,11 +2,20 @@
 
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
+val localProps = gradleLocalProperties(rootDir, providers)
+
+val versionMajor = 0
+val versionMinor = 5
+val versionPatch = 0
+val versionBuild = 0
+
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.android")
 
+    id("io.sentry.android.gradle") version "4.12.0"
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -17,12 +26,19 @@ android {
         applicationId = "net.itsjustsomedude.tokens"
         minSdk = 21
         targetSdk = 35
-        versionCode = 20
-        versionName = "0.5"
+
+        versionCode = versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
 
         resValue("string", "app_name", "Tokification")
+        
+        val sentryDsn =
+            localProps["sentry.dsn"]?.toString() ?: System.getenv("SENTRY_DSN") ?: run {
+                println("No DSN provided, Sentry will not be enabled.")
+                ""
+            }
 
-//        archivesName.set("Tokification-v$versionCode($versionName)")
+        buildConfigField("String", "SENTRY_DSN", "\"$sentryDsn\"")
 
         vectorDrawables {
             useSupportLibrary = true
@@ -43,8 +59,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    
-    val localProps = gradleLocalProperties(rootDir, providers)
+
     signingConfigs {
         create("release") {
             try {
@@ -75,7 +90,6 @@ android {
         }
     }
 
-
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -85,7 +99,6 @@ android {
             )
             resValue("string", "app_name", "Tokification")
             signingConfig = signingConfigs.getByName("release")
-
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -96,7 +109,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
-
+        buildConfig = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -118,10 +131,11 @@ tasks.register("printVersionName") {
 }
 
 dependencies {
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.2")
-    val composeBomVersion = "2024.09.02"
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.3")
+    val composeBomVersion = "2024.09.03"
     val lifecycleVersion = "2.8.6"
     val roomVersion = "2.6.1"
+    val ktorVersion = "2.3.4"
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
@@ -155,7 +169,13 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     // Koin
     implementation("io.insert-koin:koin-android:4.0.0")

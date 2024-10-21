@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
@@ -30,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.models.CoopViewModel
-import net.itsjustsomedude.tokens.models.provideDialogModel
+import net.itsjustsomedude.tokens.models.provideDialogController
 import net.itsjustsomedude.tokens.reports.LuckBoostReport
 import net.itsjustsomedude.tokens.reports.SelfReport
 
@@ -40,14 +41,13 @@ fun EditCoop(
     model: CoopViewModel = CoopViewModel.provide(coopId)
 ) {
     var showEventList by model.showEventList
-//    var showEventEdit by model.showEventEdit
     var showNameEdit by model.showNameEdit
 
     val modelCoop by model.coop.observeAsState()
     val selectedEventId by model.selectedEventId.observeAsState()
     val events by model.events.observeAsState(emptyList())
 
-    val eventDialog = provideDialogModel()
+    val eventDialog = provideDialogController()
 
     modelCoop?.let { coop ->
         CoopInfo(
@@ -96,7 +96,8 @@ fun EditCoop(
                     eventDialog.show()
                 })
 
-        if (eventDialog.visible)
+        val eventDialogVisible by eventDialog.visible.collectAsState()
+        if (eventDialogVisible)
             EventEditDialog(
                 dialogKey = eventDialog.key,
                 coopId = coop.id,

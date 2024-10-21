@@ -14,8 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-class PreferencesRepository(private val dataStore: DataStore<Preferences>) {
+class PreferencesRepository(dataStore: DataStore<Preferences>) {
     companion object {
         const val DEFAULT_COOP_MODE_SINK = 1
         const val DEFAULT_COOP_MODE_NORMAL = 2
@@ -27,6 +29,7 @@ class PreferencesRepository(private val dataStore: DataStore<Preferences>) {
         private val KEY_AUTO_DISMISS = booleanPreferencesKey("auto_dismiss")
         private val KEY_DEFAULT_COOP_MODE = intPreferencesKey("default_coop_mode")
         private val KEY_DEBUGGER = booleanPreferencesKey("enable_notification_debugger")
+        private val SENTRY_ENABLED = booleanPreferencesKey("enable_sentry")
     }
 
     val serviceEnable = StoreItem(dataStore, KEY_SERVICE_ENABLE, false)
@@ -36,6 +39,7 @@ class PreferencesRepository(private val dataStore: DataStore<Preferences>) {
     val autoDismiss = StoreItem(dataStore, KEY_AUTO_DISMISS, false)
     val defaultCoopMode = StoreItem(dataStore, KEY_DEFAULT_COOP_MODE, DEFAULT_COOP_MODE_SINK)
     val notificationDebugger = StoreItem(dataStore, KEY_DEBUGGER, false)
+    val sentryEnabled = StoreItem(dataStore, SENTRY_ENABLED, true)
 
     class StoreItem<T>(
         private val dataStore: DataStore<Preferences>,
@@ -48,12 +52,31 @@ class PreferencesRepository(private val dataStore: DataStore<Preferences>) {
         fun getStateFlow(scope: CoroutineScope): StateFlow<T> = getFlow()
             .stateIn(scope, SharingStarted.Eagerly, defaultValue)
 
+        /**
+         * **Blocks the thread** until the value can be fetched. Use with caution.
+         */
+        fun getValueSync(): T =
+            runBlocking { getValue() }
+
+        /**
+         * **Blocks the thread** until the value can be set. Use with caution.
+         */
+        fun setValueSync(newValue: T) =
+            runBlocking { setValue(newValue) }
+
         suspend fun getValue(): T =
             getFlow().first()
 
         suspend fun setValue(newValue: T) = dataStore.edit { settings ->
             settings[key] = newValue
         }
+
+        fun setValueIn(scope: CoroutineScope, newValue: T) =
+            scope.launch {
+                dataStore.edit { settings ->
+                    settings[key] = newValue
+                }
+            }
     }
 }
 

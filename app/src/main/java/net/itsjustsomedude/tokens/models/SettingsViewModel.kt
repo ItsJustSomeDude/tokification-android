@@ -3,12 +3,15 @@ package net.itsjustsomedude.tokens.models
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.sentry.Sentry
 import kotlinx.coroutines.launch
 import net.itsjustsomedude.tokens.NotificationService
+import net.itsjustsomedude.tokens.network.UpdateChecker
 import net.itsjustsomedude.tokens.store.PreferencesRepository
 
 class SettingsViewModel(
-    private val prefsRepo: PreferencesRepository
+    private val prefsRepo: PreferencesRepository,
+    private val updateChecker: UpdateChecker
 ) : ViewModel() {
 
     val serviceEnabled = prefsRepo.serviceEnable.getStateFlow(viewModelScope)
@@ -39,9 +42,19 @@ class SettingsViewModel(
         }
 
     val defaultCoopMode = prefsRepo.defaultCoopMode.getStateFlow(viewModelScope)
-    fun setDefaultCoopMode(newState: Int) {
-        viewModelScope.launch {
-            prefsRepo.defaultCoopMode.setValue(newState)
+    fun setDefaultCoopMode(newState: Int) =
+        prefsRepo.defaultCoopMode.setValueIn(viewModelScope, newState)
+
+    val sentryEnabled = prefsRepo.sentryEnabled.getStateFlow(viewModelScope)
+    fun setSentryEnabled(newState: Boolean) {
+        prefsRepo.sentryEnabled.setValueIn(viewModelScope, newState)
+
+        if (newState) {
+            // TODO: No clue if this will work at all.
+//            TokificationApp.startSentry()
+        } else {
+            Sentry.close()
         }
     }
+
 }
