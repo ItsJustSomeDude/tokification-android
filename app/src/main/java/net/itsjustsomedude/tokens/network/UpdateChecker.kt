@@ -15,8 +15,8 @@ class UpdateChecker(
     suspend fun isNewVersionAvailable(): Result<Boolean> {
         val manager = context.packageManager
         val info = manager.getPackageInfo(context.packageName, PackageManager.GET_ACTIVITIES)
-//        val currentVersion = info.versionName
-        val currentVersion = "0.0.1"
+        val currentVersion = info.versionName
+//        val currentVersion = "0.0.1"
 
         return try {
             val response: HttpResponse = client.get(
