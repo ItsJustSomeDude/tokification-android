@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
+import net.itsjustsomedude.tokens.updateInferredCoopValues
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.Calendar
@@ -58,15 +59,14 @@ class EventEditViewModel(
             // TODO: Usage of update inferred values.
 //            updateInferredCoopValues(coopId)
 
-            if (eventId == null)
-                event.value = Event(
-                    coop = coop.value?.name ?: "",
-                    kevId = coop.value?.contract ?: "",
-                    count = 6,
-                    direction = Event.DIRECTION_RECEIVED,
-                    time = Calendar.getInstance(),
-                    person = ""
-                )
+            if (eventId == null) event.value = Event(
+                coop = coop.value?.name ?: "",
+                kevId = coop.value?.contract ?: "",
+                count = 6,
+                direction = Event.DIRECTION_RECEIVED,
+                time = Calendar.getInstance(),
+                person = ""
+            )
             else {
                 // Fetch and Edit Event.
                 event.value = eventRepo.getEventDirect(eventId)
@@ -85,12 +85,15 @@ class EventEditViewModel(
         event.value?.let { ev ->
             coop.value?.let {
                 println("Saving!!!")
-                eventRepo.upsert(
-                    ev.copy(
-                        coop = it.name,
-                        kevId = it.contract
-                    )
+                val newEvent = ev.copy(
+                    coop = it.name, kevId = it.contract
                 )
+
+                eventRepo.upsert(newEvent)
+
+                viewModelScope.launch {
+                    updateInferredCoopValues(newEvent)
+                }
             }
         }
     }

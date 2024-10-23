@@ -1,27 +1,19 @@
 package net.itsjustsomedude.tokens.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,10 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import net.itsjustsomedude.tokens.R
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.models.EventEditViewModel
 
@@ -149,7 +138,7 @@ fun EventEditSkeleton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventEdit(
     modifier: Modifier = Modifier,
@@ -160,15 +149,7 @@ fun EventEdit(
     onChanged: (Event) -> Unit,
     // TODO: Give this its own ViewModel.
 ) {
-    var playerMenuExpanded by remember { mutableStateOf(false) }
     var selectedPlayer by remember { mutableStateOf(event.person) }
-    var customPlayerMode by remember {
-        mutableStateOf(
-            event.person.isNotBlank() &&
-                    !players.contains(event.person)
-        )
-    }
-    var customPlayer by remember { mutableStateOf(if (customPlayerMode) event.person else "") }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -176,93 +157,20 @@ fun EventEdit(
     ) {
         Text("Coop: ${event.coop}, Contract: ${event.kevId}")
 
-        ExposedDropdownMenuBox(
-            expanded = playerMenuExpanded,
-            onExpandedChange = {
-                playerMenuExpanded = !playerMenuExpanded
-            },
-            modifier = Modifier.debugRuler(LocalDensity.current, "DDL")
-        ) {
-            TextField(
-                modifier = Modifier.menuAnchor(),
-                readOnly = !customPlayerMode,
-                singleLine = true,
-                value = if (customPlayerMode) customPlayer else selectedPlayer,
-                onValueChange = {
-                    if (customPlayerMode) {
-                        customPlayer = it
+        TextFieldMenu(
+            label = "Select Player",
+            options = players,
+            selectedOption = selectedPlayer,
+            onOptionSelected = {
+                selectedPlayer = it ?: ""
 
-                        onChanged(
-                            event.copy(
-                                person = it
-                            )
-                        )
-                    }
-                },
-                label = {
-                    Text(
-                        if (customPlayerMode) "Enter Player" else "Select Player"
+                onChanged(
+                    event.copy(
+                        person = it ?: ""
                     )
-                },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerMenuExpanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            )
-            ExposedDropdownMenu(
-                expanded = playerMenuExpanded,
-                onDismissRequest = { playerMenuExpanded = false },
-            ) {
-                players.forEach { player ->
-                    DropdownMenuItem(
-                        text = { Text(text = player) },
-                        onClick = {
-                            customPlayerMode = false
-                            selectedPlayer = player
-                            playerMenuExpanded = false
-
-                            onChanged(
-                                event.copy(
-                                    person = player
-                                )
-                            )
-                        },
-                    )
-                }
-
-                DropdownMenuItem(
-                    text = {
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Icon(
-                                painter = painterResource(R.drawable.offline_bolt),
-                                contentDescription = ""
-                            )
-                            Text(text = "Sink", fontStyle = FontStyle.Italic)
-                        }
-                    },
-                    onClick = {
-                        customPlayerMode = false
-                        selectedPlayer = "Sink"
-                        playerMenuExpanded = false
-                    },
-                )
-
-                DropdownMenuItem(
-                    text = {
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = ""
-                            )
-                            Text(text = "Add a player", fontStyle = FontStyle.Italic)
-                        }
-                    },
-                    onClick = {
-                        selectedPlayer = "Add a player"
-                        playerMenuExpanded = false
-                        customPlayerMode = true
-                    },
                 )
             }
-        }
+        )
 
         if (showExtendedButtons)
             SingleChoiceSegmentedButtonRow(

@@ -18,6 +18,7 @@ fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
     }
     // TODO: Do this better.
     eventPlayers.remove("Sink")
+    eventPlayers.remove("")
     val newPlayerList = eventPlayers.union(coop.players).toList()
     println("Inferred player list: $newPlayerList")
 
