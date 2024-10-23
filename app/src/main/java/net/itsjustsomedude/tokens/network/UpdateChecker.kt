@@ -16,6 +16,7 @@ class UpdateChecker(
         val manager = context.packageManager
         val info = manager.getPackageInfo(context.packageName, PackageManager.GET_ACTIVITIES)
         val currentVersion = info.versionName
+//        val currentVersion = BuildConfig.VERSION_NAME
 //        val currentVersion = "0.0.1"
 
         return try {

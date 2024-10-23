@@ -35,7 +35,11 @@ fun SettingsScreen(
     val defaultCoopMode by model.defaultCoopMode.collectAsState()
     val sentryEnabled by model.sentryEnabled.collectAsState()
 
-    Text("Notification Service Control")
+    Text(text = "Notification Service Control", fontWeight = FontWeight.Bold)
+    Text(
+        text = "This enables or disables Tokification reading Egg Inc's notifications.  This is used to track tokens that you have received.  If enabled, it runs in the background, so it may be helpful to disable when you have no active co-ops.",
+        fontStyle = FontStyle.Italic
+    )
     Switch(checked = serviceEnabled, onCheckedChange = { newState ->
         // TODO: Find out if this is the best place to manage Context.
         model.setServiceEnabled(context, newState)
@@ -43,21 +47,33 @@ fun SettingsScreen(
 
     HorizontalDivider()
 
-    Text("Auto Dismiss Notifications")
+    Text(text = "Auto Dismiss Notifications", fontWeight = FontWeight.Bold)
+    Text(
+        text = "If enabled, Egg Inc's notifications will be dismissed automatically shortly after Tokification processes them.",
+        fontStyle = FontStyle.Italic
+    )
     Switch(checked = autoDismiss, onCheckedChange = { newState ->
         model.setAutoDismiss(newState)
     })
 
     HorizontalDivider()
 
-    Text("Notification Debugger")
+    Text(text = "Notification Debugger", fontWeight = FontWeight.Bold)
+    Text(
+        text = "This adds a wrench icon to the main screen that allows you to send fake notifications.  Used for debugging, can be left disabled here.",
+        fontStyle = FontStyle.Italic
+    )
     Switch(checked = notificationDebuggerEnabled, onCheckedChange = { newState ->
         model.setNoteDebugger(newState)
     })
 
     HorizontalDivider()
 
-    Text("Player Name (Janky Field, type very slowly...)")
+    Text(text = "Player Name (Janky Field, type very slowly...)", fontWeight = FontWeight.Bold)
+    Text(
+        text = "This is your In-Game Name, used for showing in Sink Reports.",
+        fontStyle = FontStyle.Italic
+    )
     OutlinedTextField(
         value = playerName,
         onValueChange = {
@@ -67,7 +83,11 @@ fun SettingsScreen(
 
     HorizontalDivider()
 
-    Text("Default Coop Mode")
+    Text(text = "Default Coop Mode", fontWeight = FontWeight.Bold)
+    Text(
+        text = "Whether new Co-ops will be in Normal or Sink mode by default.",
+        fontStyle = FontStyle.Italic
+    )
     SingleChoiceSegmentedButtonRow {
         SegmentedButton(
             selected = defaultCoopMode == PreferencesRepository.DEFAULT_COOP_MODE_SINK,
@@ -92,7 +112,7 @@ fun SettingsScreen(
 
     HorizontalDivider()
 
-    Text("Enable Error Reporting", fontWeight = FontWeight.Bold)
+    Text(text = "Enable Error Reporting", fontWeight = FontWeight.Bold)
     Text(
         text = "Tokification uses Sentry to report errors and crashes. Information about your device and your IGN entered above will be sent with error reports if enabled.",
         fontStyle = FontStyle.Italic

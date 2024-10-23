@@ -4,12 +4,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -52,6 +55,7 @@ fun EventEditDialog(
                 Text("Done")
             }
         },
+        title = { Text("Token Transaction") },
         text = {
             event?.let { ev ->
                 EventEdit(
@@ -152,10 +156,10 @@ fun EventEdit(
     var selectedPlayer by remember { mutableStateOf(event.person) }
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
-        Text("Coop: ${event.coop}, Contract: ${event.kevId}")
+//        Text("Coop: ${event.coop}, Contract: ${event.kevId}")
 
         TextFieldMenu(
             label = "Select Player",
@@ -172,7 +176,12 @@ fun EventEdit(
             }
         )
 
-        if (showExtendedButtons)
+        if (showExtendedButtons) {
+            Text(
+                modifier = Modifier.padding(PaddingValues(top = 8.dp)),
+                text = "Token Direction",
+                style = MaterialTheme.typography.bodySmall
+            )
             SingleChoiceSegmentedButtonRow(
                 modifier = Modifier.debugRuler(LocalDensity.current, "ButtonRow")
             ) {
@@ -205,8 +214,15 @@ fun EventEdit(
                 }
             }
 
+        }
+
+        Text(
+            modifier = Modifier.padding(PaddingValues(top = 8.dp)),
+            text = "Number of Tokens",
+            style = MaterialTheme.typography.bodySmall
+        )
+
         NumberEntry(
-            modifier = Modifier.debugRuler(LocalDensity.current, "NumberEntry"),
             value = event.count, onChanged = {
                 onChanged(
                     event.copy(
@@ -217,7 +233,7 @@ fun EventEdit(
 
         if (showExtendedButtons)
             DateTimeRow(
-                modifier = Modifier.debugRuler(LocalDensity.current, "DateRow"),
+                modifier = Modifier.padding(PaddingValues(top = 8.dp)),
                 dateLabel = "Date",
                 timeLabel = "Time",
                 unsetText = "Set",
