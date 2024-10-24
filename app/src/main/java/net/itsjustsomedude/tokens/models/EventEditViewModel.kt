@@ -14,6 +14,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.Calendar
 
+// TODO: This model has issues.
+// TODO: Find a way to re-write.
+
 class EventEditViewModel(
     // TODO: Find out if this is always present and needed.
     // I think the answer is "yes".
@@ -65,6 +68,8 @@ class EventEditViewModel(
                 count = 6,
                 direction = Event.DIRECTION_RECEIVED,
                 time = Calendar.getInstance(),
+
+                // TODO: This isn't right.
                 person = ""
             )
             else {

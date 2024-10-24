@@ -184,11 +184,30 @@ fun CoopInfo(
                 )
             }
         }
+
+        if (coop.name.isBlank() || coop.name.isBlank())
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = "Warning",
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Text(
+                    "Enter Name and KevID before recording events!",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
         Row {
             Button(onClick = onEventsClicked) {
                 Text(text = "Edit Events ($numEvents)")
             }
-            IconButton(onClick = onSendClicked) {
+            IconButton(
+                enabled = coop.name.isNotBlank() && coop.name.isNotBlank(),
+                onClick = onSendClicked
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Send Tokens"

@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.models.EventEditViewModel
@@ -60,7 +61,13 @@ fun EventEditDialog(
             event?.let { ev ->
                 EventEdit(
                     event = ev,
-                    players = coop?.players ?: emptyList(),
+                    players = (
+                            if (coop?.sinkMode == true)
+                                coop?.players
+                            else
+                                listOf("Sink") + (coop?.players ?: emptyList())
+                            )
+                        ?: emptyList(),
                     showExtendedButtons = showExtendedButtons,
                     showBoostOptions = showBoostOptions,
                     onChanged = {
@@ -161,6 +168,11 @@ fun EventEdit(
     ) {
 //        Text("Coop: ${event.coop}, Contract: ${event.kevId}")
 
+        // TODO: Meh...
+        Text(
+            "If sending to the Sink, leave this blank.",
+            fontStyle = FontStyle.Italic
+        )
         TextFieldMenu(
             label = "Select Player",
             options = players,

@@ -208,6 +208,18 @@ fun TextFieldMenu(
                     dropDownExpanded = false
                 },
             ) {
+                // Show "no items".
+                if (dropdownOptions.isEmpty() && textInput.text.isEmpty())
+                    DropdownMenuItem(
+                        onClick = {},
+                        text = {
+                            Text(
+                                text = "No items. Start typing to add one.",
+                                fontStyle = FontStyle.Italic
+                            )
+                        }
+                    )
+
                 dropdownOptions.forEach { option ->
                     DropdownMenuItem(onClick = {
                         dropDownExpanded = false

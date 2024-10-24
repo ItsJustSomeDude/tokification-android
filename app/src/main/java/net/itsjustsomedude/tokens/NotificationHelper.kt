@@ -162,6 +162,11 @@ class NotificationHelper(
     }
 
     fun sendActions(coop: Coop, events: List<Event>) {
+
+        // Don't ever post Actions if the Name or KevID is missing.
+        if (coop.name.isBlank() || coop.contract.isBlank())
+            return
+
         if (coop.sinkMode) {
             val report = LuckBoostReport().generate(coop, events)
 
