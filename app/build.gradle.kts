@@ -6,7 +6,7 @@ val localProps = gradleLocalProperties(rootDir, providers)
 
 val versionMajor = 0
 val versionMinor = 9
-val versionPatch = 2
+val versionPatch = 3
 val versionBuild = 0
 
 plugins {
@@ -31,7 +31,7 @@ android {
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
 
         resValue("string", "app_name", "Tokification")
-        
+
         val sentryDsn =
             localProps["sentry.dsn"]?.toString() ?: System.getenv("SENTRY_DSN") ?: run {
                 println("No DSN provided, Sentry will not be enabled.")
