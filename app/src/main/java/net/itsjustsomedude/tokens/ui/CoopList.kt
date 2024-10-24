@@ -31,10 +31,12 @@ import net.itsjustsomedude.tokens.db.Coop
 fun CoopList(
     modifier: Modifier = Modifier,
     coops: List<Coop>,
-    onDelete: (id: Long, deleteEvents: Boolean) -> Unit,
+    onDelete: (coop: Coop, deleteEvents: Boolean) -> Unit,
     onSelect: (id: Long) -> Unit,
     listPre: @Composable (() -> Unit)? = null
 ) {
+    var coopToDelete by remember { mutableStateOf<Coop?>(null) }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -44,24 +46,54 @@ fun CoopList(
 
         items(coops) { item ->
             CoopListItem(
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { onSelect(item.id) },
+                            onLongPress = { coopToDelete = item }
+                        )
+                    },
                 coop = item,
-                onclick = onSelect,
-                onDelete = onDelete
             )
             HorizontalDivider()
         }
     }
+
+    if (coopToDelete != null) {
+        var deleteEvents by remember { mutableStateOf(false) }
+
+        YesNoDialog(
+            title = "Delete Coop '${coopToDelete!!.name}'?",
+            onDismissRequest = { coopToDelete = null },
+            onNoClick = { coopToDelete = null },
+            onYesClick = {
+                onDelete(coopToDelete!!, deleteEvents)
+
+                coopToDelete = null
+            }
+        ) {
+            Text(text = "Really delete this coop?")
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text("Delete Events")
+                Checkbox(
+                    checked = deleteEvents,
+                    onCheckedChange = { deleteEvents = it }
+                )
+            }
+        }
+    }
+
 }
 
 @Composable
 private fun CoopListItem(
     modifier: Modifier = Modifier,
     coop: Coop,
-    onDelete: (id: Long, deleteEvents: Boolean) -> Unit,
-    onclick: (id: Long) -> Unit,
 ) {
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
 
     val dateFormatter = remember {
@@ -75,12 +107,6 @@ private fun CoopListItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = { onclick(coop.id) },
-                    onLongPress = { showDeleteDialog = true },
-                )
-            }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -131,98 +157,6 @@ private fun CoopListItem(
                 text = coop.id.toString(),
                 style = MaterialTheme.typography.bodySmall,
             )
-        }
-    }
-
-//    Column(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .pointerInput(Unit) {
-//                detectTapGestures(
-//                    onTap = { onclick(coop.id) },
-//                    onLongPress = { showDeleteDialog = true },
-//                )
-//            }
-//            .padding(16.dp)
-//    ) {
-//        Row(
-//            modifier = modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            Text(
-////                modifier = Modifier.weight(0.5f),
-////                maxLines = 1,
-////                overflow = TextOverflow.Ellipsis,
-//                text = coop.name.ifBlank { "<No Name>" },
-//                style = MaterialTheme.typography.bodyLarge,
-//            )
-//            Text(
-////                modifier = Modifier.weight(0.5f),
-////                maxLines = 1,
-////                overflow = TextOverflow.Ellipsis,
-//                text = if (coop.startTime == null) "?" else dateFormatter.format(coop.startTime.time),
-//                style = MaterialTheme.typography.bodyLarge,
-//            )
-//        }
-//        Row(
-//            modifier = modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween
-//        ) {
-//            Text(
-////                modifier = Modifier.weight(0.3f),
-//                maxLines = 1,
-//                overflow = TextOverflow.Ellipsis,
-//
-//                text = coop.contract.ifBlank { "<No KevID>" },
-//                style = MaterialTheme.typography.bodySmall,
-//            )
-//            Spacer(modifier = Modifier.weight(1f))
-//            Text(
-////                modifier = Modifier.weight(0.3f),
-//                maxLines = 1,
-//                overflow = TextOverflow.Ellipsis,
-//
-//                text = if (coop.sinkMode) "Sink Mode" else "Normal Mode",
-//                style = MaterialTheme.typography.bodySmall,
-//            )
-//            Spacer(modifier = Modifier.weight(1f))
-//            Text(
-////                modifier = Modifier.weight(0.3f),
-//                maxLines = 1,
-//                overflow = TextOverflow.Ellipsis,
-//
-//                text = coop.id.toString(),
-//                style = MaterialTheme.typography.bodySmall,
-//            )
-//        }
-//    }
-
-    if (showDeleteDialog) {
-        var deleteEvents by remember { mutableStateOf(false) }
-
-        YesNoDialog(
-            title = "Delete Coop '${coop.name}'?",
-            onDismissRequest = { showDeleteDialog = false },
-            onNoClick = { showDeleteDialog = false },
-            onYesClick = {
-                showDeleteDialog = false
-
-                onDelete(coop.id, deleteEvents)
-            }
-        ) {
-            Text(text = "Really delete this coop?")
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text("Delete Events")
-                Checkbox(
-                    enabled = false,
-                    checked = deleteEvents,
-                    onCheckedChange = { deleteEvents = it }
-                )
-            }
         }
     }
 }

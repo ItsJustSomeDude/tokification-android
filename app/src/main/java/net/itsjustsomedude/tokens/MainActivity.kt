@@ -160,8 +160,8 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
                         model.setSelectedCoopId(it)
                         showCoopListSheet = false
                     },
-                    onDelete = { id, deleteEvents ->
-                        model.deleteCoopById(id, deleteEvents)
+                    onDelete = { coop, deleteEvents ->
+                        model.deleteCoop(coop, deleteEvents)
                     }
                 )
             }

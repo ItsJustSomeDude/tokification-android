@@ -94,7 +94,12 @@ fun EditCoop(
 
                     showEventList = false
                     eventDialog.show()
-                })
+                },
+                onDelete = {
+                    model.selectEvent(null)
+                    model.deleteEvent(it)
+                }
+            )
 
         val eventDialogVisible by eventDialog.visible.collectAsState()
         if (eventDialogVisible)

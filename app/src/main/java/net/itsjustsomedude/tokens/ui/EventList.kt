@@ -1,7 +1,7 @@
 package net.itsjustsomedude.tokens.ui
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,9 +19,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -43,11 +47,13 @@ fun EventListSheet(
     coop: Coop? = null,
     onDismissRequest: () -> Unit,
     onSelect: (id: Long) -> Unit,
+    onDelete: (event: Event) -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier) {
         EventList(
             events = events,
             onSelect = onSelect,
+            onDelete = onDelete,
             coopStart = (coop?.startTime),
             coopEnd = (coop?.endTime),
         )
@@ -59,8 +65,9 @@ fun EventList(
     modifier: Modifier = Modifier,
     events: List<Event>,
     onSelect: (id: Long) -> Unit,
+    onDelete: (event: Event) -> Unit,
     coopStart: Calendar? = null,
-    coopEnd: Calendar? = null
+    coopEnd: Calendar? = null,
 ) {
     if (events.isEmpty()) {
         Text(
@@ -72,22 +79,46 @@ fun EventList(
         )
     }
 
+    var eventToDelete by remember { mutableStateOf<Event?>(null) }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
     ) {
         items(events) { item ->
-            EventListItem(item, onclick = onSelect, coopStart = coopStart, coopEnd = coopEnd)
+            EventListItem(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = { onSelect(item.id) },
+                        onLongPress = { eventToDelete = item }
+                    )
+                },
+                event = item,
+                coopStart = coopStart,
+                coopEnd = coopEnd
+            )
             HorizontalDivider()
         }
     }
+
+    if (eventToDelete != null)
+        YesNoDialog(
+            title = "Delete Event?",
+            onDismissRequest = { eventToDelete = null },
+            onNoClick = { eventToDelete = null },
+            onYesClick = {
+                onDelete(eventToDelete!!)
+                eventToDelete = null
+            }
+        ) {
+            Text(text = "Really delete this event?")
+        }
 }
 
 @Composable
 private fun EventListItem(
-    event: Event,
-    onclick: (id: Long) -> Unit,
     modifier: Modifier = Modifier,
+    event: Event,
     coopStart: Calendar? = null,
     coopEnd: Calendar? = null
 ) {
@@ -96,14 +127,9 @@ private fun EventListItem(
         DateFormat.getTimeFormat(context)
     }
 
-    // TODO: Add ability to delete events.
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
-                onclick(event.id)
-            }
             .padding(16.dp)
     ) {
         Row(

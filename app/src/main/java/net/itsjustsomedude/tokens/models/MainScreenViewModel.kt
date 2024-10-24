@@ -11,6 +11,7 @@ import net.itsjustsomedude.tokens.NotificationHelper
 import net.itsjustsomedude.tokens.NotificationService
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
+import net.itsjustsomedude.tokens.db.EventRepository
 import net.itsjustsomedude.tokens.network.UpdateChecker
 import net.itsjustsomedude.tokens.store.PreferencesRepository
 
@@ -20,6 +21,7 @@ private const val TAG = "MainViewModel"
 class MainScreenViewModel(
     private val preferencesRepo: PreferencesRepository,
     private val coopRepo: CoopRepository,
+    private val eventRepo: EventRepository,
     private val notificationHelper: NotificationHelper,
     private val preferences: PreferencesRepository,
     private val updateChecker: UpdateChecker
@@ -59,11 +61,11 @@ class MainScreenViewModel(
         }
     }
 
-    // TODO: Delete the events, too.
-    fun deleteCoopById(id: Long, deleteEvents: Boolean) {
-        viewModelScope.launch {
-            coopRepo.deleteById(id)
-        }
+    fun deleteCoop(coop: Coop, deleteEvents: Boolean) {
+        coopRepo.delete(coop)
+
+        if (deleteEvents)
+            eventRepo.deleteAll(coop.name, coop.contract)
     }
 
     fun refreshNotifications() {

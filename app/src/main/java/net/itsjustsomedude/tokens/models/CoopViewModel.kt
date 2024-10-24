@@ -13,6 +13,7 @@ import net.itsjustsomedude.tokens.ClipboardHelper
 import net.itsjustsomedude.tokens.NotificationHelper
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
+import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
 import net.itsjustsomedude.tokens.reports.DetailedReport
 import net.itsjustsomedude.tokens.reports.SinkReport
@@ -28,7 +29,6 @@ class CoopViewModel(
     private val clipboard: ClipboardHelper
 ) : ViewModel() {
     var showEventList = mutableStateOf(false)
-    var showEventEdit = mutableStateOf(false)
     var showNameEdit = mutableStateOf(false)
 
     val coop: LiveData<Coop?> = liveData {
@@ -48,7 +48,7 @@ class CoopViewModel(
             Unit
         }
     }
-    
+
     val selectedEventId = MutableLiveData<Long?>(null)
 
     fun selectEvent(id: Long?) {
@@ -62,9 +62,11 @@ class CoopViewModel(
     }
 
     fun delete(coop: Coop) {
-        viewModelScope.launch {
-            coopRepo.delete(coop)
-        }
+        coopRepo.delete(coop)
+    }
+
+    fun deleteEvent(event: Event) {
+        eventRepo.delete(event)
     }
 
     fun copySinkReport() {
