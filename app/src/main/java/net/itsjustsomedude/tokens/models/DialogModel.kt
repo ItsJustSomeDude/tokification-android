@@ -8,9 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * If multiple controllers are used in the same composable, a unique index must be provided.
+ */
 @Composable
-fun provideDialogController(): DialogControllerViewModel {
-    return viewModel<DialogControllerViewModel>()
+fun provideDialogController(index: Int = 0): DialogControllerViewModel {
+    return viewModel<DialogControllerViewModel>(key = index.toString())
 }
 
 class DialogControllerViewModel : ViewModel() {
@@ -27,11 +30,11 @@ class DialogControllerViewModel : ViewModel() {
     }
 
     fun show() {
-        reset()
         _visible.value = true
     }
 
     fun hide() {
+        reset()
         _visible.value = false
     }
 

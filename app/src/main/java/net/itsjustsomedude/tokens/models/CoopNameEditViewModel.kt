@@ -19,20 +19,19 @@ class CoopNameEditViewModel(
     val coop = mutableStateOf(initialName)
     val kevId = mutableStateOf(initialKevId)
 
-    val clipboardCoop = mutableStateOf("")
-    val clipboardKevId = mutableStateOf("")
-
-    val isClipboardValid = mutableStateOf(false)
+    val clipboardAvailable = mutableStateOf(false)
+    val clipboardValid = mutableStateOf(true)
 
     private val clipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
-        updateClipboardValidity()
+        updateValidity()
     }
 
     init {
-        readClipboard()
-        // TODO: Change the way this whole thing and UI works, it spams too much.
-        updateClipboardValidity()
+        // Begin watching for clip changes
         clipboard.manager.addPrimaryClipChangedListener(clipChangedListener)
+
+        // Check on startup too.
+        updateValidity()
     }
 
     override fun onCleared() {
@@ -41,28 +40,25 @@ class CoopNameEditViewModel(
     }
 
     fun readClipboard() {
-        isClipboardValid()
-
-        coop.value = clipboardCoop.value
-        kevId.value = clipboardKevId.value
-    }
-
-    private fun isClipboardValid(): Boolean {
-        val text = clipboard.getText() ?: return false
+        val text = clipboard.getText() ?: return
 
         for (pattern in patterns) {
             val match = pattern.matcher(text)
 
             if (match.matches()) {
-                clipboardKevId.value = match.group(1) ?: ""
-                clipboardCoop.value = match.group(2) ?: ""
-                return true
+                clipboardValid.value = true
+                coop.value = match.group(1) ?: ""
+                kevId.value = match.group(2) ?: ""
+                return
             }
         }
-        return false
+
+        clipboardValid.value = false
     }
 
-    private fun updateClipboardValidity() {
-        isClipboardValid.value = isClipboardValid()
+    private fun updateValidity() {
+        clipboardAvailable.value = clipboard.isText()
+
+        clipboardValid.value = true
     }
 }

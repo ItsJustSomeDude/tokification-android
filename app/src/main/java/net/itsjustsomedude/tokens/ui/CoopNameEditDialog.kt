@@ -2,24 +2,25 @@ package net.itsjustsomedude.tokens.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.R
 import net.itsjustsomedude.tokens.models.CoopNameEditViewModel
@@ -30,39 +31,59 @@ import org.koin.core.parameter.parametersOf
 fun CoopNameEditDialog(
     initialCoop: String,
     initialKevId: String,
+    key: String = "",
     onDismiss: () -> Unit,
     onConfirm: (coop: String, kevId: String) -> Unit,
-    model: CoopNameEditViewModel = koinViewModel { parametersOf(initialCoop, initialKevId) }
+    model: CoopNameEditViewModel = koinViewModel(key = key) {
+        parametersOf(initialCoop, initialKevId)
+    }
 ) {
-    val regex = remember { Regex("^[a-z0-9\\-]*\$") }
-
     var coop by model.coop
     var kevId by model.kevId
 
-    val clipboardValid by model.isClipboardValid
-
-    val valueSetter: (String) -> String? = {
-        val a = it
-            .lowercase()
-            .replace(" ", "-")
-            .replace("_", "-")
-        if (a.matches(regex)) {
-            a
-        } else null
-    }
+    val clipboardAvailable by model.clipboardAvailable
+    val clipboardValid by model.clipboardValid
 
     AlertDialog(
         onDismissRequest = {
             onDismiss()
         },
-        title = { Text("Edit Coop") },
+        title = {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Text("Edit Coop")
+                if (clipboardAvailable)
+                    IconButton(
+                        modifier = Modifier.size(32.dp),
+                        onClick = { model.readClipboard() },
+                        enabled = clipboardValid
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.content_paste),
+                            contentDescription = "Paste"
+                        )
+                    }
+            }
+        },
 
         text = {
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Something about editing this stuff, yeah.")
+                if (!clipboardValid)
+                    Text(
+                        modifier = Modifier.align(Alignment.End),
+                        text = "Couldn't find coop id in clipboard.",
+                        color = MaterialTheme.colorScheme.error
+                    )
+
+                Text("Events are stored by Name and KevID. Changing these will make all existing recorded events disappear.")
 
                 OutlinedTextField(
                     value = coop,
@@ -85,27 +106,6 @@ fun CoopNameEditDialog(
                     },
                     label = { Text("KevID") },
                 )
-
-                if (clipboardValid)
-                    Button(
-                        colors = ButtonDefaults.elevatedButtonColors(),
-                        elevation = ButtonDefaults.filledTonalButtonElevation(),
-                        onClick = {
-                            // TODO: This spams toasts... must fix.
-                            model.readClipboard()
-                            onConfirm(coop, kevId)
-                        }) {
-                        Icon(
-                            painter = painterResource(R.drawable.content_paste),
-                            contentDescription = "Edit Coop"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            fontFamily = FontFamily.Monospace,
-                            text = "${model.clipboardKevId.value}/${model.clipboardCoop.value}"
-                        )
-                    }
-
             }
         },
         confirmButton = {
@@ -119,4 +119,15 @@ fun CoopNameEditDialog(
             }
         }
     )
+}
+
+fun valueSetter(input: String): String? {
+    val a = input
+        .lowercase()
+        .replace(" ", "-")
+        .replace("_", "-")
+    return if (a.matches(Regex("^[a-z0-9\\-]*\$")))
+        a
+    else
+        null
 }

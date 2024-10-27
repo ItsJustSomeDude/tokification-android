@@ -38,16 +38,16 @@ import net.itsjustsomedude.tokens.reports.SelfReport
 @Composable
 fun EditCoop(
     coopId: Long,
-    model: CoopViewModel = CoopViewModel.provide(coopId)
+    model: CoopViewModel = CoopViewModel.provide(coopId),
 ) {
     var showEventList by model.showEventList
-    var showNameEdit by model.showNameEdit
+
+    val nameEditDialog = provideDialogController(0)
+    val eventDialog = provideDialogController(1)
 
     val modelCoop by model.coop.observeAsState()
     val selectedEventId by model.selectedEventId.observeAsState()
     val events by model.events.observeAsState(emptyList())
-
-    val eventDialog = provideDialogController()
 
     modelCoop?.let { coop ->
         CoopInfo(
@@ -68,7 +68,7 @@ fun EditCoop(
                 eventDialog.show()
             },
             onEditClicked = {
-                showNameEdit = true
+                nameEditDialog.show()
             },
             onReportClicked = {
                 model.copySinkReport()
@@ -110,11 +110,13 @@ fun EditCoop(
                 onDismiss = { eventDialog.hide() }
             )
 
-        if (showNameEdit)
+        val nameEditVisible by nameEditDialog.visible.collectAsState()
+        if (nameEditVisible)
             CoopNameEditDialog(
                 initialCoop = coop.name,
                 initialKevId = coop.contract,
-                onDismiss = { showNameEdit = false },
+                key = nameEditDialog.key,
+                onDismiss = { nameEditDialog.hide() },
                 onConfirm = { coopName, kevId ->
                     model.update(
                         coop.copy(
@@ -123,7 +125,7 @@ fun EditCoop(
                         )
                     )
 
-                    showNameEdit = false
+                    nameEditDialog.hide()
                 },
             )
     } ?: CoopInfoSkeleton()

@@ -40,27 +40,21 @@ class EventRepository(private val eventDao: EventDao) {
         }
     }
 
-    suspend fun create(
-        coop: String,
-        kevId: String,
+    fun newEvent(
+        coop: Coop,
         time: Calendar = Calendar.getInstance(),
-        count: Int = 1,
-        player: String = "",
-        direction: Int = Event.DIRECTION_RECEIVED
-    ): Long {
-        return withContext(Dispatchers.IO) {
-            eventDao.insert(
-                Event(
-                    coop = coop,
-                    kevId = kevId,
-                    time = time,
-                    count = count,
-                    person = player,
-                    direction = direction
-                )
-            )
-        }
-    }
+        count: Int = if (coop.sinkMode) 6 else 2,
+        direction: Int = Event.DIRECTION_RECEIVED,
+        // TODO: Boost Order Next Person
+        person: String = if (coop.sinkMode) "" else "Sink",
+    ) = Event(
+        coop = coop.name,
+        kevId = coop.contract,
+        time = time,
+        count = count,
+        direction = direction,
+        person = person
+    )
 
     fun insert(event: Event) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -80,15 +74,11 @@ class EventRepository(private val eventDao: EventDao) {
         }
     }
 
-    suspend fun upsertCor(event: Event) {
-        eventDao.upsert(event)
-    }
-
-    fun deleteById(id: Long) {
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.deleteById(id)
-        }
-    }
+//    fun deleteById(id: Long) {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            eventDao.deleteById(id)
+//        }
+//    }
 
     fun delete(event: Event) {
         CoroutineScope(Dispatchers.IO).launch {

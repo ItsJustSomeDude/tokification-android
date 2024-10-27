@@ -204,6 +204,7 @@ class NotificationHelper(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        // TODO: Add a way to make the notification un-dismissible.
         return NotificationCompat.Builder(ctx, ACTION_CHANNEL)
             .setSmallIcon(R.drawable.offline_bolt)
             .setAutoCancel(false)

@@ -28,7 +28,7 @@ class NotificationActions : BroadcastReceiver() {
         when (intent.action) {
             ACTION_COPY_REPORT -> scope.launch {
                 val report = SinkReport().generate(coopId)
-                
+
                 ClipboardHelper(ctx).copyText(report)
             }
 
@@ -42,7 +42,13 @@ class NotificationActions : BroadcastReceiver() {
 
                 val coop = coopRepo.getCoopDirect(coopId) ?: return@launch
 
-                eventRepo.create(coop = coop.name, kevId = coop.contract, player = "Sink")
+                eventRepo.insert(
+                    eventRepo.newEvent(
+                        coop = coop,
+                        person = "Sink",
+                        count = 1
+                    )
+                )
 
                 notificationHelper.sendActions(coopId)
             }

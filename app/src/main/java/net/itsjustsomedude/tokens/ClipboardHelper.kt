@@ -1,6 +1,7 @@
 package net.itsjustsomedude.tokens
 
 import android.content.ClipData
+import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
@@ -10,6 +11,14 @@ import android.widget.Toast
 
 class ClipboardHelper(private val ctx: Context) {
     val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    fun isText(): Boolean {
+        if (!manager.hasPrimaryClip()) return false
+
+        println(manager.primaryClipDescription)
+
+        return manager.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true
+    }
 
     fun getText(): String? {
         val clipData = manager.primaryClip
