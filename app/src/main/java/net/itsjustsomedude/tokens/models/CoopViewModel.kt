@@ -1,7 +1,6 @@
 package net.itsjustsomedude.tokens.models
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,9 +27,6 @@ class CoopViewModel(
     private val notificationHelper: NotificationHelper,
     private val clipboard: ClipboardHelper
 ) : ViewModel() {
-    var showEventList = mutableStateOf(false)
-    var showNameEdit = mutableStateOf(false)
-
     val coop: LiveData<Coop?> = liveData {
         println("Fetching Coop: $coopId")
         emitSource(coopRepo.getCoop(coopId))

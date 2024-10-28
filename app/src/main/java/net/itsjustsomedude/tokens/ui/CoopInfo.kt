@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +39,9 @@ fun EditCoop(
     coopId: Long,
     model: CoopViewModel = CoopViewModel.provide(coopId),
 ) {
-    var showEventList by model.showEventList
-
     val nameEditDialog = provideDialogController(0)
-    val eventDialog = provideDialogController(1)
+    val eventListDialog = provideDialogController(1)
+    val eventDialog = provideDialogController(2)
 
     val modelCoop by model.coop.observeAsState()
     val selectedEventId by model.selectedEventId.observeAsState()
@@ -59,7 +57,7 @@ fun EditCoop(
                 SelfReport().generate(coop, events),
 
             onEventsClicked = {
-                showEventList = true
+                eventListDialog.show()
             },
             onSendClicked = {
                 // Create new event.
@@ -82,17 +80,20 @@ fun EditCoop(
             }
         )
 
-        if (showEventList)
+        println("Events List: ${eventListDialog.visible.value}")
+        val eventListVisible by eventListDialog.visible.collectAsState()
+        if (eventListVisible)
             EventListSheet(
                 events = events,
                 coop = coop,
                 onDismissRequest = {
-                    showEventList = false
+                    println("Nope!")
+                    eventListDialog.hide()
                 },
                 onSelect = {
                     model.selectEvent(it)
 
-                    showEventList = false
+                    eventListDialog.hide()
                     eventDialog.show()
                 },
                 onDelete = {
