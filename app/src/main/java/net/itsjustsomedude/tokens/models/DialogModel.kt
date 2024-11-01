@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * If multiple controllers are used in the same composable, a unique index must be provided.
+ * If multiple controllers are used in the same activity, a unique key **must** be provided.
  */
 @Composable
-fun provideDialogController(index: Int = 0): DialogControllerViewModel {
-    return viewModel<DialogControllerViewModel>(key = index.toString())
+fun provideDialogController(key: String): DialogControllerViewModel {
+    return viewModel(key = key)
 }
 
 class DialogControllerViewModel : ViewModel() {

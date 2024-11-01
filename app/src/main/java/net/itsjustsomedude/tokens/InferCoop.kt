@@ -57,8 +57,8 @@ suspend fun inferCoopValues(id: Long): Coop {
     val coopRepo: CoopRepository = getKoin().get()
     val eventRepo: EventRepository = getKoin().get()
 
-    val coop = coopRepo.getCoopDirect(id) ?: throw Error("No Coop Found!")
-    val events = eventRepo.listEventsDirect(coop.name, coop.contract)
+    val coop = coopRepo.getCoop(id) ?: throw Error("No Coop Found!")
+    val events = eventRepo.listEvents(coop.name, coop.contract)
 
     return inferCoopValues(coop, events)
 }
@@ -79,7 +79,7 @@ suspend fun updateInferredCoopValues(coopId: Long, event: Event) {
     // TODO: Usages of getKoin()
     val coopRepo: CoopRepository = getKoin().get()
 
-    coopRepo.getCoopDirect(coopId)?.let {
+    coopRepo.getCoop(coopId)?.let {
         val newCoop = inferCoopValues(it, listOf(event))
 
         coopRepo.update(newCoop)
@@ -87,13 +87,14 @@ suspend fun updateInferredCoopValues(coopId: Long, event: Event) {
 }
 
 suspend fun updateInferredCoopValues(event: Event) {
+    println("About to infer...")
     // TODO: Usages of getKoin()
     val coopRepo: CoopRepository = getKoin().get()
 
-    coopRepo.getCoopByNameDirect(event.coop, event.kevId)?.let {
+    coopRepo.getCoop(event.coop, event.kevId)?.let {
         val newCoop = inferCoopValues(it, listOf(event))
         println("Inferring...")
 
         coopRepo.update(newCoop)
-    }
+    } ?: run { println("No coop from $event") }
 }

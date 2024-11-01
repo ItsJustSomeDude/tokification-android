@@ -6,7 +6,7 @@ val localProps = gradleLocalProperties(rootDir, providers)
 
 val versionMajor = 0
 val versionMinor = 9
-val versionPatch = 4
+val versionPatch = 5
 val versionBuild = 0
 
 plugins {
@@ -131,22 +131,22 @@ tasks.register("printVersionName") {
 }
 
 dependencies {
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.3")
-    val composeBomVersion = "2024.09.03"
-    val lifecycleVersion = "2.8.6"
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
+    val composeBomVersion = "2024.10.01"
+    val lifecycleVersion = "2.8.7"
     val roomVersion = "2.6.1"
     val ktorVersion = "2.3.4"
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
-    implementation("androidx.navigation:navigation-compose:2.8.1")
+    implementation("androidx.navigation:navigation-compose:2.8.3")
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-android:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
-    implementation("androidx.activity:activity-compose:1.9.2")
+    implementation("androidx.activity:activity-compose:1.9.3")
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -165,7 +165,7 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
 

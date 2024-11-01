@@ -18,8 +18,8 @@ abstract class Report {
         val coopRepo: CoopRepository = getKoin().get()
         val eventRepo: EventRepository = getKoin().get()
 
-        val coop = coopRepo.getCoopDirect(coopId) ?: return "Unknown Coop"
-        val events = eventRepo.listEventsDirect(coop.name, coop.contract)
+        val coop = coopRepo.getCoop(coopId) ?: return "Unknown Coop"
+        val events = eventRepo.listEvents(coop.name, coop.contract)
 
         return generate(coop, events)
     }

@@ -24,19 +24,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.R
 import net.itsjustsomedude.tokens.models.CoopNameEditViewModel
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun CoopNameEditDialog(
     initialCoop: String,
     initialKevId: String,
-    key: String = "",
+    dialogKey: String = "",
     onDismiss: () -> Unit,
     onConfirm: (coop: String, kevId: String) -> Unit,
-    model: CoopNameEditViewModel = koinViewModel(key = key) {
-        parametersOf(initialCoop, initialKevId)
-    }
+    model: CoopNameEditViewModel = CoopNameEditViewModel.provide(
+        dialogKey,
+        initialCoop,
+        initialKevId
+    )
 ) {
     var coop by model.coop
     var kevId by model.kevId

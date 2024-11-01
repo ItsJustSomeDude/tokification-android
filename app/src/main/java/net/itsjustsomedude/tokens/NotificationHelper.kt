@@ -155,8 +155,8 @@ class NotificationHelper(
     }
 
     suspend fun sendActions(coopId: Long) {
-        val coop = coopRepo.getCoopDirect(coopId) ?: return
-        val events = eventRepo.listEventsDirect(coop.name, coop.contract)
+        val coop = coopRepo.getCoop(coopId) ?: return
+        val events = eventRepo.listEvents(coop.name, coop.contract)
 
         sendActions(coop, events)
     }

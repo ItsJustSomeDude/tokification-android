@@ -40,7 +40,7 @@ class NotificationActions : BroadcastReceiver() {
                 val coopRepo: CoopRepository = getKoin().get()
                 val eventRepo: EventRepository = getKoin().get()
 
-                val coop = coopRepo.getCoopDirect(coopId) ?: return@launch
+                val coop = coopRepo.getCoop(coopId) ?: return@launch
 
                 eventRepo.insert(
                     eventRepo.newEvent(

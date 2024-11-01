@@ -1,44 +1,39 @@
 package net.itsjustsomedude.tokens.db
 
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class EventRepository(private val eventDao: EventDao) {
 
-    suspend fun getEvent(id: Long): LiveData<Event?> {
-        return withContext(Dispatchers.IO) {
-            eventDao.getEvent(id)
-        }
-    }
+    fun listEventsLiveData(coop: String, kevId: String): LiveData<List<Event>> =
+        eventDao.listEventsLiveData(coop, kevId)
 
-    suspend fun getEventDirect(id: Long): Event? {
-        return withContext(Dispatchers.IO) {
-            eventDao.getEventDirect(id)
-        }
-    }
+    suspend fun listEvents(coop: String, kevId: String): List<Event> =
+        eventDao.listEvents(coop, kevId)
 
-    suspend fun listEventsDirect(coop: String, kevId: String): List<Event> {
-        return withContext(Dispatchers.IO) {
-            eventDao.listEventsDirect(coop, kevId)
-        }
-    }
+    fun getEventLiveData(id: Long): LiveData<Event?> =
+        eventDao.getEventLiveData(id)
 
-    suspend fun listEvents(coop: String, kevId: String): LiveData<List<Event>> {
-        return withContext(Dispatchers.IO) {
-            eventDao.listEvents(coop, kevId)
-        }
-    }
+    suspend fun getEvent(id: Long): Event? =
+        eventDao.getEvent(id)
 
-    suspend fun exists(coop: String, kevId: String, noteId: Int): Boolean {
-        return withContext(Dispatchers.IO) {
-            eventDao.eventExists(coop, kevId, noteId)
-        }
-    }
+    suspend fun exists(coop: String, kevId: String, noteId: Int): Boolean =
+        eventDao.eventExists(coop, kevId, noteId)
+
+    suspend fun insert(event: Event) =
+        eventDao.insert(event)
+
+    suspend fun update(event: Event) =
+        eventDao.update(event)
+
+    suspend fun upsert(event: Event) =
+        eventDao.upsert(event)
+
+    suspend fun delete(event: Event) =
+        eventDao.delete(event)
+
+    suspend fun deleteAll(coop: String, kevId: String) =
+        eventDao.deleteAll(coop, kevId)
 
     fun newEvent(
         coop: Coop,
@@ -55,47 +50,4 @@ class EventRepository(private val eventDao: EventDao) {
         direction = direction,
         person = person
     )
-
-    fun insert(event: Event) {
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.insert(event)
-        }
-    }
-
-    fun update(event: Event) {
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.update(event)
-        }
-    }
-
-    fun upsert(event: Event) {
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.upsert(event)
-        }
-    }
-
-//    fun deleteById(id: Long) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            eventDao.deleteById(id)
-//        }
-//    }
-
-    fun delete(event: Event) {
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.delete(event)
-        }
-    }
-
-    fun deleteAll(coop: String, kevId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.deleteAll(coop, kevId)
-        }
-    }
-
-    @Deprecated("Don't use blocking calls.")
-    fun blockingInsert(event: Event) = runBlocking { insert(event) }
-
-    @Deprecated("Don't use blocking calls.")
-    fun blockingExists(coop: String, kevId: String, noteId: Int) =
-        runBlocking { exists(coop, kevId, noteId) }
 }

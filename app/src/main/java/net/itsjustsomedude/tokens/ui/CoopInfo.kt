@@ -39,9 +39,9 @@ fun EditCoop(
     coopId: Long,
     model: CoopViewModel = CoopViewModel.provide(coopId),
 ) {
-    val nameEditDialog = provideDialogController(0)
-    val eventListDialog = provideDialogController(1)
-    val eventDialog = provideDialogController(2)
+    val nameEditDialog = provideDialogController("NameEdit")
+    val eventListDialog = provideDialogController("EventList")
+    val eventDialog = provideDialogController("Event")
 
     val modelCoop by model.coop.observeAsState()
     val selectedEventId by model.selectedEventId.observeAsState()
@@ -61,8 +61,8 @@ fun EditCoop(
             },
             onSendClicked = {
                 // Create new event.
-                // TODO: Add keys to the CreateEventModel, as this breaks when switching coops then clicking send!
                 model.selectEvent(null)
+                eventDialog.reset()
                 eventDialog.show()
             },
             onEditClicked = {
@@ -80,14 +80,12 @@ fun EditCoop(
             }
         )
 
-        println("Events List: ${eventListDialog.visible.value}")
         val eventListVisible by eventListDialog.visible.collectAsState()
         if (eventListVisible)
             EventListSheet(
                 events = events,
                 coop = coop,
                 onDismissRequest = {
-                    println("Nope!")
                     eventListDialog.hide()
                 },
                 onSelect = {
@@ -116,7 +114,7 @@ fun EditCoop(
             CoopNameEditDialog(
                 initialCoop = coop.name,
                 initialKevId = coop.contract,
-                key = nameEditDialog.key,
+                dialogKey = nameEditDialog.key,
                 onDismiss = { nameEditDialog.hide() },
                 onConfirm = { coopName, kevId ->
                     model.update(

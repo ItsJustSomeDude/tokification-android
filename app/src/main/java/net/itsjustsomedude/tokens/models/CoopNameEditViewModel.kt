@@ -1,9 +1,12 @@
 package net.itsjustsomedude.tokens.models
 
 import android.content.ClipboardManager
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import net.itsjustsomedude.tokens.ClipboardHelper
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import java.util.regex.Pattern
 
 private val patterns = listOf(
@@ -47,8 +50,8 @@ class CoopNameEditViewModel(
 
             if (match.matches()) {
                 clipboardValid.value = true
-                coop.value = match.group(1) ?: ""
-                kevId.value = match.group(2) ?: ""
+                kevId.value = match.group(1) ?: ""
+                coop.value = match.group(2) ?: ""
                 return
             }
         }
@@ -60,5 +63,13 @@ class CoopNameEditViewModel(
         clipboardAvailable.value = clipboard.isText()
 
         clipboardValid.value = true
+    }
+
+    companion object {
+        @Composable
+        fun provide(key: String, initialName: String, initialKevId: String): CoopNameEditViewModel =
+            koinViewModel(key = "CoopNameEdit_$key") {
+                parametersOf(initialName, initialKevId)
+            }
     }
 }

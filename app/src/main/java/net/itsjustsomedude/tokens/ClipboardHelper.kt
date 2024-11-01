@@ -14,9 +14,7 @@ class ClipboardHelper(private val ctx: Context) {
 
     fun isText(): Boolean {
         if (!manager.hasPrimaryClip()) return false
-
-        println(manager.primaryClipDescription)
-
+        
         return manager.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true
     }
 

@@ -29,7 +29,7 @@ class CoopViewModel(
 ) : ViewModel() {
     val coop: LiveData<Coop?> = liveData {
         println("Fetching Coop: $coopId")
-        emitSource(coopRepo.getCoop(coopId))
+        emitSource(coopRepo.getCoopLiveData(coopId))
         // TODO: Usage of update inferred values.
         updateInferredCoopValues(coopId)
     }
@@ -37,7 +37,7 @@ class CoopViewModel(
     val events = coop.switchMap { co ->
         liveData {
             if (co != null)
-                emitSource(eventRepo.listEvents(co.name, co.contract))
+                emitSource(eventRepo.listEventsLiveData(co.name, co.contract))
             else
                 emit(emptyList())
             // Return "void"
@@ -57,11 +57,11 @@ class CoopViewModel(
         }
     }
 
-    fun delete(coop: Coop) {
+    fun delete(coop: Coop) = viewModelScope.launch {
         coopRepo.delete(coop)
     }
 
-    fun deleteEvent(event: Event) {
+    fun deleteEvent(event: Event) = viewModelScope.launch {
         eventRepo.delete(event)
     }
 
@@ -92,6 +92,6 @@ class CoopViewModel(
     companion object {
         @Composable
         fun provide(coopId: Long): CoopViewModel =
-            koinViewModel(key = coopId.toString()) { parametersOf(coopId) }
+            koinViewModel(key = "Coop_$coopId") { parametersOf(coopId) }
     }
 }

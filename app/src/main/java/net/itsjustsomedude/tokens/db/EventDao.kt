@@ -32,14 +32,14 @@ interface EventDao {
     suspend fun deleteAll(coop: String, kevId: String)
 
     @Query("SELECT * FROM Event WHERE coop = :coop AND kevId = :kevId ORDER BY time DESC")
-    fun listEvents(coop: String, kevId: String): LiveData<List<Event>>
+    fun listEventsLiveData(coop: String, kevId: String): LiveData<List<Event>>
 
     @Query("SELECT * FROM Event WHERE id = :id LIMIT 1")
-    fun getEvent(id: Long): LiveData<Event?>
+    fun getEventLiveData(id: Long): LiveData<Event?>
 
     @Query("SELECT * FROM Event WHERE id = :id LIMIT 1")
-    suspend fun getEventDirect(id: Long): Event?
+    suspend fun getEvent(id: Long): Event?
 
     @Query("SELECT * FROM Event WHERE coop = :coop AND kevId = :kevId ORDER BY time DESC")
-    fun listEventsDirect(coop: String, kevId: String): List<Event>
+    suspend fun listEvents(coop: String, kevId: String): List<Event>
 }

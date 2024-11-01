@@ -45,8 +45,7 @@ class MainScreenViewModel(
     }
 
     val coopsList: LiveData<List<Coop>> = liveData {
-        val newCoops = coopRepo.listCoops()
-        emitSource(newCoops)
+        emitSource(coopRepo.listCoopsLiveData())
     }
 
     fun createAndSelectCoop() {
@@ -61,7 +60,7 @@ class MainScreenViewModel(
         }
     }
 
-    fun deleteCoop(coop: Coop, deleteEvents: Boolean) {
+    fun deleteCoop(coop: Coop, deleteEvents: Boolean) = viewModelScope.launch {
         coopRepo.delete(coop)
 
         if (deleteEvents)
