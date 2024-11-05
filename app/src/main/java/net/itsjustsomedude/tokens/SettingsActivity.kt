@@ -9,8 +9,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import net.itsjustsomedude.tokens.ui.Header
 import net.itsjustsomedude.tokens.ui.SettingsScreen
+import net.itsjustsomedude.tokens.ui.components.Header
 
 private const val TAG = "SettingsActivity"
 

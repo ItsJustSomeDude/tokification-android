@@ -6,7 +6,11 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Coop::class, Event::class], version = 1, exportSchema = true)
+@Database(
+    entities = [Coop::class, Event::class],
+    version = 2,
+    exportSchema = true
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun coopDao(): CoopDao
@@ -19,20 +23,11 @@ abstract class AppDatabase : RoomDatabase() {
             AppDatabase::class.java,
             "Coops.db"
         )
+            // Migrates from the legacy Tokifiction to the Room version.
             .addMigrations(MIGRATION_10_1)
+            // Adds boost order to Coop, and Receiver to Events.
+            .addMigrations(MIGRATION_1_2)
 //            .fallbackToDestructiveMigration()
             .build()
-
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-        fun getInstance(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = createInstance(context)
-
-                INSTANCE = instance
-                instance
-            }
-        }
     }
 }

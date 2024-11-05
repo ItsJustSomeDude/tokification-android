@@ -31,8 +31,11 @@ import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.models.CoopViewModel
 import net.itsjustsomedude.tokens.models.provideDialogController
-import net.itsjustsomedude.tokens.reports.LuckBoostReport
+import net.itsjustsomedude.tokens.reports.BoostOrderReport
 import net.itsjustsomedude.tokens.reports.SelfReport
+import net.itsjustsomedude.tokens.ui.components.DateTimeRow
+import net.itsjustsomedude.tokens.ui.components.DateTimeRowSkeleton
+import net.itsjustsomedude.tokens.ui.components.skeletonColors
 
 @Composable
 fun EditCoop(
@@ -52,7 +55,7 @@ fun EditCoop(
             coop = coop,
             numEvents = events.size,
             reportText = if (coop.sinkMode)
-                LuckBoostReport().generate(coop, events)
+                BoostOrderReport().generate(coop, events)
             else
                 SelfReport().generate(coop, events),
 

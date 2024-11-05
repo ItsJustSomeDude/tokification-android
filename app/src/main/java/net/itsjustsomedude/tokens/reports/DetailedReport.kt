@@ -1,11 +1,12 @@
 package net.itsjustsomedude.tokens.reports
 
 import net.itsjustsomedude.tokens.db.Event
+import net.itsjustsomedude.tokens.db.ExpandedCoop
 import net.itsjustsomedude.tokens.round
 import net.itsjustsomedude.tokens.tval
 
 class DetailedReport : Report() {
-    override fun generate(data: ReportData): String {
+    override fun generate(data: ExpandedCoop): String {
         if (data.isStartEstimated || data.isEndEstimated)
             return "Start and End are required for detailed report."
 

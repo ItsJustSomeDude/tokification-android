@@ -1,9 +1,10 @@
 package net.itsjustsomedude.tokens.reports
 
+import net.itsjustsomedude.tokens.db.ExpandedCoop
 import net.itsjustsomedude.tokens.round
 
 class SelfReport : Report() {
-    override fun generate(data: ReportData): String {
+    override fun generate(data: ExpandedCoop): String {
         var est = ""
         if (data.isStartEstimated) est += "(Unknown Start)"
         if (data.isEndEstimated) est += "(Assuming 12 hour duration)"

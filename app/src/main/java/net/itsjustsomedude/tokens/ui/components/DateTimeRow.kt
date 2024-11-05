@@ -1,4 +1,4 @@
-package net.itsjustsomedude.tokens.ui
+package net.itsjustsomedude.tokens.ui.components
 
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement

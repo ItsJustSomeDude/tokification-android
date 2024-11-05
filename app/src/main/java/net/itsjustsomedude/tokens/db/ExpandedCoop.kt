@@ -1,36 +1,54 @@
-package net.itsjustsomedude.tokens.reports
+package net.itsjustsomedude.tokens.db
 
-import net.itsjustsomedude.tokens.db.Coop
-import net.itsjustsomedude.tokens.db.Event
+import net.itsjustsomedude.tokens.db.Coop.Companion.BOOST_ORDER_UNKNOWN
 import net.itsjustsomedude.tokens.roundedTval
 import net.itsjustsomedude.tokens.tval
 import java.util.Calendar
 import java.util.Locale
 
-data class ReportData(
-    val coop: Coop,
-    val events: List<Event>
-) {
-    val isStartEstimated = coop.startTime == null
+data class ExpandedCoop(
+    val id: Long = 0,
 
-    val isEndEstimated = coop.endTime == null
+    val name: String = "",
+    val contract: String = "",
+    val startTime: Calendar? = null,
+    val endTime: Calendar? = null,
+    val sinkMode: Boolean = false,
+    val boostOrder: Int = BOOST_ORDER_UNKNOWN,
+
+    val players: List<String> = emptyList(),
+    val sink: String = "",
+
+    /** Used to lock a players into certain boost order positions. */
+    val playerPositionOverrides: Map<String, Int> = emptyMap(),
+
+    /** Used to have certain players following a different boost order than the default. */
+    val playerOrderOverrides: Map<String, Int> = emptyMap(),
+
+    /** Overrides the number of tokens each player wants. */
+    val playerTokenAmounts: Map<String, Int> = emptyMap(),
+
+    val events: List<Event> = emptyList()
+) {
+    val isStartEstimated = startTime == null
+    val isEndEstimated = endTime == null
 
     val nowEpoch = Calendar.getInstance().timeInMillis / 1000L
 
-    val startEpoch = coop.startTime?.let {
+    val startEpoch = startTime?.let {
         it.timeInMillis / 1000L
     } ?: (nowEpoch % 3600)
 
-    val endEpoch = coop.endTime?.let {
+    val endEpoch = endTime?.let {
         it.timeInMillis / 1000L
     } ?: (startEpoch + 12 * 60 * 60)
 
-    val isEnded = (nowEpoch > endEpoch)
+    val isEnded = nowEpoch > endEpoch
 
     val startInfoLine = if (isStartEstimated)
         ":warning: No start time set, assuming start of current hour."
     else
-        "<:contract:589317482901405697> Start Time: <t:$startEpoch> (<t:$startEpoch:R>)"
+        "<:contract_scroll_white:1291832469179338796> Start Time: <t:$startEpoch> (<t:$startEpoch:R>)"
 
     val endInfoLine = if (isEndEstimated)
         ":warning: No end time set, assuming 12 hours from start time."
@@ -71,6 +89,8 @@ data class ReportData(
     val tvalTable: Map<String, String>
     val tvalTableString: String
 
+    // TODO: Move the table code into the actual sink report.
+    // It's a mess where it is.
     init {
         var selfTokensSent = 0
         var selfTokensReceived = 0
@@ -98,8 +118,8 @@ data class ReportData(
 
         selfTvalDelta = selfTvalSent - selfTvalReceived
 
-        tvalDelta = tvalSent.mapValues { (key, value) ->
-            value - (tvalRec[key] ?: 0.0)
+        tvalDelta = players.associateWith { player ->
+            (tvalSent[player] ?: 0.0) - (tvalRec[player] ?: 0.0)
         }
 
         this.selfTokensSent = selfTokensSent
@@ -109,16 +129,15 @@ data class ReportData(
 
         // Keyed by Player Name, value is table row.
         val tvalTable = mutableMapOf<String, String>()
-        val rowFormat = "%-12.12s|%9.3f|%4d|%8.3f|%4d|%9.3f"
 
-        for (person in coop.players) {
+        for (person in players) {
             val sent = tvalSent[person] ?: 0.0
             val rec = tvalRec[person] ?: 0.0
             val delta = sent - rec
 
             val output = String.format(
                 Locale.US,
-                rowFormat,
+                SINK_TABLE_FORMAT,
                 person,
                 delta,
                 tokensSent[person] ?: 0,
@@ -132,23 +151,42 @@ data class ReportData(
         }
 
         this.tvalTable = tvalTable
-        this.tvalTableString = tvalTable.values.joinToString("\n")
+        tvalTableString = tvalTable.values.joinToString("\n")
+    }
+
+    val coop
+        get() = Coop(
+            id,
+            name,
+            contract,
+            startTime,
+            endTime,
+            sinkMode,
+            boostOrder,
+            players,
+            sink,
+            playerPositionOverrides,
+            playerOrderOverrides,
+            playerTokenAmounts
+        )
+
+    companion object {
+        const val SINK_TABLE_FORMAT = "%-12.12s|%9.3f|%4d|%8.3f|%4d|%9.3f"
     }
 }
 
-//val a = listOf(
-//    "isStartEstimate" to startEstimate,
-//    "isEndEstimate" to endEstimate,
-//    "isEnded" to ended,
-//    "nowEpoch" to nowEpoch,
-//    "startEpoch" to startEpoch,
-//    "endEpoch" to endEpoch,
-//    "runningTvalNow" to tvalNow,
-//    "runningTval30Mins" to tval30Mins,
-//    "runningTval60Mins" to tval60Mins,
-//    "reportInfoLine" to "Report Generated at <t:$nowEpoch> (<t:$nowEpoch:R>)",
-//    "startInfoLine" to startLine,
-//    "endInfoLine" to endLine,
-//    "playersTvalTable" to tvalTable,
-//    "futureRunningTvalTable" to futureTable
-//)
+fun Coop.expand(events: List<Event>) = ExpandedCoop(
+    id,
+    name,
+    contract,
+    startTime,
+    endTime,
+    sinkMode,
+    boostOrder,
+    players,
+    sink,
+    playerPositionOverrides,
+    playerOrderOverrides,
+    playerTokenAmounts,
+    events
+)

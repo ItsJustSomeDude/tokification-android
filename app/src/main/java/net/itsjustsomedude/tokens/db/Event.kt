@@ -17,7 +17,9 @@ data class Event(
     val count: Int,
     val person: String,
     val direction: Int,
-    val notification: Int = 0
+    val notification: Int = 0,
+
+    val receiver: Int = 0
 ) {
     /**
      * Start and End should be Unix values, not millis.

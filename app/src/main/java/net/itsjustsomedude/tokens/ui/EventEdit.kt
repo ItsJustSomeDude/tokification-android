@@ -25,10 +25,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.models.EventEditViewModel
+import net.itsjustsomedude.tokens.ui.components.DateTimeRow
+import net.itsjustsomedude.tokens.ui.components.DateTimeRowSkeleton
+import net.itsjustsomedude.tokens.ui.components.NumberEntry
+import net.itsjustsomedude.tokens.ui.components.NumberEntrySkeleton
+import net.itsjustsomedude.tokens.ui.components.TextFieldMenu
+import net.itsjustsomedude.tokens.ui.components.skeletonColors
 
 @Composable
 fun EventEditDialog(
@@ -188,9 +193,7 @@ fun EventEdit(
                 text = "Token Direction",
                 style = MaterialTheme.typography.bodySmall
             )
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.debugRuler(LocalDensity.current, "ButtonRow")
-            ) {
+            SingleChoiceSegmentedButtonRow {
                 SegmentedButton(
                     selected = event.direction == Event.DIRECTION_SENT,
                     onClick = {

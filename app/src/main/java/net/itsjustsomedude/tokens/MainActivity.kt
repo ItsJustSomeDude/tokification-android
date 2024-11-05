@@ -40,8 +40,8 @@ import net.itsjustsomedude.tokens.models.MainScreenViewModel
 import net.itsjustsomedude.tokens.network.UpdateChecker
 import net.itsjustsomedude.tokens.ui.CoopList
 import net.itsjustsomedude.tokens.ui.EditCoop
-import net.itsjustsomedude.tokens.ui.Header
 import net.itsjustsomedude.tokens.ui.NotificationDebuggerDialog
+import net.itsjustsomedude.tokens.ui.components.Header
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {

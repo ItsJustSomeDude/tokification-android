@@ -18,7 +18,7 @@ import net.itsjustsomedude.tokens.db.Coop
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.Event
 import net.itsjustsomedude.tokens.db.EventRepository
-import net.itsjustsomedude.tokens.reports.LuckBoostReport
+import net.itsjustsomedude.tokens.reports.BoostOrderReport
 import net.itsjustsomedude.tokens.reports.SelfReport
 import java.util.Random
 
@@ -168,7 +168,7 @@ class NotificationHelper(
             return
 
         if (coop.sinkMode) {
-            val report = LuckBoostReport().generate(coop, events)
+            val report = BoostOrderReport().generate(coop, events)
 
             sendSinkActions(coop.id, coop.name, report)
         } else {

@@ -1,4 +1,4 @@
-package net.itsjustsomedude.tokens.ui
+package net.itsjustsomedude.tokens.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier

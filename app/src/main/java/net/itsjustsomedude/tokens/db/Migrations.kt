@@ -73,3 +73,15 @@ val MIGRATION_10_1 = object : Migration(10, 1) {
         db.execSQL("DROP TABLE Events")
     }
 }
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE Event ADD COLUMN receiver INTEGER NOT NULL DEFAULT 0")
+
+        db.execSQL("ALTER TABLE Coop ADD COLUMN boostOrder INTEGER NOT NULL DEFAULT ${Coop.BOOST_ORDER_UNKNOWN}")
+        db.execSQL("ALTER TABLE Coop ADD COLUMN sink TEXT NOT NULL DEFAULT \"\"")
+        db.execSQL("ALTER TABLE Coop ADD COLUMN playerPositionOverrides TEXT NOT NULL DEFAULT \"{}\"")
+        db.execSQL("ALTER TABLE Coop ADD COLUMN playerOrderOverrides TEXT NOT NULL DEFAULT \"{}\"")
+        db.execSQL("ALTER TABLE Coop ADD COLUMN playerTokenAmounts TEXT NOT NULL DEFAULT \"{}\"")
+    }
+}

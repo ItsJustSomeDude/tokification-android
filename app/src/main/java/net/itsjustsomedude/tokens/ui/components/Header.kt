@@ -1,4 +1,4 @@
-package net.itsjustsomedude.tokens.ui
+package net.itsjustsomedude.tokens.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
