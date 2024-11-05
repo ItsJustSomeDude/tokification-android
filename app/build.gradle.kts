@@ -6,7 +6,7 @@ val localProps = gradleLocalProperties(rootDir, providers)
 
 val versionMajor = 0
 val versionMinor = 9
-val versionPatch = 5
+val versionPatch = 6
 val versionBuild = 0
 
 plugins {
