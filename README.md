@@ -22,12 +22,7 @@ On opening the app, you'll be asked to grant permissions, and then you'll be at 
 
 ## Usage
 
-When you're ready to track a co-op, launch the app and click the "List" icon in the upper right. This is how you will create new co-ops, or select a previous co-op. Once a co-op is created, fill out the Co-op Name and KevID. The app will try to read [Co-op Tracker](https://eicoop-carpet.netlify.app/) and [EggCoop](https://eggcoop.org/) links from the clipboard to populate this info.
-
-*
-
-*Make sure this information is set before recording any tokens.
-**
+When you're ready to track a co-op, launch the app and click the "List" icon in the upper right. This is how you will create new co-ops, or select a previous co-op. Once a co-op is created, fill out the Co-op Name and KevID. The app will try to read [Co-op Tracker](https://eicoop-carpet.netlify.app/) and [EggCoop](https://eggcoop.org/) links from the clipboard to populate this info. **Make sure this information is set before recording any tokens.**
 
 Set the co-op start time, and, as soon as it is known, the end time estimate. These are both needed for accurate TVal calculations. If you are the Token Broker/Sink, select Sink Mode, otherwise use Normal Mode.
 
@@ -56,8 +51,9 @@ Tokification requests a few permissions:
 #### Notification Access
 
 - Used to read Egg, Inc. notifications to track incoming tokens and chicken runs.
-    * Only Egg, Inc. and Tokification's own notifications are read. See the `Convert.kt`
-      file [here](https://github.com/ItsJustSomeDude/tokification-android/blob/main/app/src/main/java/net/itsjustsomedude/tokens/reader/Convert.kt#L20) if concerned about how these are processed.
+
+* Only Egg, Inc. and Tokification's own notifications are read. See the `Convert.kt` file [here](https://github.com/ItsJustSomeDude/tokification-android/blob/main/app/src/main/java/net/itsjustsomedude/tokens/reader/Convert.kt#L20) if concerned about how these are processed.
+
 - Optionally used to dismiss notifications after processing.
 
 #### Show Notifications
