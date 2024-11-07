@@ -12,27 +12,27 @@ import org.koin.mp.KoinPlatform.getKoin
 // 3. Auto determine Start Time based on time of first event.
 
 fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
-    val eventPlayers = mutableListOf<String>()
-    for (ev in events) {
-        eventPlayers.add(ev.person)
-    }
-    // TODO: Do this better.
-    eventPlayers.remove("Sink")
-    eventPlayers.remove("")
-    val newPlayerList = eventPlayers.union(coop.players).toList()
-    println("Inferred player list: $newPlayerList")
+	val eventPlayers = mutableListOf<String>()
+	for (ev in events) {
+		eventPlayers.add(ev.person)
+	}
+	// TODO: Do this better.
+	eventPlayers.remove("Sink")
+	eventPlayers.remove("")
+	val newPlayerList = eventPlayers.union(coop.players).toList()
+	println("Inferred player list: $newPlayerList")
 
-    val newStart =
-        coop.startTime
-            ?: if (events.isNotEmpty())
-                events[0].time
-            else
-                null
+	val newStart =
+		coop.startTime
+			?: if (events.isNotEmpty())
+				events[0].time
+			else
+				null
 
-    return coop.copy(
-        players = newPlayerList,
-        startTime = newStart
-    )
+	return coop.copy(
+		players = newPlayerList,
+		startTime = newStart
+	)
 }
 
 //suspend fun inferCoopName(coop: Coop): Coop {
@@ -53,48 +53,50 @@ fun inferCoopValues(coop: Coop, events: List<Event>): Coop {
 //}
 
 suspend fun inferCoopValues(id: Long): Coop {
-    // TODO: Usages of getKoin()
-    val coopRepo: CoopRepository = getKoin().get()
-    val eventRepo: EventRepository = getKoin().get()
+	// TODO: Usages of getKoin()
+	val coopRepo: CoopRepository = getKoin().get()
+	val eventRepo: EventRepository = getKoin().get()
 
-    val coop = coopRepo.getCoop(id) ?: throw Error("No Coop Found!")
-    val events = eventRepo.listEvents(coop.name, coop.contract)
+	val coop = coopRepo.getCoop(id) ?: throw Error("No Coop Found!")
+	val events = eventRepo.listEvents(coop.name, coop.contract)
 
-    return inferCoopValues(coop, events)
+	return inferCoopValues(coop, events)
 }
 
 suspend fun updateInferredCoopValues(id: Long) {
-    // TODO: Usages of getKoin()
-    val coopRepo: CoopRepository = getKoin().get()
+	// TODO: Usages of getKoin()
+	val coopRepo: CoopRepository = getKoin().get()
+	val eventRepo: EventRepository = getKoin().get()
 
-    try {
-        val newCoop = inferCoopValues(id)
-        coopRepo.update(newCoop)
-    } catch (_: Error) {
-    }
+	val oldCoop = coopRepo.getCoop(id) ?: throw Error("Unknown Coop!")
+	val events = eventRepo.listEvents(oldCoop.name, oldCoop.contract)
+
+	val newCoop = inferCoopValues(oldCoop, events)
+
+	if (oldCoop != newCoop)
+		coopRepo.update(newCoop)
 }
 
 // Probably Unused?
 suspend fun updateInferredCoopValues(coopId: Long, event: Event) {
-    // TODO: Usages of getKoin()
-    val coopRepo: CoopRepository = getKoin().get()
+	// TODO: Usages of getKoin()
+	val coopRepo: CoopRepository = getKoin().get()
 
-    coopRepo.getCoop(coopId)?.let {
-        val newCoop = inferCoopValues(it, listOf(event))
+	coopRepo.getCoop(coopId)?.let {
+		val newCoop = inferCoopValues(it, listOf(event))
 
-        coopRepo.update(newCoop)
-    }
+		coopRepo.update(newCoop)
+	}
 }
 
 suspend fun updateInferredCoopValues(event: Event) {
-    println("About to infer...")
-    // TODO: Usages of getKoin()
-    val coopRepo: CoopRepository = getKoin().get()
+	// TODO: Usages of getKoin()
+	val coopRepo: CoopRepository = getKoin().get()
 
-    coopRepo.getCoop(event.coop, event.kevId)?.let {
-        val newCoop = inferCoopValues(it, listOf(event))
-        println("Inferring...")
+	coopRepo.getCoop(event.coop, event.kevId)?.let { oldCoop ->
+		val newCoop = inferCoopValues(oldCoop, listOf(event))
 
-        coopRepo.update(newCoop)
-    } ?: run { println("No coop from $event") }
+		if (oldCoop != newCoop)
+			coopRepo.update(newCoop)
+	} ?: run { println("No coop from $event") }
 }
