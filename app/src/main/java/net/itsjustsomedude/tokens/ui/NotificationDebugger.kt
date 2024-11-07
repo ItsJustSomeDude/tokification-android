@@ -20,87 +20,87 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NotificationDebugger(
-    modifier: Modifier = Modifier,
-    model: NotificationDebuggerViewModel = koinViewModel()
+	modifier: Modifier = Modifier,
+	model: NotificationDebuggerViewModel = koinViewModel()
 ) {
-    var player by model.player
-    var coop by model.coop
-    var kevId by model.kevId
+	var player by model.player
+	var coop by model.coop
+	var kevId by model.kevId
 
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState())
-    ) {
-        Text("Send Fake Notification")
+	Column(
+		modifier = modifier.verticalScroll(rememberScrollState())
+	) {
+		Text("Send Fake Notification")
 
-        OutlinedTextField(
-            value = player,
-            onValueChange = { player = it },
-            singleLine = true,
-            label = {
-                Text("Player")
-            }
-        )
+		OutlinedTextField(
+			value = player,
+			onValueChange = { player = it },
+			singleLine = true,
+			label = {
+				Text("Player")
+			}
+		)
 
-        OutlinedTextField(
-            value = coop,
-            onValueChange = { coop = it },
-            singleLine = true,
-            label = {
-                Text("Co-op")
-            }
-        )
+		OutlinedTextField(
+			value = coop,
+			onValueChange = { coop = it },
+			singleLine = true,
+			label = {
+				Text("Co-op")
+			}
+		)
 
-        OutlinedTextField(
-            value = kevId,
-            onValueChange = { kevId = it },
-            singleLine = true,
-            label = {
-                Text("KevID")
-            }
-        )
+		OutlinedTextField(
+			value = kevId,
+			onValueChange = { kevId = it },
+			singleLine = true,
+			label = {
+				Text("KevID")
+			}
+		)
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Button(onClick = {
-                if (player.isBlank() || kevId.isBlank() || coop.isBlank()) return@Button
+		Row(
+			horizontalArrangement = Arrangement.spacedBy(8.dp)
+		) {
+			Button(onClick = {
+				if (player.isBlank() || kevId.isBlank() || coop.isBlank()) return@Button
 
-                model.sendNotification(isCR = false)
-            }) {
-                Text("Send Token")
-            }
+				model.sendNotification(isCR = false)
+			}) {
+				Text("Send Token")
+			}
 
-            Button(onClick = {
-                if (player.isBlank() || kevId.isBlank() || coop.isBlank()) return@Button
+			Button(onClick = {
+				if (player.isBlank() || kevId.isBlank() || coop.isBlank()) return@Button
 
-                model.sendNotification(isCR = true)
-            }) {
-                Text("Send CR")
-            }
-        }
-    }
+				model.sendNotification(isCR = true)
+			}) {
+				Text("Send CR")
+			}
+		}
+	}
 }
 
 @Composable
 fun NotificationDebuggerDialog(modifier: Modifier = Modifier, onDismissRequest: () -> Unit) {
-    AlertDialog(
-        title = {
-            Text("Notification Debugger")
-        },
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            Button(onClick = onDismissRequest) {
-                Text("Close")
-            }
-        },
-        text = {
-            NotificationDebugger()
-        })
+	AlertDialog(
+		title = {
+			Text("Notification Debugger")
+		},
+		modifier = modifier,
+		onDismissRequest = onDismissRequest,
+		confirmButton = {
+			Button(onClick = onDismissRequest) {
+				Text("Close")
+			}
+		},
+		text = {
+			NotificationDebugger()
+		})
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewNotificationDebugger() {
-    NotificationDebugger()
+	NotificationDebugger()
 }

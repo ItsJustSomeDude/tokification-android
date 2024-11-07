@@ -22,42 +22,42 @@ import net.itsjustsomedude.tokens.ui.theme.TokificationTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Header(
-    title: @Composable () -> Unit,
-    navigation: @Composable () -> Unit = {},
-    actions: @Composable (RowScope.() -> Unit) = {},
-    content: @Composable ColumnScope.() -> Unit
+	title: @Composable () -> Unit,
+	navigation: @Composable () -> Unit = {},
+	actions: @Composable (RowScope.() -> Unit) = {},
+	content: @Composable ColumnScope.() -> Unit
 ) {
-    TokificationTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = title,
-                    navigationIcon = navigation,
+	TokificationTheme {
+		Scaffold(
+			topBar = {
+				TopAppBar(
+					title = title,
+					navigationIcon = navigation,
 
-                    actions = actions,
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        PaddingValues(
-                            start = 8.dp,
-                            end = 8.dp,
-                            top = paddingValues.calculateTopPadding() + 8.dp,
-                            bottom = paddingValues.calculateBottomPadding(),
-                        )
-                    )
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                content()
-            }
-        }
-    }
+					actions = actions,
+					colors = TopAppBarDefaults.topAppBarColors(
+						containerColor = MaterialTheme.colorScheme.primaryContainer,
+						titleContentColor = MaterialTheme.colorScheme.primary,
+					),
+				)
+			}
+		) { paddingValues ->
+			Column(
+				modifier = Modifier
+					.verticalScroll(rememberScrollState())
+					.padding(
+						PaddingValues(
+							start = 8.dp,
+							end = 8.dp,
+							top = paddingValues.calculateTopPadding() + 8.dp,
+							bottom = paddingValues.calculateBottomPadding(),
+						)
+					)
+					.fillMaxSize(),
+				verticalArrangement = Arrangement.spacedBy(8.dp)
+			) {
+				content()
+			}
+		}
+	}
 }

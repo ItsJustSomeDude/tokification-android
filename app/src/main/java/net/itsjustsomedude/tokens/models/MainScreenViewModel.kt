@@ -19,82 +19,82 @@ private const val TAG = "MainViewModel"
 
 // TODO: This needs a Koin conversion
 class MainScreenViewModel(
-    private val preferencesRepo: PreferencesRepository,
-    private val coopRepo: CoopRepository,
-    private val eventRepo: EventRepository,
-    private val notificationHelper: NotificationHelper,
-    private val preferences: PreferencesRepository,
-    private val updateChecker: UpdateChecker
+	private val preferencesRepo: PreferencesRepository,
+	private val coopRepo: CoopRepository,
+	private val eventRepo: EventRepository,
+	private val notificationHelper: NotificationHelper,
+	private val preferences: PreferencesRepository,
+	private val updateChecker: UpdateChecker
 ) : ViewModel() {
 
-    init {
-        checkForUpdate()
-    }
+	init {
+		checkForUpdate()
+	}
 
-    val noteDebugger = preferences.notificationDebugger.getStateFlow(viewModelScope)
-    val selectedCoopId = preferencesRepo.selectedCoop.getStateFlow(viewModelScope)
-    val serviceEnabled = preferencesRepo.serviceEnable.getStateFlow(viewModelScope)
+	val noteDebugger = preferences.notificationDebugger.getStateFlow(viewModelScope)
+	val selectedCoopId = preferencesRepo.selectedCoop.getStateFlow(viewModelScope)
+	val serviceEnabled = preferencesRepo.serviceEnable.getStateFlow(viewModelScope)
 
-    fun setSelectedCoopId(id: Long) {
-        viewModelScope.launch {
-            preferencesRepo.selectedCoop.setValue(id)
+	fun setSelectedCoopId(id: Long) {
+		viewModelScope.launch {
+			preferencesRepo.selectedCoop.setValue(id)
 
-            // TODO: Move this maybe? Maybe?
-            notificationHelper.sendActions(id)
-        }
-    }
+			// TODO: Move this maybe? Maybe?
+			notificationHelper.sendActions(id)
+		}
+	}
 
-    val coopsList: LiveData<List<Coop>> = liveData {
-        emitSource(coopRepo.listCoopsLiveData())
-    }
+	val coopsList: LiveData<List<Coop>> = liveData {
+		emitSource(coopRepo.listCoopsLiveData())
+	}
 
-    fun createAndSelectCoop() {
-        viewModelScope.launch {
-            val sinkMode =
-                preferences.defaultCoopMode.getValue() == PreferencesRepository.DEFAULT_COOP_MODE_SINK
+	fun createAndSelectCoop() {
+		viewModelScope.launch {
+			val sinkMode =
+				preferences.defaultCoopMode.getValue() == PreferencesRepository.DEFAULT_COOP_MODE_SINK
 
-            val newId = coopRepo.insert(
-                Coop(sinkMode = sinkMode)
-            )
-            setSelectedCoopId(newId)
-        }
-    }
+			val newId = coopRepo.insert(
+				Coop(sinkMode = sinkMode)
+			)
+			setSelectedCoopId(newId)
+		}
+	}
 
-    fun deleteCoop(coop: Coop, deleteEvents: Boolean) = viewModelScope.launch {
-        coopRepo.delete(coop)
+	fun deleteCoop(coop: Coop, deleteEvents: Boolean) = viewModelScope.launch {
+		coopRepo.delete(coop)
 
-        if (deleteEvents)
-            eventRepo.deleteAll(coop.name, coop.contract)
-    }
+		if (deleteEvents)
+			eventRepo.deleteAll(coop.name, coop.contract)
+	}
 
-    fun refreshNotifications() {
-        NotificationService.processAllNotifications()
+	fun refreshNotifications() {
+		NotificationService.processAllNotifications()
 
-        // TODO: This is NOT the right place to put this...
-        // Since notificationHelper is injected, I can run from almost anywhere I know the CoopID.
-        viewModelScope.launch {
-            notificationHelper.sendActions(selectedCoopId.value)
-        }
-    }
+		// TODO: This is NOT the right place to put this...
+		// Since notificationHelper is injected, I can run from almost anywhere I know the CoopID.
+		viewModelScope.launch {
+			notificationHelper.sendActions(selectedCoopId.value)
+		}
+	}
 
-    private val _updateAvailable = MutableStateFlow(false)
-    val updateAvailable: StateFlow<Boolean> = _updateAvailable
+	private val _updateAvailable = MutableStateFlow(false)
+	val updateAvailable: StateFlow<Boolean> = _updateAvailable
 
-    private fun checkForUpdate() {
-        viewModelScope.launch {
-            val result = updateChecker.isNewVersionAvailable()
-            result.onSuccess { isNewVersion ->
-                if (isNewVersion) {
-                    println("A new version is available!")
-                    // Handle update notification (e.g., prompt user to update)
-                    _updateAvailable.value = true
-                } else {
-                    println("You're on the latest version.")
-                }
-            }.onFailure { error ->
-                println("Error checking for updates: ${error.message}")
-            }
-        }
-    }
+	private fun checkForUpdate() {
+		viewModelScope.launch {
+			val result = updateChecker.isNewVersionAvailable()
+			result.onSuccess { isNewVersion ->
+				if (isNewVersion) {
+					println("A new version is available!")
+					// Handle update notification (e.g., prompt user to update)
+					_updateAvailable.value = true
+				} else {
+					println("You're on the latest version.")
+				}
+			}.onFailure { error ->
+				println("Error checking for updates: ${error.message}")
+			}
+		}
+	}
 
 }

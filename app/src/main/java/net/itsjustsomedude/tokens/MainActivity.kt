@@ -45,161 +45,161 @@ import net.itsjustsomedude.tokens.ui.components.Header
 import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
 
-        // TODO: This should be an Onboarding thing. But I haven't built that yet...
-        NotificationHelper.requestPermission(this)
+		// TODO: This should be an Onboarding thing. But I haven't built that yet...
+		NotificationHelper.requestPermission(this)
 
-        enableEdgeToEdge()
-        setContent {
-            Content()
-        }
-    }
+		enableEdgeToEdge()
+		setContent {
+			Content()
+		}
+	}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(model: MainScreenViewModel = koinViewModel()) {
-    val context = LocalContext.current
+	val context = LocalContext.current
 
-    val notificationDebuggerEnabled by model.noteDebugger.collectAsState()
-    val serviceEnabled by model.serviceEnabled.collectAsState(true)
-    val coop by model.selectedCoopId.collectAsState()
-    val coopList by model.coopsList.observeAsState()
+	val notificationDebuggerEnabled by model.noteDebugger.collectAsState()
+	val serviceEnabled by model.serviceEnabled.collectAsState(true)
+	val coop by model.selectedCoopId.collectAsState()
+	val coopList by model.coopsList.observeAsState()
 
-    var showCoopListSheet by remember { mutableStateOf(false) }
-    var showNotificationDebugger by remember { mutableStateOf(false) }
+	var showCoopListSheet by remember { mutableStateOf(false) }
+	var showNotificationDebugger by remember { mutableStateOf(false) }
 
-    val updateAvailable by model.updateAvailable.collectAsState(false)
+	val updateAvailable by model.updateAvailable.collectAsState(false)
 
-    Header(
-        title = { Text(stringResource(R.string.app_name)) },
-        actions = {
-            IconButton(onClick = {
-                model.refreshNotifications()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh"
-                )
-            }
+	Header(
+		title = { Text(stringResource(R.string.app_name)) },
+		actions = {
+			IconButton(onClick = {
+				model.refreshNotifications()
+			}) {
+				Icon(
+					imageVector = Icons.Default.Refresh,
+					contentDescription = "Refresh"
+				)
+			}
 
-            if (notificationDebuggerEnabled)
-                IconButton(onClick = {
-                    showNotificationDebugger = true
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Build,
-                        contentDescription = "Notification Debugger"
-                    )
-                }
+			if (notificationDebuggerEnabled)
+				IconButton(onClick = {
+					showNotificationDebugger = true
+				}) {
+					Icon(
+						imageVector = Icons.Default.Build,
+						contentDescription = "Notification Debugger"
+					)
+				}
 
-            IconButton(onClick = {
-                context.startActivity(Intent(context, SettingsActivity::class.java))
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
-                )
-            }
+			IconButton(onClick = {
+				context.startActivity(Intent(context, SettingsActivity::class.java))
+			}) {
+				Icon(
+					imageVector = Icons.Default.Settings,
+					contentDescription = "Settings"
+				)
+			}
 
-            IconButton(onClick = {
-                showCoopListSheet = true
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.List,
-                    contentDescription = "Create Coop"
-                )
-            }
-        }
-    ) {
-        if (!serviceEnabled) {
-            Box(
-                modifier = Modifier
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.error,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-                    .padding(8.dp)
-                    .clickable {
-                        context.startActivity(Intent(context, SettingsActivity::class.java))
-                    },
-            ) {
-                Column {
-                    Text(
-                        text = "Service Not Running",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        text = "Service must be running to process notifications. Start the service from the Settings screen.",
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-            }
-        }
+			IconButton(onClick = {
+				showCoopListSheet = true
+			}) {
+				Icon(
+					imageVector = Icons.AutoMirrored.Filled.List,
+					contentDescription = "Create Coop"
+				)
+			}
+		}
+	) {
+		if (!serviceEnabled) {
+			Box(
+				modifier = Modifier
+					.border(
+						width = 2.dp,
+						color = MaterialTheme.colorScheme.error,
+						shape = RoundedCornerShape(4.dp)
+					)
+					.padding(8.dp)
+					.clickable {
+						context.startActivity(Intent(context, SettingsActivity::class.java))
+					},
+			) {
+				Column {
+					Text(
+						text = "Service Not Running",
+						style = MaterialTheme.typography.titleLarge
+					)
+					Text(
+						text = "Service must be running to process notifications. Start the service from the Settings screen.",
+						style = MaterialTheme.typography.titleSmall
+					)
+				}
+			}
+		}
 
-        EditCoop(coopId = coop)
+		EditCoop(coopId = coop)
 
-        if (showCoopListSheet)
-            ModalBottomSheet(onDismissRequest = { showCoopListSheet = false }) {
-                CoopList(
-                    listPre = {
-                        Button(modifier = Modifier.padding(8.dp),
-                            onClick = {
-                                model.createAndSelectCoop()
-                                showCoopListSheet = false
-                            }) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = "")
-                            Text("Create Coop")
-                        }
-                    },
-                    coops = coopList ?: emptyList(),
-                    onSelect = {
-                        model.setSelectedCoopId(it)
-                        showCoopListSheet = false
-                    },
-                    onDelete = { coop, deleteEvents ->
-                        model.deleteCoop(coop, deleteEvents)
-                    }
-                )
-            }
+		if (showCoopListSheet)
+			ModalBottomSheet(onDismissRequest = { showCoopListSheet = false }) {
+				CoopList(
+					listPre = {
+						Button(modifier = Modifier.padding(8.dp),
+							onClick = {
+								model.createAndSelectCoop()
+								showCoopListSheet = false
+							}) {
+							Icon(imageVector = Icons.Default.Add, contentDescription = "")
+							Text("Create Coop")
+						}
+					},
+					coops = coopList ?: emptyList(),
+					onSelect = {
+						model.setSelectedCoopId(it)
+						showCoopListSheet = false
+					},
+					onDelete = { coop, deleteEvents ->
+						model.deleteCoop(coop, deleteEvents)
+					}
+				)
+			}
 
-        if (showNotificationDebugger)
-            NotificationDebuggerDialog(onDismissRequest = {
-                showNotificationDebugger = false
-            })
+		if (showNotificationDebugger)
+			NotificationDebuggerDialog(onDismissRequest = {
+				showNotificationDebugger = false
+			})
 
-        if (updateAvailable)
-            Box(
-                modifier = Modifier
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-                    .padding(8.dp)
-                    .clickable {
-                        // TODO: Move this to... BuildConfig maybe?
-                        context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://github.com/${UpdateChecker.REPO}/releases")
-                            )
-                        )
-                    },
-            ) {
-                Column {
-                    Text(
-                        text = "An Update is Available!",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        text = "Click to open the release page.",
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-            }
-    }
+		if (updateAvailable)
+			Box(
+				modifier = Modifier
+					.border(
+						width = 2.dp,
+						color = MaterialTheme.colorScheme.primaryContainer,
+						shape = RoundedCornerShape(4.dp)
+					)
+					.padding(8.dp)
+					.clickable {
+						// TODO: Move this to... BuildConfig maybe?
+						context.startActivity(
+							Intent(
+								Intent.ACTION_VIEW,
+								Uri.parse("https://github.com/${UpdateChecker.REPO}/releases")
+							)
+						)
+					},
+			) {
+				Column {
+					Text(
+						text = "An Update is Available!",
+						style = MaterialTheme.typography.titleLarge
+					)
+					Text(
+						text = "Click to open the release page.",
+						style = MaterialTheme.typography.titleSmall
+					)
+				}
+			}
+	}
 }

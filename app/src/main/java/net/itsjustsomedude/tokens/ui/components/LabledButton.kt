@@ -17,65 +17,65 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LabeledButton(
-    modifier: Modifier = Modifier,
-    label: String,
-    btnText: String,
-    onClick: () -> Unit
+	modifier: Modifier = Modifier,
+	label: String,
+	btnText: String,
+	onClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Text(text = label, fontSize = 12.sp)
-        Button(onClick = onClick) {
-            Text(text = btnText)
-        }
-    }
+	Column(
+		modifier = modifier,
+		horizontalAlignment = Alignment.Start
+	) {
+		Text(text = label, fontSize = 12.sp)
+		Button(onClick = onClick) {
+			Text(text = btnText)
+		}
+	}
 }
 
 @Composable
 fun LabeledButtonSkeleton(
-    modifier: Modifier = Modifier,
-    label: String? = null
+	modifier: Modifier = Modifier,
+	label: String? = null
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start
-    ) {
-        if (label == null)
-            Box(
-                Modifier
-                    .size(60.dp, 14.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .skeletonColors()
-            )
-        else
-            Text(text = label, fontSize = 12.sp)
+	Column(
+		modifier = modifier,
+		horizontalAlignment = Alignment.Start
+	) {
+		if (label == null)
+			Box(
+				Modifier
+					.size(60.dp, 14.dp)
+					.clip(RoundedCornerShape(8.dp))
+					.skeletonColors()
+			)
+		else
+			Text(text = label, fontSize = 12.sp)
 
-        Box(
-            Modifier
-                .padding(vertical = 4.dp)
-                .size(100.dp, 40.dp)
-                .clip(RoundedCornerShape(50))
-                .skeletonColors()
-        )
-    }
+		Box(
+			Modifier
+				.padding(vertical = 4.dp)
+				.size(100.dp, 40.dp)
+				.clip(RoundedCornerShape(50))
+				.skeletonColors()
+		)
+	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewLabeledButton() {
-    LabeledButton(btnText = "Button", label = "label", onClick = {})
+	LabeledButton(btnText = "Button", label = "label", onClick = {})
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewLabeledButtonLabeledSkeleton() {
-    LabeledButtonSkeleton(label = "Test Label")
+	LabeledButtonSkeleton(label = "Test Label")
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewLabeledButtonSkeleton() {
-    LabeledButtonSkeleton()
+	LabeledButtonSkeleton()
 }

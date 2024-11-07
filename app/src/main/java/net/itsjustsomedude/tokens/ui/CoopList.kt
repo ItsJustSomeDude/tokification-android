@@ -29,134 +29,134 @@ import net.itsjustsomedude.tokens.db.Coop
 
 @Composable
 fun CoopList(
-    modifier: Modifier = Modifier,
-    coops: List<Coop>,
-    onDelete: (coop: Coop, deleteEvents: Boolean) -> Unit,
-    onSelect: (id: Long) -> Unit,
-    listPre: @Composable (() -> Unit)? = null
+	modifier: Modifier = Modifier,
+	coops: List<Coop>,
+	onDelete: (coop: Coop, deleteEvents: Boolean) -> Unit,
+	onSelect: (id: Long) -> Unit,
+	listPre: @Composable (() -> Unit)? = null
 ) {
-    var coopToDelete by remember { mutableStateOf<Coop?>(null) }
+	var coopToDelete by remember { mutableStateOf<Coop?>(null) }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        if (listPre != null)
-            item { listPre() }
+	LazyColumn(
+		modifier = modifier
+			.fillMaxSize()
+	) {
+		if (listPre != null)
+			item { listPre() }
 
-        items(coops) { item ->
-            CoopListItem(
-                modifier = Modifier
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = { onSelect(item.id) },
-                            onLongPress = { coopToDelete = item }
-                        )
-                    },
-                coop = item,
-            )
-            HorizontalDivider()
-        }
-    }
+		items(coops) { item ->
+			CoopListItem(
+				modifier = Modifier
+					.pointerInput(Unit) {
+						detectTapGestures(
+							onTap = { onSelect(item.id) },
+							onLongPress = { coopToDelete = item }
+						)
+					},
+				coop = item,
+			)
+			HorizontalDivider()
+		}
+	}
 
-    if (coopToDelete != null) {
-        var deleteEvents by remember { mutableStateOf(false) }
+	if (coopToDelete != null) {
+		var deleteEvents by remember { mutableStateOf(false) }
 
-        YesNoDialog(
-            title = "Delete Coop '${coopToDelete!!.name}'?",
-            onDismissRequest = { coopToDelete = null },
-            onNoClick = { coopToDelete = null },
-            onYesClick = {
-                onDelete(coopToDelete!!, deleteEvents)
+		YesNoDialog(
+			title = "Delete Coop '${coopToDelete!!.name}'?",
+			onDismissRequest = { coopToDelete = null },
+			onNoClick = { coopToDelete = null },
+			onYesClick = {
+				onDelete(coopToDelete!!, deleteEvents)
 
-                coopToDelete = null
-            }
-        ) {
-            Text(text = "Really delete this coop?")
+				coopToDelete = null
+			}
+		) {
+			Text(text = "Really delete this coop?")
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text("Delete Events")
-                Checkbox(
-                    checked = deleteEvents,
-                    onCheckedChange = { deleteEvents = it }
-                )
-            }
-        }
-    }
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				modifier = Modifier.padding(vertical = 8.dp)
+			) {
+				Text("Delete Events")
+				Checkbox(
+					checked = deleteEvents,
+					onCheckedChange = { deleteEvents = it }
+				)
+			}
+		}
+	}
 
 }
 
 @Composable
 private fun CoopListItem(
-    modifier: Modifier = Modifier,
-    coop: Coop,
+	modifier: Modifier = Modifier,
+	coop: Coop,
 ) {
-    val context = LocalContext.current
+	val context = LocalContext.current
 
-    val dateFormatter = remember {
-        DateFormat.getDateFormat(context)
-    }
+	val dateFormatter = remember {
+		DateFormat.getDateFormat(context)
+	}
 
-    val timeFormatter = remember {
-        DateFormat.getTimeFormat(context)
-    }
+	val timeFormatter = remember {
+		DateFormat.getTimeFormat(context)
+	}
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(6 / 12f)
-                .fillMaxWidth()
-        ) {
-            Text(
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                text = coop.name.ifBlank { "<No Name>" },
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+	Row(
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(16.dp),
+		horizontalArrangement = Arrangement.SpaceBetween
+	) {
+		Column(
+			modifier = Modifier
+				.weight(6 / 12f)
+				.fillMaxWidth()
+		) {
+			Text(
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis,
+				text = coop.name.ifBlank { "<No Name>" },
+				style = MaterialTheme.typography.bodyLarge
+			)
+			Text(
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis,
 
-                text = coop.contract.ifBlank { "<No KevID>" },
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-        Column(
-            modifier = Modifier.weight(2 / 12f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = if (coop.endTime == null) "-" else dateFormatter.format(coop.endTime.time),
+				text = coop.contract.ifBlank { "<No KevID>" },
+				style = MaterialTheme.typography.bodySmall
+			)
+		}
+		Column(
+			modifier = Modifier.weight(2 / 12f),
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			Text(
+				text = if (coop.endTime == null) "-" else dateFormatter.format(coop.endTime.time),
 
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = if (coop.sinkMode) "Sink" else "Normal",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-        Column(
-            modifier = Modifier
-                .weight(4 / 12f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = if (coop.endTime == null) "-" else timeFormatter.format(coop.endTime.time),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = coop.id.toString(),
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-    }
+				style = MaterialTheme.typography.bodyLarge
+			)
+			Text(
+				text = if (coop.sinkMode) "Sink" else "Normal",
+				style = MaterialTheme.typography.bodySmall
+			)
+		}
+		Column(
+			modifier = Modifier
+				.weight(4 / 12f)
+				.fillMaxWidth(),
+			horizontalAlignment = Alignment.End
+		) {
+			Text(
+				text = if (coop.endTime == null) "-" else timeFormatter.format(coop.endTime.time),
+				style = MaterialTheme.typography.bodyLarge
+			)
+			Text(
+				text = coop.id.toString(),
+				style = MaterialTheme.typography.bodySmall,
+			)
+		}
+	}
 }

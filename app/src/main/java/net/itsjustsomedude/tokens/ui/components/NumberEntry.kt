@@ -26,94 +26,94 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun NumberEntry(
-    modifier: Modifier = Modifier,
-    value: Int,
-    onChanged: (Int) -> Unit
+	modifier: Modifier = Modifier,
+	value: Int,
+	onChanged: (Int) -> Unit
 ) {
-    var valueState by remember { mutableIntStateOf(value) }
-    val countPattern = remember { Regex("^\\d{1,4}\$") }
+	var valueState by remember { mutableIntStateOf(value) }
+	val countPattern = remember { Regex("^\\d{1,4}\$") }
 
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = {
-            if (valueState != 0) {
-                onChanged(--valueState)
-            }
-        }) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = "Subtract 1"
-            )
-        }
+	Row(
+		modifier = modifier,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		IconButton(onClick = {
+			if (valueState != 0) {
+				onChanged(--valueState)
+			}
+		}) {
+			Icon(
+				imageVector = Icons.Default.KeyboardArrowDown,
+				contentDescription = "Subtract 1"
+			)
+		}
 
-        TextField(
-            shape = RoundedCornerShape(4.dp),
-            value = valueState.toString(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            onValueChange = {
-                if (it.matches(countPattern)) {
-                    valueState = it.toInt()
-                } else if (it.isEmpty()) {
-                    valueState = 0
-                }
-                onChanged(valueState)
-            },
-            modifier = Modifier.width(64.dp)
-        )
+		TextField(
+			shape = RoundedCornerShape(4.dp),
+			value = valueState.toString(),
+			keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+			onValueChange = {
+				if (it.matches(countPattern)) {
+					valueState = it.toInt()
+				} else if (it.isEmpty()) {
+					valueState = 0
+				}
+				onChanged(valueState)
+			},
+			modifier = Modifier.width(64.dp)
+		)
 
-        IconButton(onClick = {
-            if (valueState != 9999) {
-                onChanged(++valueState)
-            }
-        }) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowUp,
-                contentDescription = "Add 1"
-            )
-        }
-    }
+		IconButton(onClick = {
+			if (valueState != 9999) {
+				onChanged(++valueState)
+			}
+		}) {
+			Icon(
+				imageVector = Icons.Default.KeyboardArrowUp,
+				contentDescription = "Add 1"
+			)
+		}
+	}
 }
 
 @Composable
 fun NumberEntrySkeleton(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = {}, enabled = false) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = "Subtract 1"
-            )
-        }
+	Row(
+		modifier = modifier,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		IconButton(onClick = {}, enabled = false) {
+			Icon(
+				imageVector = Icons.Default.KeyboardArrowDown,
+				contentDescription = "Subtract 1"
+			)
+		}
 
-        Box(
-            Modifier
-                .size(64.dp, 56.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .skeletonColors()
-        )
+		Box(
+			Modifier
+				.size(64.dp, 56.dp)
+				.clip(RoundedCornerShape(4.dp))
+				.skeletonColors()
+		)
 
-        IconButton(onClick = {}, enabled = false) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowUp,
-                contentDescription = "Add 1"
-            )
-        }
-    }
+		IconButton(onClick = {}, enabled = false) {
+			Icon(
+				imageVector = Icons.Default.KeyboardArrowUp,
+				contentDescription = "Add 1"
+			)
+		}
+	}
 }
 
 @Preview
 @Composable
 fun PreviewNumberEntry() {
-    NumberEntry(value = 12, onChanged = {})
+	NumberEntry(value = 12, onChanged = {})
 }
 
 @Preview
 @Composable
 fun PreviewNumberEntrySkeleton() {
-    NumberEntrySkeleton()
+	NumberEntrySkeleton()
 }
 

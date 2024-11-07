@@ -21,77 +21,77 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 class CoopViewModel(
-    private val coopId: Long,
-    private val coopRepo: CoopRepository,
-    private val eventRepo: EventRepository,
-    private val notificationHelper: NotificationHelper,
-    private val clipboard: ClipboardHelper
+	private val coopId: Long,
+	private val coopRepo: CoopRepository,
+	private val eventRepo: EventRepository,
+	private val notificationHelper: NotificationHelper,
+	private val clipboard: ClipboardHelper
 ) : ViewModel() {
-    val coop: LiveData<Coop?> = liveData {
-        println("Fetching Coop: $coopId")
-        emitSource(coopRepo.getCoopLiveData(coopId))
-        // TODO: Usage of update inferred values.
-        updateInferredCoopValues(coopId)
-    }
+	val coop: LiveData<Coop?> = liveData {
+		println("Fetching Coop: $coopId")
+		emitSource(coopRepo.getCoopLiveData(coopId))
+		// TODO: Usage of update inferred values.
+		updateInferredCoopValues(coopId)
+	}
 
-    val events = coop.switchMap { co ->
-        liveData {
-            if (co != null)
-                emitSource(eventRepo.listEventsLiveData(co.name, co.contract))
-            else
-                emit(emptyList())
-            // Return "void"
-            Unit
-        }
-    }
+	val events = coop.switchMap { co ->
+		liveData {
+			if (co != null)
+				emitSource(eventRepo.listEventsLiveData(co.name, co.contract))
+			else
+				emit(emptyList())
+			// Return "void"
+			Unit
+		}
+	}
 
-    val selectedEventId = MutableLiveData<Long?>(null)
+	val selectedEventId = MutableLiveData<Long?>(null)
 
-    fun selectEvent(id: Long?) {
-        selectedEventId.value = id
-    }
+	fun selectEvent(id: Long?) {
+		selectedEventId.value = id
+	}
 
-    fun update(coop: Coop) {
-        viewModelScope.launch {
-            coopRepo.update(coop)
-        }
-    }
+	fun update(coop: Coop) {
+		viewModelScope.launch {
+			coopRepo.update(coop)
+		}
+	}
 
-    fun delete(coop: Coop) = viewModelScope.launch {
-        coopRepo.delete(coop)
-    }
+	fun delete(coop: Coop) = viewModelScope.launch {
+		coopRepo.delete(coop)
+	}
 
-    fun deleteEvent(event: Event) = viewModelScope.launch {
-        eventRepo.delete(event)
-    }
+	fun deleteEvent(event: Event) = viewModelScope.launch {
+		eventRepo.delete(event)
+	}
 
-    fun copySinkReport() {
-        coop.value?.let {
-            val report = SinkReport().generate(coop = it, events = events.value ?: emptyList())
+	fun copySinkReport() {
+		coop.value?.let {
+			val report = SinkReport().generate(coop = it, events = events.value ?: emptyList())
 
-            clipboard.copyText(report)
-        }
-    }
+			clipboard.copyText(report)
+		}
+	}
 
-    fun copyDetailedReport() {
-        coop.value?.let {
-            val report = DetailedReport().generate(coop = it, events = events.value ?: emptyList())
+	fun copyDetailedReport() {
+		coop.value?.let {
+			val report = DetailedReport().generate(coop = it, events = events.value ?: emptyList())
 
-            clipboard.copyText(report)
-        }
-    }
+			clipboard.copyText(report)
+		}
+	}
 
-    fun postActions() {
-        coop.value?.let { c ->
-            events.value?.let { e ->
-                notificationHelper.sendActions(c, e)
-            }
-        }
-    }
+	fun postActions() {
+		coop.value?.let { c ->
+			events.value?.let { e ->
+				notificationHelper.sendActions(c, e)
+			}
+		}
+	}
 
-    companion object {
-        @Composable
-        fun provide(coopId: Long): CoopViewModel =
-            koinViewModel(key = "Coop_$coopId") { parametersOf(coopId) }
-    }
+	companion object {
+		@Composable
+		fun provide(coopId: Long): CoopViewModel =
+			koinViewModel(key = "Coop_$coopId") { parametersOf(coopId) }
+	}
 }

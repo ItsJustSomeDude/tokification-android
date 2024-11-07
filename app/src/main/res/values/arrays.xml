@@ -1,11 +1,11 @@
 <resources>
-	<string-array name="default_mode_entries">
-		<item>Normal Mode</item>
-		<item>Sink Mode</item>
-	</string-array>
+    <string-array name="default_mode_entries">
+        <item>Normal Mode</item>
+        <item>Sink Mode</item>
+    </string-array>
 
-	<string-array name="default_mode_values">
-		<item>normal</item>
-		<item>sink</item>
-	</string-array>
+    <string-array name="default_mode_values">
+        <item>normal</item>
+        <item>sink</item>
+    </string-array>
 </resources>

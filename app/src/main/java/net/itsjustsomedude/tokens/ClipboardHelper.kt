@@ -10,35 +10,35 @@ import android.os.Looper
 import android.widget.Toast
 
 class ClipboardHelper(private val ctx: Context) {
-    val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+	val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    fun isText(): Boolean {
-        if (!manager.hasPrimaryClip()) return false
-        
-        return manager.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true
-    }
+	fun isText(): Boolean {
+		if (!manager.hasPrimaryClip()) return false
 
-    fun getText(): String? {
-        val clipData = manager.primaryClip
+		return manager.primaryClipDescription?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) == true
+	}
 
-        if (clipData != null && clipData.itemCount > 0) {
-            val item = clipData.getItemAt(0)
-            val text = item.coerceToText(ctx).toString()
+	fun getText(): String? {
+		val clipData = manager.primaryClip
 
-            return text
-        } else {
-            return null
-        }
-    }
+		if (clipData != null && clipData.itemCount > 0) {
+			val item = clipData.getItemAt(0)
+			val text = item.coerceToText(ctx).toString()
 
-    fun copyText(content: String, label: String = "Tokification Report") {
-        val clip = ClipData.newPlainText(label, content)
-        manager.setPrimaryClip(clip)
+			return text
+		} else {
+			return null
+		}
+	}
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
-            Handler(Looper.getMainLooper()).post {
-                Toast.makeText(ctx, "Report Copied!", Toast.LENGTH_SHORT).show()
-            }
-    }
+	fun copyText(content: String, label: String = "Tokification Report") {
+		val clip = ClipData.newPlainText(label, content)
+		manager.setPrimaryClip(clip)
+
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+			Handler(Looper.getMainLooper()).post {
+				Toast.makeText(ctx, "Report Copied!", Toast.LENGTH_SHORT).show()
+			}
+	}
 }
 

@@ -15,25 +15,25 @@ import net.itsjustsomedude.tokens.ui.components.Header
 private const val TAG = "SettingsActivity"
 
 class SettingsActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Header(
-                title = { Text("Settings") },
-                navigation = {
-                    IconButton(
-                        onClick = { finish() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            ) {
-                SettingsScreen()
-            }
-        }
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		enableEdgeToEdge()
+		setContent {
+			Header(
+				title = { Text("Settings") },
+				navigation = {
+					IconButton(
+						onClick = { finish() }
+					) {
+						Icon(
+							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+							contentDescription = "Back"
+						)
+					}
+				}
+			) {
+				SettingsScreen()
+			}
+		}
+	}
 }

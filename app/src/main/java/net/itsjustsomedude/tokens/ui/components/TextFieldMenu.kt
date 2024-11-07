@@ -48,211 +48,211 @@ import net.itsjustsomedude.tokens.ui.theme.TokificationTheme
  * Source: https://stackoverflow.com/a/77353891
  */
 @OptIn(
-    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
+	ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
 )
 @Composable
 fun TextFieldMenu(
-    modifier: Modifier = Modifier,
-    /** The label for the text field */
-    label: String,
-    /** All the available options. */
-    options: List<String>,
-    /** The selected option. */
-    selectedOption: String?,
-    /** When the option is selected via tapping on the dropdown option or typing in the option. */
-    onOptionSelected: (String?) -> Unit,
-    bringIntoViewRequester: BringIntoViewRequester = remember { BringIntoViewRequester() },
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+	modifier: Modifier = Modifier,
+	/** The label for the text field */
+	label: String,
+	/** All the available options. */
+	options: List<String>,
+	/** The selected option. */
+	selectedOption: String?,
+	/** When the option is selected via tapping on the dropdown option or typing in the option. */
+	onOptionSelected: (String?) -> Unit,
+	bringIntoViewRequester: BringIntoViewRequester = remember { BringIntoViewRequester() },
+	coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
-    val focusRequester = remember { FocusRequester() }
-    var showAllOptions by remember { mutableStateOf(false) }
-    var dropDownExpanded by remember { mutableStateOf(false) }
+	val focusRequester = remember { FocusRequester() }
+	var showAllOptions by remember { mutableStateOf(false) }
+	var dropDownExpanded by remember { mutableStateOf(false) }
 
-    // Default our text input to the selected option
-    var textInput by remember(selectedOption) {
-        mutableStateOf(TextFieldValue(selectedOption.orEmpty()))
-    }
+	// Default our text input to the selected option
+	var textInput by remember(selectedOption) {
+		mutableStateOf(TextFieldValue(selectedOption.orEmpty()))
+	}
 
-    // Update our filtered options everytime our text input changes
-    val filteredOptions = remember(textInput, dropDownExpanded) {
-        when (dropDownExpanded) {
-            true -> options.filter { it.contains(textInput.text, ignoreCase = true) }
-            // Skip filtering when we don't need to
-            false -> emptyList()
-        }
-    }
+	// Update our filtered options everytime our text input changes
+	val filteredOptions = remember(textInput, dropDownExpanded) {
+		when (dropDownExpanded) {
+			true -> options.filter { it.contains(textInput.text, ignoreCase = true) }
+			// Skip filtering when we don't need to
+			false -> emptyList()
+		}
+	}
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
+	val keyboardController = LocalSoftwareKeyboardController.current
+	val focusManager = LocalFocusManager.current
 
-    ExposedDropdownMenuBox(
-        expanded = dropDownExpanded,
-        onExpandedChange = {
-            dropDownExpanded = !dropDownExpanded
+	ExposedDropdownMenuBox(
+		expanded = dropDownExpanded,
+		onExpandedChange = {
+			dropDownExpanded = !dropDownExpanded
 
-            if (dropDownExpanded)
-                textInput = textInput.copy(
-                    selection = TextRange(0, textInput.text.length),
-                )
-        },
-        modifier = modifier,
-    ) {
-        // Text Input
-        TextField(
-            value = textInput,
-            onValueChange = {
+			if (dropDownExpanded)
+				textInput = textInput.copy(
+					selection = TextRange(0, textInput.text.length),
+				)
+		},
+		modifier = modifier,
+	) {
+		// Text Input
+		TextField(
+			value = textInput,
+			onValueChange = {
 //                if (textInput.text == it.text) {
 //                    println("Not a text change")
 //                    textInput = it
 //                    return@TextField
 //                }
 
-                // Dropdown may auto hide for scrolling but it's important it always shows when a user
-                // does a search
-                dropDownExpanded = true
-                textInput = it
+				// Dropdown may auto hide for scrolling but it's important it always shows when a user
+				// does a search
+				dropDownExpanded = true
+				textInput = it
 
-                // On re-focusing the box while a value is entered, all options will be shown.
-                // Stop showing all the options upon typing something.
-                if (textInput.text != selectedOption)
-                    showAllOptions = textInput.text.isBlank()
-            },
-            modifier = Modifier
-                // Match the parent width
-                .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryEditable)
-                .focusRequester(focusRequester)
-                .onFocusChanged { focusState ->
-                    println("Focus Changed! All: $showAllOptions")
-                    // When only 1 option left when we lose focus, selected it.
-                    if (!focusState.isFocused) {
-                        // Whenever we lose focus, always hide the dropdown
-                        dropDownExpanded = false
+				// On re-focusing the box while a value is entered, all options will be shown.
+				// Stop showing all the options upon typing something.
+				if (textInput.text != selectedOption)
+					showAllOptions = textInput.text.isBlank()
+			},
+			modifier = Modifier
+				// Match the parent width
+				.fillMaxWidth()
+				.menuAnchor(MenuAnchorType.PrimaryEditable)
+				.focusRequester(focusRequester)
+				.onFocusChanged { focusState ->
+					println("Focus Changed! All: $showAllOptions")
+					// When only 1 option left when we lose focus, selected it.
+					if (!focusState.isFocused) {
+						// Whenever we lose focus, always hide the dropdown
+						dropDownExpanded = false
 
-                        when (filteredOptions.size) {
-                            // Auto accept what they typed.
-                            0 -> if (textInput.text != selectedOption) {
-                                onOptionSelected(textInput.text)
-                            }
-                            // Auto select the single option
-                            1 -> if (filteredOptions.first() != selectedOption) {
-                                onOptionSelected(filteredOptions.first())
-                            } else {
-                                // The value hasn't changed, show the selected.
-                                textInput = textInput.copy(text = selectedOption.orEmpty())
-                            }
-                            // Nothing to we can auto select - reset our text input to the selected value
-                            else -> textInput = textInput.copy(text = selectedOption.orEmpty())
-                        }
+						when (filteredOptions.size) {
+							// Auto accept what they typed.
+							0 -> if (textInput.text != selectedOption) {
+								onOptionSelected(textInput.text)
+							}
+							// Auto select the single option
+							1 -> if (filteredOptions.first() != selectedOption) {
+								onOptionSelected(filteredOptions.first())
+							} else {
+								// The value hasn't changed, show the selected.
+								textInput = textInput.copy(text = selectedOption.orEmpty())
+							}
+							// Nothing to we can auto select - reset our text input to the selected value
+							else -> textInput = textInput.copy(text = selectedOption.orEmpty())
+						}
 
-                        println("Unfocus!")
-                        showAllOptions = true
-                    } else {
-                        println("Focus! ${textInput.text.isNotEmpty()}")
+						println("Unfocus!")
+						showAllOptions = true
+					} else {
+						println("Focus! ${textInput.text.isNotEmpty()}")
 
-                        // When focused:
-                        // Select all the existing text if there is something already.
-                        if (textInput.text.isNotEmpty())
-                            textInput = textInput.copy(
-                                selection = TextRange(0, textInput.text.length),
-                            )
+						// When focused:
+						// Select all the existing text if there is something already.
+						if (textInput.text.isNotEmpty())
+							textInput = textInput.copy(
+								selection = TextRange(0, textInput.text.length),
+							)
 
-                        // Ensure field is visible by scrolling to it
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
+						// Ensure field is visible by scrolling to it
+						coroutineScope.launch {
+							bringIntoViewRequester.bringIntoView()
+						}
 
-                        // If there's already a value, show all options.
-                        showAllOptions = textInput.text.isNotEmpty()
+						// If there's already a value, show all options.
+						showAllOptions = textInput.text.isNotEmpty()
 
-                        // Show the dropdown right away
-                        dropDownExpanded = true
-                    }
-                },
-            label = { Text(label) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropDownExpanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            keyboardOptions = KeyboardOptions(
-                imeAction = when (filteredOptions.size) {
-                    // We will either reset input or auto select the single option
-                    0, 1 -> ImeAction.Done
-                    // Keyboard will hide to make room for search results
-                    else -> ImeAction.Search
-                }
-            ),
-            singleLine = true,
-            keyboardActions = KeyboardActions(onAny = {
-                when (filteredOptions.size) {
-                    // Remove focus to execute our onFocusChanged effect
-                    0, 1 -> focusManager.clearFocus(force = true)
-                    // Can't auto select option since we have a list, so hide keyboard to give more room for dropdown
-                    else -> keyboardController?.hide()
-                }
-            })
-        )
+						// Show the dropdown right away
+						dropDownExpanded = true
+					}
+				},
+			label = { Text(label) },
+			trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropDownExpanded) },
+			colors = ExposedDropdownMenuDefaults.textFieldColors(),
+			keyboardOptions = KeyboardOptions(
+				imeAction = when (filteredOptions.size) {
+					// We will either reset input or auto select the single option
+					0, 1 -> ImeAction.Done
+					// Keyboard will hide to make room for search results
+					else -> ImeAction.Search
+				}
+			),
+			singleLine = true,
+			keyboardActions = KeyboardActions(onAny = {
+				when (filteredOptions.size) {
+					// Remove focus to execute our onFocusChanged effect
+					0, 1 -> focusManager.clearFocus(force = true)
+					// Can't auto select option since we have a list, so hide keyboard to give more room for dropdown
+					else -> keyboardController?.hide()
+				}
+			})
+		)
 
-        // Dropdown
-        if (dropDownExpanded) {
-            val dropdownOptions = remember(textInput, showAllOptions) {
-                if (textInput.text.isEmpty() || showAllOptions) {
-                    // Show all options if nothing to filter yet
-                    options
-                } else {
-                    filteredOptions
-                }
-            }
+		// Dropdown
+		if (dropDownExpanded) {
+			val dropdownOptions = remember(textInput, showAllOptions) {
+				if (textInput.text.isEmpty() || showAllOptions) {
+					// Show all options if nothing to filter yet
+					options
+				} else {
+					filteredOptions
+				}
+			}
 
-            ExposedDropdownMenu(
-                expanded = dropDownExpanded,
-                onDismissRequest = {
-                    dropDownExpanded = false
-                },
-            ) {
-                // Show "no items".
-                if (dropdownOptions.isEmpty() && textInput.text.isEmpty())
-                    DropdownMenuItem(
-                        onClick = {},
-                        text = {
-                            Text(
-                                text = "No items. Start typing to add one.",
-                                fontStyle = FontStyle.Italic
-                            )
-                        }
-                    )
+			ExposedDropdownMenu(
+				expanded = dropDownExpanded,
+				onDismissRequest = {
+					dropDownExpanded = false
+				},
+			) {
+				// Show "no items".
+				if (dropdownOptions.isEmpty() && textInput.text.isEmpty())
+					DropdownMenuItem(
+						onClick = {},
+						text = {
+							Text(
+								text = "No items. Start typing to add one.",
+								fontStyle = FontStyle.Italic
+							)
+						}
+					)
 
-                dropdownOptions.forEach { option ->
-                    DropdownMenuItem(onClick = {
-                        dropDownExpanded = false
-                        onOptionSelected(option)
-                        focusManager.clearFocus(force = true)
-                    }, text = {
-                        Text(option)
-                    })
-                }
+				dropdownOptions.forEach { option ->
+					DropdownMenuItem(onClick = {
+						dropDownExpanded = false
+						onOptionSelected(option)
+						focusManager.clearFocus(force = true)
+					}, text = {
+						Text(option)
+					})
+				}
 
-                if (textInput.text.isNotEmpty() && !options.contains(textInput.text))
-                    DropdownMenuItem(onClick = {
-                        dropDownExpanded = false
-                        onOptionSelected(textInput.text)
-                        focusManager.clearFocus(force = true)
-                    }, text = {
-                        Text(text = "Add \"${textInput.text}\"", fontStyle = FontStyle.Italic)
-                    })
+				if (textInput.text.isNotEmpty() && !options.contains(textInput.text))
+					DropdownMenuItem(onClick = {
+						dropDownExpanded = false
+						onOptionSelected(textInput.text)
+						focusManager.clearFocus(force = true)
+					}, text = {
+						Text(text = "Add \"${textInput.text}\"", fontStyle = FontStyle.Italic)
+					})
 
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Preview(showSystemUi = true, heightDp = 200)
 @Composable
 private fun PreviewTextFieldMenu() {
-    TokificationTheme {
-        var selectedString by remember { mutableStateOf<String?>("") }
-        val stringOptions = remember {
-            listOf(
-                "String A", "String B", "String C", "String D", "Last!!!", "String AAA",
+	TokificationTheme {
+		var selectedString by remember { mutableStateOf<String?>("") }
+		val stringOptions = remember {
+			listOf(
+				"String A", "String B", "String C", "String D", "Last!!!", "String AAA",
 //                "String A", "String B", "String C", "String D", "Last!!!", "String AAA",
 //                "String A", "String B", "String C", "String D", "Last!!!", "String AAA",
 //                "String A", "String B", "String C", "String D", "Last!!!", "String AAA",
@@ -262,53 +262,53 @@ private fun PreviewTextFieldMenu() {
 //                "String A", "String B", "String C", "String D", "Last!!!", "String AAA",
 //                "String A", "String B", "String C", "String D", "Last!!!", "String AAA",
 //                "String A", "String B", "String C", "String D", "Last!!!", "String AAA"
-            )
-        }
+			)
+		}
 
-        Column(
-            modifier = Modifier
-                // Reduce column height when keyboard is shown
-                // Note: This needs to be set _before_ verticalScroll so that BringIntoViewRequester APIs work
-                .imePadding()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            val nameFocusRequester = remember { FocusRequester() }
-            val optionsFocusRequester = remember { FocusRequester() }
+		Column(
+			modifier = Modifier
+				// Reduce column height when keyboard is shown
+				// Note: This needs to be set _before_ verticalScroll so that BringIntoViewRequester APIs work
+				.imePadding()
+				.verticalScroll(rememberScrollState())
+				.padding(16.dp)
+				.fillMaxHeight(),
+			verticalArrangement = Arrangement.spacedBy(12.dp)
+		) {
+			val nameFocusRequester = remember { FocusRequester() }
+			val optionsFocusRequester = remember { FocusRequester() }
 
-            var nameInput by remember { mutableStateOf("") }
+			var nameInput by remember { mutableStateOf("") }
 
-            Text(text = "Model Value: $selectedString", color = Color.White)
+			Text(text = "Model Value: $selectedString", color = Color.White)
 
-            // Free Style Input
-            OutlinedTextField(
-                modifier = Modifier
-                    .focusRequester(nameFocusRequester)
-                    .fillMaxWidth(),
-                label = {
-                    Text(
-                        text = "Name",
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                    )
-                },
-                value = nameInput,
-                onValueChange = { nameInput = it },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { optionsFocusRequester.requestFocus() },
-                ),
-            )
+			// Free Style Input
+			OutlinedTextField(
+				modifier = Modifier
+					.focusRequester(nameFocusRequester)
+					.fillMaxWidth(),
+				label = {
+					Text(
+						text = "Name",
+						overflow = TextOverflow.Ellipsis,
+						maxLines = 1,
+					)
+				},
+				value = nameInput,
+				onValueChange = { nameInput = it },
+				singleLine = true,
+				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+				keyboardActions = KeyboardActions(
+					onNext = { optionsFocusRequester.requestFocus() },
+				),
+			)
 
-            TextFieldMenu(
-                label = "Testing!",
-                selectedOption = selectedString,
-                onOptionSelected = { selectedString = it },
-                options = stringOptions
-            )
-        }
-    }
+			TextFieldMenu(
+				label = "Testing!",
+				selectedOption = selectedString,
+				onOptionSelected = { selectedString = it },
+				options = stringOptions
+			)
+		}
+	}
 }

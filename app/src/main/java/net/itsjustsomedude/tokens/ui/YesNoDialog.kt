@@ -11,32 +11,32 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun YesNoDialog(
-    onYesClick: () -> Unit,
-    onNoClick: () -> Unit,
-    onDismissRequest: () -> Unit,
-    title: String? = null,
-    yesButtonText: String = "Yes",
-    noButtonText: String = "No",
-    content: @Composable ColumnScope.() -> Unit
+	onYesClick: () -> Unit,
+	onNoClick: () -> Unit,
+	onDismissRequest: () -> Unit,
+	title: String? = null,
+	yesButtonText: String = "Yes",
+	noButtonText: String = "No",
+	content: @Composable ColumnScope.() -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = {
-            if (title != null)
-                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        },
-        text = {
-            Column(content = content)
-        },
-        confirmButton = {
-            Button(onClick = onYesClick) {
-                Text(yesButtonText)
-            }
-        },
-        dismissButton = {
-            Button(onClick = onNoClick) {
-                Text(noButtonText)
-            }
-        },
-    )
+	AlertDialog(
+		onDismissRequest = onDismissRequest,
+		title = {
+			if (title != null)
+				Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+		},
+		text = {
+			Column(content = content)
+		},
+		confirmButton = {
+			Button(onClick = onYesClick) {
+				Text(yesButtonText)
+			}
+		},
+		dismissButton = {
+			Button(onClick = onNoClick) {
+				Text(noButtonText)
+			}
+		},
+	)
 }

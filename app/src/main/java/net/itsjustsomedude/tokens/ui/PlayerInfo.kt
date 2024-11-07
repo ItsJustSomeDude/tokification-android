@@ -12,21 +12,21 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PlayerInfo() {
-    val playerInfoString = AnnotatedString.Builder().apply {
-        withStyle(MaterialTheme.typography.titleLarge.toSpanStyle()) { append("Player Name") }
-        append(" - ")
+	val playerInfoString = AnnotatedString.Builder().apply {
+		withStyle(MaterialTheme.typography.titleLarge.toSpanStyle()) { append("Player Name") }
+		append(" - ")
 
-    }.toAnnotatedString()
+	}.toAnnotatedString()
 
-    Column(Modifier.fillMaxWidth()) {
-        Text(playerInfoString, style = MaterialTheme.typography.titleLarge)
+	Column(Modifier.fillMaxWidth()) {
+		Text(playerInfoString, style = MaterialTheme.typography.titleLarge)
 
 
-    }
+	}
 }
 
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewPlayerInfo() {
-    PlayerInfo()
+	PlayerInfo()
 }

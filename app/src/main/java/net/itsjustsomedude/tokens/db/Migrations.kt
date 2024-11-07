@@ -5,10 +5,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 // This should migrate SQLite to room!
 val MIGRATION_10_1 = object : Migration(10, 1) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        // Create the new Coops table
-        db.execSQL(
-            """
+	override fun migrate(db: SupportSQLiteDatabase) {
+		// Create the new Coops table
+		db.execSQL(
+			"""
             CREATE TABLE IF NOT EXISTS Coop (
                 id INTEGER NOT NULL PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -19,11 +19,11 @@ val MIGRATION_10_1 = object : Migration(10, 1) {
                 players TEXT NOT NULL
             )
             """
-        )
+		)
 
-        // Create the new Events table
-        db.execSQL(
-            """
+		// Create the new Events table
+		db.execSQL(
+			"""
             CREATE TABLE IF NOT EXISTS Event (
                 id INTEGER NOT NULL PRIMARY KEY,
                 coop TEXT NOT NULL,
@@ -35,11 +35,11 @@ val MIGRATION_10_1 = object : Migration(10, 1) {
                 notification INTEGER NOT NULL
             )
             """
-        )
+		)
 
-        // Step 2: Copy data from old table into the new table
-        db.execSQL(
-            """
+		// Step 2: Copy data from old table into the new table
+		db.execSQL(
+			"""
             INSERT INTO Coop (id, name, contract, startTime, endTime, sinkMode, players)
             SELECT
                 _id,
@@ -50,10 +50,10 @@ val MIGRATION_10_1 = object : Migration(10, 1) {
                 IFNULL(SinkMode, 0), '[]'
             FROM Coops
             """
-        )
+		)
 
-        db.execSQL(
-            """
+		db.execSQL(
+			"""
             INSERT INTO Event (id, coop, kevId, time, count, person, direction, notification)
             SELECT 
                 _id,
@@ -66,22 +66,22 @@ val MIGRATION_10_1 = object : Migration(10, 1) {
                 IFNULL(NoteID, 0)
             FROM Events
             """
-        )
+		)
 
-        // Step 3: Drop the old table
-        db.execSQL("DROP TABLE Coops")
-        db.execSQL("DROP TABLE Events")
-    }
+		// Step 3: Drop the old table
+		db.execSQL("DROP TABLE Coops")
+		db.execSQL("DROP TABLE Events")
+	}
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE Event ADD COLUMN receiver INTEGER NOT NULL DEFAULT 0")
+	override fun migrate(db: SupportSQLiteDatabase) {
+		db.execSQL("ALTER TABLE Event ADD COLUMN receiver INTEGER NOT NULL DEFAULT 0")
 
-        db.execSQL("ALTER TABLE Coop ADD COLUMN boostOrder INTEGER NOT NULL DEFAULT ${Coop.BOOST_ORDER_UNKNOWN}")
-        db.execSQL("ALTER TABLE Coop ADD COLUMN sink TEXT NOT NULL DEFAULT \"\"")
-        db.execSQL("ALTER TABLE Coop ADD COLUMN playerPositionOverrides TEXT NOT NULL DEFAULT \"{}\"")
-        db.execSQL("ALTER TABLE Coop ADD COLUMN playerOrderOverrides TEXT NOT NULL DEFAULT \"{}\"")
-        db.execSQL("ALTER TABLE Coop ADD COLUMN playerTokenAmounts TEXT NOT NULL DEFAULT \"{}\"")
-    }
+		db.execSQL("ALTER TABLE Coop ADD COLUMN boostOrder INTEGER NOT NULL DEFAULT ${Coop.BOOST_ORDER_UNKNOWN}")
+		db.execSQL("ALTER TABLE Coop ADD COLUMN sink TEXT NOT NULL DEFAULT \"\"")
+		db.execSQL("ALTER TABLE Coop ADD COLUMN playerPositionOverrides TEXT NOT NULL DEFAULT \"{}\"")
+		db.execSQL("ALTER TABLE Coop ADD COLUMN playerOrderOverrides TEXT NOT NULL DEFAULT \"{}\"")
+		db.execSQL("ALTER TABLE Coop ADD COLUMN playerTokenAmounts TEXT NOT NULL DEFAULT \"{}\"")
+	}
 }

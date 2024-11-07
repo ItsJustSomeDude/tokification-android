@@ -10,39 +10,39 @@ import net.itsjustsomedude.tokens.ui.EventEditDialog
 import net.itsjustsomedude.tokens.ui.theme.TokificationTheme
 
 class CreateEventActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
 
-        val coopId = intent.getLongExtra(PARAM_COOP_ID, 2);
+		val coopId = intent.getLongExtra(PARAM_COOP_ID, 2);
 
-        setContent {
-            TokificationTheme {
-                val context = LocalContext.current
+		setContent {
+			TokificationTheme {
+				val context = LocalContext.current
 
-                EventEditDialog(
-                    coopId = coopId,
-                    eventId = null,
-                    showExtendedButtons = false,
-                    onDismiss = {
-                        // TODO: Get out of the composable function.
-                        context.sendBroadcast(
-                            NotificationActions.refreshNotificationIntent(
-                                context,
-                                coopId
-                            )
-                        )
+				EventEditDialog(
+					coopId = coopId,
+					eventId = null,
+					showExtendedButtons = false,
+					onDismiss = {
+						// TODO: Get out of the composable function.
+						context.sendBroadcast(
+							NotificationActions.refreshNotificationIntent(
+								context,
+								coopId
+							)
+						)
 
-                        finish()
-                    }
-                )
-            }
-        }
-    }
+						finish()
+					}
+				)
+			}
+		}
+	}
 
-    companion object {
-        const val PARAM_COOP_ID = "CoopId"
+	companion object {
+		const val PARAM_COOP_ID = "CoopId"
 
-        fun createIntent(ctx: Context, coopId: Long) =
-            Intent(ctx, CreateEventActivity::class.java).putExtra(PARAM_COOP_ID, coopId)
-    }
+		fun createIntent(ctx: Context, coopId: Long) =
+			Intent(ctx, CreateEventActivity::class.java).putExtra(PARAM_COOP_ID, coopId)
+	}
 }

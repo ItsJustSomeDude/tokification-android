@@ -8,18 +8,18 @@ import net.itsjustsomedude.tokens.db.expand
 import org.koin.mp.KoinPlatform.getKoin
 
 abstract class Report {
-    abstract fun generate(data: ExpandedCoop): String
+	abstract fun generate(data: ExpandedCoop): String
 
-    fun generate(coop: Coop, events: List<Event>): String {
-        val data = coop.expand(events)
-        return generate(data)
-    }
+	fun generate(coop: Coop, events: List<Event>): String {
+		val data = coop.expand(events)
+		return generate(data)
+	}
 
-    suspend fun generate(coopId: Long): String {
-        val coopRepo: ExpandedCoopRepository = getKoin().get()
+	suspend fun generate(coopId: Long): String {
+		val coopRepo: ExpandedCoopRepository = getKoin().get()
 
-        val coop = coopRepo.getExpandedCoop(coopId) ?: return "Unknown Coop"
+		val coop = coopRepo.getExpandedCoop(coopId) ?: return "Unknown Coop"
 
-        return generate(coop)
-    }
+		return generate(coop)
+	}
 }

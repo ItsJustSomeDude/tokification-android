@@ -8,18 +8,18 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Density
 
 fun Modifier.skeletonColors(): Modifier {
-    return this.background(
-        brush = Brush.horizontalGradient(
-            colors = listOf(
-                Color.Gray,
-                Color.LightGray
-            )
-        )
-    )
+	return this.background(
+		brush = Brush.horizontalGradient(
+			colors = listOf(
+				Color.Gray,
+				Color.LightGray
+			)
+		)
+	)
 }
 
 fun Modifier.debugRuler(density: Density, name: String): Modifier {
-    return this.onSizeChanged {
-        println("$name Width: ${with(density) { it.width.toDp() }}, Height: ${with(density) { it.height.toDp() }}")
-    }
+	return this.onSizeChanged {
+		println("$name Width: ${with(density) { it.width.toDp() }}, Height: ${with(density) { it.height.toDp() }}")
+	}
 }

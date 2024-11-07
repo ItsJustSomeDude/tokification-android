@@ -31,74 +31,74 @@ import org.koin.dsl.module
 const val DATASTORE_NAME = "new_settings"
 
 class TokificationApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
+	override fun onCreate() {
+		super.onCreate()
 
-        startKoin {
-            androidContext(this@TokificationApp)
-            modules(appModule, networkModule)
-        }
+		startKoin {
+			androidContext(this@TokificationApp)
+			modules(appModule, networkModule)
+		}
 
-        /* if (!BuildConfig.DEBUG) */
-        startSentry()
-    }
+		/* if (!BuildConfig.DEBUG) */
+		startSentry()
+	}
 
-    private fun startSentry() {
-        val prefsRepo by inject<PreferencesRepository>()
+	private fun startSentry() {
+		val prefsRepo by inject<PreferencesRepository>()
 
-        Sentry.init { options ->
-            options.dsn = BuildConfig.SENTRY_DSN
-            options.isDebug = BuildConfig.DEBUG
-            options.setDiagnosticLevel(SentryLevel.INFO)
+		Sentry.init { options ->
+			options.dsn = BuildConfig.SENTRY_DSN
+			options.isDebug = BuildConfig.DEBUG
+			options.setDiagnosticLevel(SentryLevel.INFO)
 
-            options.setBeforeSend { event, _ ->
-                val shouldSend = prefsRepo.sentryEnabled.getValueSync()
+			options.setBeforeSend { event, _ ->
+				val shouldSend = prefsRepo.sentryEnabled.getValueSync()
 
-                if (shouldSend)
-                    event
-                else
-                    null
-            }
-        }
-    }
+				if (shouldSend)
+					event
+				else
+					null
+			}
+		}
+	}
 }
 
 val networkModule = module {
-    single {
-        HttpClient(OkHttp) {
-            install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
-            }
-        }
-    }
+	single {
+		HttpClient(OkHttp) {
+			install(ContentNegotiation) {
+				json(Json { ignoreUnknownKeys = true })
+			}
+		}
+	}
 }
 
 val appModule = module {
-    single {
-        PreferenceDataStoreFactory.create(
-            produceFile = { get<Context>().preferencesDataStoreFile(DATASTORE_NAME) }
-        )
-    }
+	single {
+		PreferenceDataStoreFactory.create(
+			produceFile = { get<Context>().preferencesDataStoreFile(DATASTORE_NAME) }
+		)
+	}
 
-    single { AppDatabase.createInstance(get()) }
+	single { AppDatabase.createInstance(get()) }
 
-    single { get<AppDatabase>().eventDao() }
-    single { get<AppDatabase>().coopDao() }
+	single { get<AppDatabase>().eventDao() }
+	single { get<AppDatabase>().coopDao() }
 
-    single { NotificationHelper(get(), get(), get()) }
-    single { ClipboardHelper(get()) }
+	single { NotificationHelper(get(), get(), get()) }
+	single { ClipboardHelper(get()) }
 
-    single { EventRepository(get()) }
-    single { CoopRepository(get()) }
-    single { PreferencesRepository(get()) }
+	single { EventRepository(get()) }
+	single { CoopRepository(get()) }
+	single { PreferencesRepository(get()) }
 
-    single { UpdateChecker(get(), get()) }
+	single { UpdateChecker(get(), get()) }
 
-    viewModel { MainScreenViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { parameters -> CoopViewModel(parameters.get(), get(), get(), get(), get()) }
-    viewModel { NotificationDebuggerViewModel(get()) }
-    viewModel { parameters -> CoopNameEditViewModel(parameters[0], parameters[1], get()) }
-    viewModel { parameters -> EventEditViewModel(parameters[0], parameters[1], get(), get()) }
+	viewModel { MainScreenViewModel(get(), get(), get(), get(), get(), get()) }
+	viewModel { parameters -> CoopViewModel(parameters.get(), get(), get(), get(), get()) }
+	viewModel { NotificationDebuggerViewModel(get()) }
+	viewModel { parameters -> CoopNameEditViewModel(parameters[0], parameters[1], get()) }
+	viewModel { parameters -> EventEditViewModel(parameters[0], parameters[1], get(), get()) }
 
-    viewModel { SettingsViewModel(get(), get()) }
+	viewModel { SettingsViewModel(get(), get()) }
 }
