@@ -5,8 +5,8 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 val localProps = gradleLocalProperties(rootDir, providers)
 
 val versionMajor = 0
-val versionMinor = 9
-val versionPatch = 6
+val versionMinor = 1
+val versionPatch = 0
 val versionBuild = 0
 
 plugins {
