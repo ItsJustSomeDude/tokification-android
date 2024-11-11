@@ -1,5 +1,9 @@
 package net.itsjustsomedude.tokens.ui
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -12,14 +16,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import io.sentry.Sentry
 import net.itsjustsomedude.tokens.BuildConfig
 import net.itsjustsomedude.tokens.models.SettingsViewModel
 import net.itsjustsomedude.tokens.store.PreferencesRepository
 import org.koin.compose.viewmodel.koinViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +51,24 @@ fun SettingsScreen(
 		// TODO: Find out if this is the best place to manage Context.
 		model.setServiceEnabled(context, newState)
 	})
+
+	Text(
+		text = "Setting Disabled?",
+		fontWeight = FontWeight.Bold
+	)
+	Text(
+		modifier = Modifier.clickable {
+			//redirect user to app Settings
+			val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+				addCategory(Intent.CATEGORY_DEFAULT)
+				setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID))
+			}
+			context.startActivity(i)
+		},
+		text = "Click here to go to App Info, then click [...], then \"Allow Restricted Settings\".",
+		fontStyle = FontStyle.Italic,
+		textDecoration = TextDecoration.Underline
+	)
 
 	HorizontalDivider()
 
