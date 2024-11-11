@@ -303,17 +303,17 @@ fun CoopInfoSkeleton(modifier: Modifier = Modifier) {
 		Row {
 			Column {
 				Box(
-                    Modifier
-                        .size(100.dp, 28.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .skeletonColors()
+					Modifier
+						.size(100.dp, 28.dp)
+						.clip(RoundedCornerShape(8.dp))
+						.skeletonColors()
 				)
 
 				Box(
-                    Modifier
-                        .size(100.dp, 16.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .skeletonColors()
+					Modifier
+						.size(100.dp, 16.dp)
+						.clip(RoundedCornerShape(8.dp))
+						.skeletonColors()
 				)
 			}
 			Column {
@@ -327,10 +327,10 @@ fun CoopInfoSkeleton(modifier: Modifier = Modifier) {
 		}
 		Row {
 			Box(
-                Modifier
-                    .size(116.dp, 40.dp)
-                    .clip(RoundedCornerShape(50))
-                    .skeletonColors()
+				Modifier
+					.size(116.dp, 40.dp)
+					.clip(RoundedCornerShape(50))
+					.skeletonColors()
 			)
 
 			IconButton(onClick = {}, enabled = false) {
@@ -352,11 +352,11 @@ fun CoopInfoSkeleton(modifier: Modifier = Modifier) {
 		)
 
 		Box(
-            Modifier
-                .padding(vertical = 4.dp)
-                .size(52.dp, 32.dp)
-                .clip(RoundedCornerShape(50))
-                .skeletonColors()
+			Modifier
+				.padding(vertical = 4.dp)
+				.size(52.dp, 32.dp)
+				.clip(RoundedCornerShape(50))
+				.skeletonColors()
 		)
 	}
 }
