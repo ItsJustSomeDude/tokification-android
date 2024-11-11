@@ -68,7 +68,7 @@ suspend fun updateInferredCoopValues(id: Long) {
 	val coopRepo: CoopRepository = getKoin().get()
 	val eventRepo: EventRepository = getKoin().get()
 
-	val oldCoop = coopRepo.getCoop(id) ?: throw Error("Unknown Coop!")
+	val oldCoop = coopRepo.getCoop(id) ?: throw Exception("Unknown Coop!")
 	val events = eventRepo.listEvents(oldCoop.name, oldCoop.contract)
 
 	val newCoop = inferCoopValues(oldCoop, events)

@@ -79,9 +79,9 @@ class NotificationService : NotificationListenerService() {
 	private suspend fun processNotification(
 		note: ShortNotification,
 	) {
-		println("Processing $note")
+//		println("Processing $note")
 		val event = note.toEvent() ?: return
-		println("Valid Notification, adding.")
+//		println("Valid Notification, adding.")
 
 		if (eventRepo.exists(event.coop, event.kevId, event.notification)) {
 			Log.i(TAG, "Skipping notification that has already been processed.")
@@ -98,7 +98,6 @@ class NotificationService : NotificationListenerService() {
 	private suspend fun scheduleRemoval(key: String) {
 		val shouldDismiss = shouldDismiss()
 
-		println("Dismiss? $shouldDismiss")
 		if (shouldDismiss)
 			dismissHandler!!.postDelayed(
 				{ cancelNotification(key) },
@@ -181,4 +180,3 @@ class NotificationService : NotificationListenerService() {
 		}
 	}
 }
-

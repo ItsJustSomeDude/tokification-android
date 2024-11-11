@@ -13,8 +13,6 @@ class BoostOrderReport : Report() {
 			else -> LuckBoostOrder().arrange(data)
 		}
 
-		println(order)
-
 		val boosted = order.filter { it.tokensSent }
 		val remaining = order.filterNot { it.tokensSent }
 

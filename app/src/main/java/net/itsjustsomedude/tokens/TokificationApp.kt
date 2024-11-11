@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import net.itsjustsomedude.tokens.db.AppDatabase
 import net.itsjustsomedude.tokens.db.CoopRepository
 import net.itsjustsomedude.tokens.db.EventRepository
+import net.itsjustsomedude.tokens.db.ExpandedCoopRepository
 import net.itsjustsomedude.tokens.models.CoopNameEditViewModel
 import net.itsjustsomedude.tokens.models.CoopViewModel
 import net.itsjustsomedude.tokens.models.EventEditViewModel
@@ -91,6 +92,7 @@ val appModule = module {
 	single { EventRepository(get()) }
 	single { CoopRepository(get()) }
 	single { PreferencesRepository(get()) }
+	single { ExpandedCoopRepository(get(), get()) }
 
 	single { UpdateChecker(get(), get()) }
 

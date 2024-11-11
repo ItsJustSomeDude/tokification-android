@@ -30,8 +30,13 @@ class CoopViewModel(
 	val coop: LiveData<Coop?> = liveData {
 		println("Fetching Coop: $coopId")
 		emitSource(coopRepo.getCoopLiveData(coopId))
-		// TODO: Usage of update inferred values.
-		updateInferredCoopValues(coopId)
+
+		try {
+			// TODO: Usage of update inferred values.
+			// TODO: This needs more than a bandaid fix...
+			updateInferredCoopValues(coopId)
+		} catch (_: Exception) {
+		}
 	}
 
 	val events = coop.switchMap { co ->
