@@ -25,3 +25,8 @@ indent_style = space
 indent_size = 1
 trim_trailing_whitespace = false # Allow trailing whitespace in Markdown files
 max_line_length = off # Disable hard wrapping for Markdown
+
+# This is needed to keep the Schema JSONs from breaking.
+[*.json]
+indent_style = space
+indent_size = 2
