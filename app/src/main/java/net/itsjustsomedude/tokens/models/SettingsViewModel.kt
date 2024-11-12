@@ -3,7 +3,6 @@ package net.itsjustsomedude.tokens.models
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.sentry.Sentry
 import kotlinx.coroutines.launch
 import net.itsjustsomedude.tokens.NotificationService
 import net.itsjustsomedude.tokens.network.UpdateChecker
@@ -14,32 +13,28 @@ class SettingsViewModel(
 	private val updateChecker: UpdateChecker
 ) : ViewModel() {
 
-	val serviceEnabled = prefsRepo.serviceEnable.getStateFlow(viewModelScope)
-	fun setServiceEnabled(ctx: Context, newState: Boolean) =
-		viewModelScope.launch {
-			if (newState)
-				NotificationService.enableService(ctx)
-			else
-				NotificationService.disableService(ctx)
-		}
+	val serviceRunningState = NotificationService.isServiceRunning
+
+	fun setServiceStatus(ctx: Context, newState: Boolean) = viewModelScope.launch {
+		prefsRepo.serviceEnable.setValue(newState)
+
+		if (newState)
+			NotificationService.requestStart(ctx)
+		else
+			NotificationService.requestStop()
+	}
 
 	val autoDismiss = prefsRepo.autoDismiss.getStateFlow(viewModelScope)
 	fun setAutoDismiss(newState: Boolean) =
-		viewModelScope.launch {
-			prefsRepo.autoDismiss.setValue(newState)
-		}
+		prefsRepo.autoDismiss.setValueIn(viewModelScope, newState)
 
 	val noteDebugger = prefsRepo.notificationDebugger.getStateFlow(viewModelScope)
 	fun setNoteDebugger(newState: Boolean) =
-		viewModelScope.launch {
-			prefsRepo.notificationDebugger.setValue(newState)
-		}
+		prefsRepo.notificationDebugger.setValueIn(viewModelScope, newState)
 
 	val playerName = prefsRepo.playerName.getStateFlow(viewModelScope)
 	fun setPlayerName(newState: String) =
-		viewModelScope.launch {
-			prefsRepo.playerName.setValue(newState)
-		}
+		prefsRepo.playerName.setValueIn(viewModelScope, newState)
 
 	val defaultCoopMode = prefsRepo.defaultCoopMode.getStateFlow(viewModelScope)
 	fun setDefaultCoopMode(newState: Int) =
@@ -48,13 +43,5 @@ class SettingsViewModel(
 	val sentryEnabled = prefsRepo.sentryEnabled.getStateFlow(viewModelScope)
 	fun setSentryEnabled(newState: Boolean) {
 		prefsRepo.sentryEnabled.setValueIn(viewModelScope, newState)
-
-		if (newState) {
-			// TODO: No clue if this will work at all.
-//            TokificationApp.startSentry()
-		} else {
-			Sentry.close()
-		}
 	}
-
 }

@@ -35,40 +35,43 @@ fun SettingsScreen(
 ) {
 	val context = LocalContext.current
 
-	val serviceEnabled by model.serviceEnabled.collectAsState()
 	val autoDismiss by model.autoDismiss.collectAsState()
 	val notificationDebuggerEnabled by model.noteDebugger.collectAsState()
 	val playerName by model.playerName.collectAsState()
 	val defaultCoopMode by model.defaultCoopMode.collectAsState()
 	val sentryEnabled by model.sentryEnabled.collectAsState()
 
+	val serviceRunning by model.serviceRunningState.collectAsState(true)
+
 	Text(text = "Notification Service Control", fontWeight = FontWeight.Bold)
 	Text(
 		text = "This enables or disables Tokification reading Egg Inc's notifications.  This is used to track tokens that you have received.  If enabled, it runs in the background, so it may be helpful to disable when you have no active co-ops.",
 		fontStyle = FontStyle.Italic
 	)
-	Switch(checked = serviceEnabled, onCheckedChange = { newState ->
+	Switch(checked = serviceRunning, onCheckedChange = { newState ->
 		// TODO: Find out if this is the best place to manage Context.
-		model.setServiceEnabled(context, newState)
+		model.setServiceStatus(context, newState)
 	})
 
-	Text(
-		text = "Setting Disabled?",
-		fontWeight = FontWeight.Bold
-	)
-	Text(
-		modifier = Modifier.clickable {
-			//redirect user to app Settings
-			val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-				addCategory(Intent.CATEGORY_DEFAULT)
-				setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID))
-			}
-			context.startActivity(i)
-		},
-		text = "Click here to go to App Info, then click [...], then \"Allow Restricted Settings\".",
-		fontStyle = FontStyle.Italic,
-		textDecoration = TextDecoration.Underline
-	)
+	if (!serviceRunning) {
+		Text(
+			text = "Setting Restricted?",
+			fontWeight = FontWeight.Bold
+		)
+		Text(
+			modifier = Modifier.clickable {
+				//redirect user to app Settings
+				val i = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+					addCategory(Intent.CATEGORY_DEFAULT)
+					setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID))
+				}
+				context.startActivity(i)
+			},
+			text = "Click here to go to App Info, then click [...], then \"Allow Restricted Settings\".",
+			fontStyle = FontStyle.Italic,
+			textDecoration = TextDecoration.Underline
+		)
+	}
 
 	HorizontalDivider()
 

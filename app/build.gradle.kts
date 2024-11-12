@@ -4,8 +4,8 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 val localProps = gradleLocalProperties(rootDir, providers)
 
-val versionMajor = 0
-val versionMinor = 1
+val versionMajor = 1
+val versionMinor = 0
 val versionPatch = 0
 val versionBuild = 0
 
@@ -121,6 +121,11 @@ android {
 		resources {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
+	}
+
+	sentry {
+		autoUploadProguardMapping = true
+		autoUploadSourceContext = true
 	}
 }
 

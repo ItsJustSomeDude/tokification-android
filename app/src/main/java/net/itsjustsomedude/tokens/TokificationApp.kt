@@ -96,7 +96,7 @@ val appModule = module {
 
 	single { UpdateChecker(get(), get()) }
 
-	viewModel { MainScreenViewModel(get(), get(), get(), get(), get(), get()) }
+	viewModel { MainScreenViewModel(get(), get(), get(), get(), get()) }
 	viewModel { parameters -> CoopViewModel(parameters.get(), get(), get(), get(), get()) }
 	viewModel { NotificationDebuggerViewModel(get()) }
 	viewModel { parameters -> CoopNameEditViewModel(parameters[0], parameters[1], get()) }

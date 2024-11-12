@@ -64,7 +64,6 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
 	val context = LocalContext.current
 
 	val notificationDebuggerEnabled by model.noteDebugger.collectAsState()
-	val serviceEnabled by model.serviceEnabled.collectAsState(true)
 	val coop by model.selectedCoopId.collectAsState()
 	val coopList by model.coopsList.observeAsState()
 
@@ -72,6 +71,7 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
 	var showNotificationDebugger by remember { mutableStateOf(false) }
 
 	val updateAvailable by model.updateAvailable.collectAsState(false)
+	val serviceRunning by model.serviceRunning.collectAsState(true)
 
 	Header(
 		title = { Text(stringResource(R.string.app_name)) },
@@ -114,7 +114,7 @@ private fun Content(model: MainScreenViewModel = koinViewModel()) {
 			}
 		}
 	) {
-		if (!serviceEnabled) {
+		if (!serviceRunning) {
 			Box(
 				modifier = Modifier
 					.border(
