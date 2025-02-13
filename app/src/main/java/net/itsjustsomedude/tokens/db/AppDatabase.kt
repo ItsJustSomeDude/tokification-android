@@ -27,6 +27,8 @@ abstract class AppDatabase : RoomDatabase() {
 			.addMigrations(MIGRATION_10_1)
 			// Adds boost order to Coop, and Receiver to Events.
 			.addMigrations(MIGRATION_1_2)
+			// Migrate from Legacy to current.
+			.addMigrations(MIGRATION_10_2)
 //            .fallbackToDestructiveMigration()
 			.build()
 	}

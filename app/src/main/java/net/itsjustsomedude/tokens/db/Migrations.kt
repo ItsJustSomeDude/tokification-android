@@ -55,7 +55,7 @@ val MIGRATION_10_1 = object : Migration(10, 1) {
 		db.execSQL(
 			"""
             INSERT INTO Event (id, coop, kevId, time, count, person, direction, notification)
-            SELECT 
+            SELECT
                 _id,
                 IFNULL(Coop, ''),
                 IFNULL(Contract, ''),
@@ -83,5 +83,12 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
 		db.execSQL("ALTER TABLE Coop ADD COLUMN playerPositionOverrides TEXT NOT NULL DEFAULT \"{}\"")
 		db.execSQL("ALTER TABLE Coop ADD COLUMN playerOrderOverrides TEXT NOT NULL DEFAULT \"{}\"")
 		db.execSQL("ALTER TABLE Coop ADD COLUMN playerTokenAmounts TEXT NOT NULL DEFAULT \"{}\"")
+	}
+}
+
+val MIGRATION_10_2 = object : Migration(10, 2) {
+	override fun migrate(db: SupportSQLiteDatabase) {
+		MIGRATION_10_1.migrate(db);
+		MIGRATION_1_2.migrate(db);
 	}
 }
